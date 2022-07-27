@@ -69,7 +69,7 @@ export function run({ Module, chai })
          });
       });
 
-      describe(`AdapterFilter errors`, () =>
+      describe(`AdapterFilters errors`, () =>
       {
          it(`add - no arguments / noop`, () =>
          {
@@ -85,7 +85,7 @@ export function run({ Module, chai })
             const dar = new DynArrayReducer([]);
 
             expect(() => dar.filters.add(false)).to.throw(TypeError,
-             `DynArrayReducer error: 'filter' is not a function or object.`);
+             `AdapterFilters error: 'filter' is not a function or object.`);
          });
 
          it(`add - null`, () =>
@@ -93,7 +93,7 @@ export function run({ Module, chai })
             const dar = new DynArrayReducer([]);
 
             expect(() => dar.filters.add(null)).to.throw(TypeError,
-             `DynArrayReducer error: 'filter' is not a function or object.`);
+             `AdapterFilters error: 'filter' is not a function or object.`);
          });
 
          it(`add - object - no data`, () =>
@@ -101,7 +101,7 @@ export function run({ Module, chai })
             const dar = new DynArrayReducer([]);
 
             expect(() => dar.filters.add({})).to.throw(TypeError,
-             `DynArrayReducer error: 'filter' attribute is not a function.`);
+             `AdapterFilters error: 'filter' attribute is not a function.`);
          });
 
          it(`add - object - no data`, () =>
@@ -109,7 +109,7 @@ export function run({ Module, chai })
             const dar = new DynArrayReducer([]);
 
             expect(() => dar.filters.add({ filter: false })).to.throw(TypeError,
-             `DynArrayReducer error: 'filter' attribute is not a function.`);
+             `AdapterFilters error: 'filter' attribute is not a function.`);
          });
 
          it(`add - object - weight not a number`, () =>
@@ -117,7 +117,7 @@ export function run({ Module, chai })
             const dar = new DynArrayReducer([]);
 
             expect(() => dar.filters.add({ filter: () => null, weight: false })).to.throw(TypeError,
-             `DynArrayReducer error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
+             `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
          });
 
          it(`add - object - weight less than 0 (-1)`, () =>
@@ -125,7 +125,7 @@ export function run({ Module, chai })
             const dar = new DynArrayReducer([]);
 
             expect(() => dar.filters.add({ filter: () => null, weight: -1 })).to.throw(TypeError,
-             `DynArrayReducer error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
+             `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
          });
 
          it(`add - object - weight greater than 1 (2)`, () =>
@@ -133,7 +133,7 @@ export function run({ Module, chai })
             const dar = new DynArrayReducer([]);
 
             expect(() => dar.filters.add({ filter: () => null, weight: 2 })).to.throw(TypeError,
-             `DynArrayReducer error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
+             `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
          });
 
          it(`add - filter w/ subscribe - no unsubscribe`, () =>
@@ -144,7 +144,7 @@ export function run({ Module, chai })
             filter.subscribe = () => null;
 
             expect(() => dar.filters.add(filter)).to.throw(TypeError,
-             `DynArrayReducer error: Filter has subscribe function, but no unsubscribe function is returned.`);
+             `AdapterFilters error: Filter has subscribe function, but no unsubscribe function is returned.`);
          });
 
          it(`add - duplicate filter w/ subscribe`, () =>
@@ -155,7 +155,7 @@ export function run({ Module, chai })
             filter.subscribe = () => () => null;
 
             expect(() => dar.filters.add(filter, filter)).to.throw(Error,
-             `DynArrayReducer error: Filter added already has an unsubscribe function registered.`);
+             `AdapterFilters error: Filter added already has an unsubscribe function registered.`);
          });
 
          // removeBy ----------------------------------------------------------------------------------------------
@@ -166,7 +166,7 @@ export function run({ Module, chai })
             dar.filters.add(() => null);
 
             expect(() => dar.filters.removeBy()).to.throw(TypeError,
-             `DynArrayReducer error: 'callback' is not a function.`);
+             `AdapterFilters error: 'callback' is not a function.`);
          });
       });
 
@@ -180,7 +180,7 @@ export function run({ Module, chai })
             compareFn.subscribe = () => null;
 
             expect(() => dar.sort.set(compareFn)).to.throw(Error,
-             `DynArrayReducer error: sort has 'subscribe' function, but no 'unsubscribe' function is returned.`);
+             `AdapterSort error: sort has 'subscribe' function, but no 'unsubscribe' function is returned.`);
          });
 
 
@@ -189,7 +189,7 @@ export function run({ Module, chai })
             const dar = new DynArrayReducer([]);
 
             expect(() => dar.sort.set({ compare: false })).to.throw(Error,
-             `DynArrayReducer error: 'compare' attribute is not a function.`);
+             `AdapterSort error: 'compare' attribute is not a function.`);
          });
       });
    });
