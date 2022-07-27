@@ -212,15 +212,15 @@ export class DynMapReducer
          throw new TypeError(`DynMapReducer.setData error: 'replace' is not a boolean.`);
       }
 
+      const map = this.#map[0];
+
       // Replace internal data with new Map or create an array from an iterable.
-      if (!(this.#map[0] instanceof Map) || replace)
+      if (!(map instanceof Map) || replace)
       {
          this.#map[0] = data instanceof Map ? data : null;
       }
-      else if (data instanceof Map && this.#map[0] instanceof Map)
+      else if (data instanceof Map && map instanceof Map)
       {
-         const map = this.#map[0];
-
          // Create a set of all current entry IDs.
          const removeKeySet = new Set(map.keys());
 
@@ -235,6 +235,10 @@ export class DynMapReducer
 
          // Remove entries that are no longer in data.
          for (const key of removeKeySet) { map.delete(key); }
+      }
+      else if (data === null)
+      {
+         this.#map[0] = null;
       }
 
       // Recalculate index and force an update to any subscribers.
@@ -288,7 +292,16 @@ export class DynMapReducer
       }
       else
       {
-         for (const value of map.values()) { yield value; }
+         if (this.reversed)
+         {
+            // TODO: Not efficient due to creating temporary values array.
+            const values = [...map.values()];
+            for (let cntr = values.length; --cntr >= 0;) { yield values[cntr]; }
+         }
+         else
+         {
+            for (const value of map.values()) { yield value; }
+         }
       }
    }
 }

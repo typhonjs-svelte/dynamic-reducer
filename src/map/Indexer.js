@@ -38,7 +38,7 @@ export class Indexer
       Object.defineProperties(publicAPI, {
          hash: { get: () => indexData.hash },
          isActive: { get: () => this.isActive() },
-         size: { get: () => Array.isArray(indexData.index) ? indexData.index.length : 0 }
+         length: { get: () => Array.isArray(indexData.index) ? indexData.index.length : 0 }
       });
 
       Object.freeze(publicAPI);
@@ -48,6 +48,7 @@ export class Indexer
       return [this, publicAPI];
    }
 
+   /* c8 ignore next */
    get reversed() { return this.indexData.reversed; }
 
    set reversed(reversed) { this.indexData.reversed = reversed; }
