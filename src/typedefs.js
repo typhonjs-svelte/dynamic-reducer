@@ -21,7 +21,19 @@
  *
  * @typedef {object} DynArrayData
  *
- * @property {Iterable<T>}                         data -
+ * @property {Iterable<T>}                         [data] -
+ *
+ * @property {Iterable<FilterFn<T>|FilterData<T>>} [filters] -
+ *
+ * @property {CompareFn<T>}                        [sort] -
+ */
+
+/**
+ * @template T
+ *
+ * @typedef {object} DynMapData
+ *
+ * @property {Map<*, T>}                           [data] -
  *
  * @property {Iterable<FilterFn<T>|FilterData<T>>} [filters] -
  *
