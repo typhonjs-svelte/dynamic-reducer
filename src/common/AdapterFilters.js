@@ -86,7 +86,7 @@ export class AdapterFilters
 
          if (filterType !== 'function' && filterType !== 'object' || filter === null)
          {
-            throw new TypeError(`DynArrayReducer error: 'filter' is not a function or object.`);
+            throw new TypeError(`AdapterFilters error: 'filter' is not a function or object.`);
          }
 
          let data = void 0;
@@ -107,14 +107,14 @@ export class AdapterFilters
             case 'object':
                if (typeof filter.filter !== 'function')
                {
-                  throw new TypeError(`DynArrayReducer error: 'filter' attribute is not a function.`);
+                  throw new TypeError(`AdapterFilters error: 'filter' attribute is not a function.`);
                }
 
                if (filter.weight !== void 0 && typeof filter.weight !== 'number' ||
                 (filter.weight < 0 || filter.weight > 1))
                {
                   throw new TypeError(
-                   `DynArrayReducer error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
+                   `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
                }
 
                data = {
@@ -151,14 +151,14 @@ export class AdapterFilters
             if (typeof unsubscribe !== 'function')
             {
                throw new TypeError(
-                'DynArrayReducer error: Filter has subscribe function, but no unsubscribe function is returned.');
+                'AdapterFilters error: Filter has subscribe function, but no unsubscribe function is returned.');
             }
 
             // Ensure that the same filter is not subscribed to multiple times.
             if (this.#mapUnsubscribe.has(data.filter))
             {
                throw new Error(
-                'DynArrayReducer error: Filter added already has an unsubscribe function registered.');
+                'AdapterFilters error: Filter added already has an unsubscribe function registered.');
             }
 
             this.#mapUnsubscribe.set(data.filter, unsubscribe);
@@ -238,7 +238,7 @@ export class AdapterFilters
 
       if (typeof callback !== 'function')
       {
-         throw new TypeError(`DynArrayReducer error: 'callback' is not a function.`);
+         throw new TypeError(`AdapterFilters error: 'callback' is not a function.`);
       }
 
       this.#filtersAdapter.filters = this.#filtersAdapter.filters.filter((data) =>

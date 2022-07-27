@@ -55,7 +55,7 @@ export class AdapterSort
 
             if (typeof data.compare !== 'function')
             {
-               throw new TypeError(`DynArrayReducer error: 'compare' attribute is not a function.`);
+               throw new TypeError(`AdapterSort error: 'compare' attribute is not a function.`);
             }
 
             compareFn = data.compare;
@@ -85,7 +85,7 @@ export class AdapterSort
          if (typeof this.#unsubscribe !== 'function')
          {
             throw new Error(
-             `DynArrayReducer error: sort has 'subscribe' function, but no 'unsubscribe' function is returned.`);
+             `AdapterSort error: sort has 'subscribe' function, but no 'unsubscribe' function is returned.`);
          }
       }
       else
