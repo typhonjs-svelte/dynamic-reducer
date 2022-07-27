@@ -19,13 +19,6 @@ export function run({ Module })
 
          let startTime;
 
-         // const unsubscribe = arrayReducer.subscribe(
-         //  () => console.log(`!!!! arrayReducer update - total time: ${performance.now() - startTime}`));
-         //
-         // console.log(`!! filters.add`);
-         // startTime = performance.now();
-         // arrayReducer.filters.add(filterDynamicModulo);
-
          arrayReducer.filters.add(filterDynamicModulo);
 
          // arrayReducer.sort.set((a, b) => b - a);
@@ -42,8 +35,6 @@ export function run({ Module })
          }
 
          console.log(`! Total time (iterations - ${repeat}): ${totalTime / repeat}`);
-
-         // unsubscribe();
       });
    });
 }
