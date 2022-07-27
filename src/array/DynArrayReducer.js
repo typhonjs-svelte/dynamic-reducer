@@ -238,19 +238,6 @@ export class DynArrayReducer
          {
             this.#array[0] = null;
          }
-
-         // if (array)
-         // {
-         //    // Remove all entries in internal data. This will not replace any initially set array.
-         //    array.length = 0;
-         //
-         //    // Add all new data.
-         //    array.push(...data);
-         // }
-         // else if (data) // Case when array is null, but there is new data to set.
-         // {
-         //    this.#array[0] = Array.isArray(data) ? data : [...data];
-         // }
       }
 
       // Recalculate index and force an update to any subscribers.
