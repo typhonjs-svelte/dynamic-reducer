@@ -12,7 +12,21 @@ type DynArrayData<T> = {
     /**
      * -
      */
-    data: Iterable<T>;
+    data?: Iterable<T>;
+    /**
+     * -
+     */
+    filters?: Iterable<FilterFn<T> | FilterData<T>>;
+    /**
+     * -
+     */
+    sort?: CompareFn<T>;
+};
+type DynMapData<T> = {
+    /**
+     * -
+     */
+    data?: Map<any, T>;
     /**
      * -
      */
@@ -253,4 +267,96 @@ declare class DynArrayReducer<T> {
     #private;
 }
 
-export { DynArrayReducer };
+/**
+ * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
+ * Svelte store support.
+ *
+ * @template T
+ */
+declare class DynMapReducer<T> {
+    /**
+     * Provides a utility method to determine if the given data is iterable / implements iterator protocol.
+     *
+     * @param {*}  data - Data to verify as iterable.
+     *
+     * @returns {boolean} Is data iterable.
+     */
+    static "__#4@#isIterable"(data: any): boolean;
+    /**
+     * Initializes DynMapReducer. Any iterable is supported for initial data. Take note that if `data` is a Map it
+     * will be used as the host map and not copied.
+     *
+     * @param {Map<*, T>|DynMapData<T>}   [data] - Source map.
+     */
+    constructor(data?: Map<any, T> | DynMapData<T>);
+    /**
+     * Returns the internal data of this instance. Be careful!
+     *
+     * TODO: UPDATE
+     * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
+     * performed to the data externally do invoke {@link index.update} with `true` to recalculate the index and notify
+     * all subscribers.
+     *
+     * @returns {Map<*, T>|null} The internal data.
+     */
+    get data(): Map<any, T>;
+    /**
+     * @returns {AdapterFilters<T>} The filters adapter.
+     */
+    get filters(): AdapterFilters<T>;
+    /**
+     * Returns the Indexer public API.
+     *
+     * @returns {IndexerAPI & Iterable<number>} Indexer API - is also iterable.
+     */
+    get index(): IndexerAPI & Iterable<number>;
+    /**
+     * Gets the main data map length / size.
+     *
+     * @returns {number} Main data map length / size.
+     */
+    get length(): number;
+    /**
+     * Sets reversed state and notifies subscribers.
+     *
+     * @param {boolean} reversed - New reversed state.
+     */
+    set reversed(arg: boolean);
+    /**
+     * Gets current reversed state.
+     *
+     * @returns {boolean} Reversed state.
+     */
+    get reversed(): boolean;
+    /**
+     * @returns {AdapterSort<T>} The sort adapter.
+     */
+    get sort(): AdapterSort<T>;
+    /**
+     * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
+     * `replace` is set to true.
+     *
+     * @param {Map<S, T> | null} data - New data to set to internal data.
+     *
+     * @param {boolean} [replace=false] - New data to set to internal data.
+     */
+    setData(data: Map<any, T> | null, replace?: boolean): void;
+    /**
+     *
+     * @param {function(DynMapReducer<T>): void} handler - Callback function that is invoked on update / changes.
+     *                                                       Receives `this` reference.
+     *
+     * @returns {(function(): void)} Unsubscribe function.
+     */
+    subscribe(handler: (arg0: DynMapReducer<T>) => void): (() => void);
+    /**
+     * Provides an iterator for data stored in DynMapReducer.
+     *
+     * @returns {Generator<*, T, *>} Generator / iterator of all data.
+     * @yields {T}
+     */
+    [Symbol.iterator](): Generator<any, T, any>;
+    #private;
+}
+
+export { DynArrayReducer, DynMapReducer };
