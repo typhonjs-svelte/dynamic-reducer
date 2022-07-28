@@ -1,6 +1,6 @@
 /**
  * Provides the storage and sequencing of managed filters. Each filter added may be a bespoke function or a
- * {@link FilterData} object containing an `id`, `filter`, and `weight` attributes; `filter` is the only required
+ * {@link DataFilter} object containing an `id`, `filter`, and `weight` attributes; `filter` is the only required
  * attribute.
  *
  * The `id` attribute can be anything that creates a unique ID for the filter; recommended strings or numbers. This
@@ -34,7 +34,7 @@ export class AdapterFilters
    /**
     * @param {Function} indexUpdate - update function for the indexer.
     *
-    * @returns {[AdapterFilters<T>, {filters: FilterData<T>[]}]} Returns this and internal storage for filter adapters.
+    * @returns {[AdapterFilters<T>, {filters: DataFilter<T>[]}]} Returns this and internal storage for filter adapters.
     */
    constructor(indexUpdate)
    {
@@ -55,8 +55,8 @@ export class AdapterFilters
    /**
     * Provides an iterator for filters.
     *
-    * @returns {Generator<number|undefined, FilterData<T>, *>} Generator / iterator of filters.
-    * @yields {FilterData<T>}
+    * @returns {Generator<number|undefined, DataFilter<T>, *>} Generator / iterator of filters.
+    * @yields {DataFilter<T>}
     */
    *[Symbol.iterator]()
    {
@@ -69,7 +69,7 @@ export class AdapterFilters
    }
 
    /**
-    * @param {...(FilterFn<T>|FilterData<T>)}   filters -
+    * @param {...(FilterFn<T>|DataFilter<T>)}   filters -
     */
    add(...filters)
    {
@@ -187,7 +187,7 @@ export class AdapterFilters
    }
 
    /**
-    * @param {...(FilterFn<T>|FilterData<T>)}   filters -
+    * @param {...(FilterFn<T>|DataFilter<T>)}   filters -
     */
    remove(...filters)
    {

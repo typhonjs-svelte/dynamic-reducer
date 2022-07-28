@@ -1,19 +1,21 @@
 import { DynReducerUtils } from '../DynReducerUtils.js';
 
 /**
+ * @template D
+ *
  * @template T
  */
 export class AdapterIndexer
 {
    /**
     *
-    * @param hostData
+    * @param {DataHost<D>}       hostData -
     *
     * @param {Function}          hostUpdate -
     *
     * @param {AdapterIndexer<T>} parentIndexer -
     *
-    * @returns {[AdapterIndexer<T>, IndexerAPI<number>]}
+    * @returns {[AdapterIndexer<T>, IndexerAPI<number>]} Indexer instance and public API.
     */
    constructor(hostData, hostUpdate, parentIndexer)
    {
@@ -22,7 +24,7 @@ export class AdapterIndexer
 
       const indexData = { index: null, hash: null, reversed: false, parent: parentIndexer };
 
-      let publicAPI = {
+      const publicAPI = {
          update: this.update.bind(this),
 
          /**
@@ -56,8 +58,6 @@ export class AdapterIndexer
          length: { get: () => Array.isArray(indexData.index) ? indexData.index.length : 0 }
       });
 
-      publicAPI = this.initializePublicAPI(publicAPI, indexData);
-
       Object.freeze(publicAPI);
 
       this.indexData = indexData;
@@ -65,30 +65,20 @@ export class AdapterIndexer
       return [this, publicAPI];
    }
 
-   /* c8 ignore next */
+   /* c8 ignore start */
    /**
     * @returns {boolean}
     *
     * c8 ignore next
     */
    get reversed() { return this.indexData.reversed; }
+   /* c8 ignore end */
 
    /**
     *
     * @param {boolean}  reversed -
     */
    set reversed(reversed) { this.indexData.reversed = reversed; }
-
-   /**
-    * Allows additions to public API.
-    *
-    * @param publicAPI
-    *
-    * @param indexData
-    *
-    * @returns {*}
-    */
-   initializePublicAPI(publicAPI, indexData) { return publicAPI; }
 
 // -------------------------------------------------------------------------------------------------------------------
 

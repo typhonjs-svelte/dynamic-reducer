@@ -14,17 +14,17 @@ import { Indexer }   from './Indexer.js';
 export class DynArrayReducer
 {
    /**
-    * @type {Array[]}
+    * @type {DataHost<T[]>}
     */
    #array = [null];
 
    /**
-    * @type {Indexer}
+    * @type {Indexer<T[], T>}
     */
    #index;
 
    /**
-    * @type{IndexerAPI}
+    * @type {IndexerAPI<number>}
     */
    #indexPublicAPI;
 
@@ -59,7 +59,7 @@ export class DynArrayReducer
     * Initializes DynArrayReducer. Any iterable is supported for initial data. Take note that if `data` is an array it
     * will be used as the host array and not copied. All non-array iterables otherwise create a new array / copy.
     *
-    * @param {Iterable<T>|DynArrayData<T>}   [data] - Data iterable to store if array or copy otherwise.
+    * @param {Iterable<T>|DataDynArray<T>}   [data] - Data iterable to store if array or copy otherwise.
     */
    constructor(data)
    {
@@ -67,12 +67,12 @@ export class DynArrayReducer
       let filters = void 0;
       let sort = void 0;
 
-      // Potentially working with DynArrayData.
+      // Potentially working with DataDynArray.
       if (!DynReducerUtils.isIterable(data) && data !== null && typeof data === 'object')
       {
          if (data.data !== void 0 && !DynReducerUtils.isIterable(data.data))
          {
-            throw new TypeError(`DynArrayReducer error (DynArrayData): 'data' attribute is not iterable.`);
+            throw new TypeError(`DynArrayReducer error (DataDynArray): 'data' attribute is not iterable.`);
          }
 
          dataIterable = data.data;
@@ -85,7 +85,7 @@ export class DynArrayReducer
             }
             else
             {
-               throw new TypeError(`DynArrayReducer error (DynArrayData): 'filters' attribute is not iterable.`);
+               throw new TypeError(`DynArrayReducer error (DataDynArray): 'filters' attribute is not iterable.`);
             }
          }
 
@@ -97,7 +97,7 @@ export class DynArrayReducer
             }
             else
             {
-               throw new TypeError(`DynArrayReducer error (DynArrayData): 'sort' attribute is not a function.`);
+               throw new TypeError(`DynArrayReducer error (DataDynArray): 'sort' attribute is not a function.`);
             }
          }
       }
@@ -120,7 +120,7 @@ export class DynArrayReducer
 
       this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter);
 
-      // Add any filters and sort function defined by DynArrayData.
+      // Add any filters and sort function defined by DataDynArray.
       if (filters) { this.filters.add(...filters); }
       if (sort) { this.sort.set(sort); }
    }
@@ -267,10 +267,7 @@ export class DynArrayReducer
     */
    #updateSubscribers()
    {
-      // Subscriptions are stored locally as on the browser Babel is still used for private class fields / Babel
-      // support until 2023. IE not doing this will require several extra method calls otherwise.
-      const subscriptions = this.#subscriptions;
-      for (let cntr = 0; cntr < subscriptions.length; cntr++) { subscriptions[cntr](this); }
+      for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](this); }
    }
 
    /**

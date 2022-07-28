@@ -27,7 +27,7 @@ export class DerivedArrayReducer
    #index;
 
    /**
-    * @type{IndexerAPI}
+    * @type {IndexerAPI<number>}
     */
    #indexPublicAPI;
 
@@ -79,4 +79,36 @@ export class DerivedArrayReducer
     * @returns {IndexerAPI<number>} Indexer API - is also iterable.
     */
    get index() { return this.#indexPublicAPI; }
+
+// -------------------------------------------------------------------------------------------------------------------
+
+   /**
+    * Subscribe to this DerivedArrayReducer.
+    *
+    * @param {function(DerivedArrayReducer<T>): void} handler - Callback function that is invoked on update / changes.
+    *                                                           Receives `this` reference.
+    *
+    * @returns {(function(): void)} Unsubscribe function.
+    */
+   subscribe(handler)
+   {
+      this.#subscriptions.push(handler); // add handler to the array of subscribers
+
+      handler(this);                     // call handler with current value
+
+      // Return unsubscribe function.
+      return () =>
+      {
+         const index = this.#subscriptions.findIndex((sub) => sub === handler);
+         if (index >= 0) { this.#subscriptions.splice(index, 1); }
+      };
+   }
+
+   /**
+    *
+    */
+   #updateSubscribers()
+   {
+      for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](this); }
+   }
 }

@@ -1,6 +1,8 @@
 import { AdapterIndexer } from '#common';
 
 /**
+ * @template D
+ *
  * @template T
  */
 export class Indexer extends AdapterIndexer

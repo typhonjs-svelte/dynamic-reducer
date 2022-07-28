@@ -24,7 +24,7 @@ export class AdapterSort
    }
 
    /**
-    * @param {CompareFn<T>|SortData<T>}  data -
+    * @param {CompareFn<T>|DataSort<T>}  data -
     *
     * A callback function that compares two values. Return > 0 to sort b before a;
     * < 0 to sort a before b; or 0 to keep original order of a & b.

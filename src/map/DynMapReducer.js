@@ -10,20 +10,23 @@ import { Indexer }   from './Indexer.js';
  * Svelte store support.
  *
  * @template K
+ *
  * @template T
  */
 export class DynMapReducer
 {
-   /** @type {Map<K, T>|null[]} */
+   /**
+    * @type {DataHost<Map<K, T>>}
+    */
    #map = [null];
 
    /**
-    * @type {Indexer}
+    * @type {Indexer<Map<K, T>, T>}
     */
    #index;
 
    /**
-    * @type{IndexerAPI<K>}
+    * @type {IndexerAPI<K>}
     */
    #indexPublicAPI;
 
@@ -58,7 +61,7 @@ export class DynMapReducer
     * Initializes DynMapReducer. Any iterable is supported for initial data. Take note that if `data` is a Map it
     * will be used as the host map and not copied.
     *
-    * @param {Map<K, T>|DynMapData<T>}   [data] - Source map.
+    * @param {Map<K, T>|DataDynMap<T>}   [data] - Source map.
     */
    constructor(data)
    {
@@ -66,12 +69,12 @@ export class DynMapReducer
       let filters = void 0;
       let sort = void 0;
 
-      // Potentially working with DynMapData.
+      // Potentially working with DataDynMap.
       if (!(data instanceof Map) && data !== null && typeof data === 'object')
       {
          if (data.data !== void 0 && !(data.data instanceof Map))
          {
-            throw new TypeError(`DynMapReducer error (DynMapData): 'data' attribute is not a Map.`);
+            throw new TypeError(`DynMapReducer error (DataDynMap): 'data' attribute is not a Map.`);
          }
 
          dataMap = data.data;
@@ -84,7 +87,7 @@ export class DynMapReducer
             }
             else
             {
-               throw new TypeError(`DynMapReducer error (DynMapData): 'filters' attribute is not iterable.`);
+               throw new TypeError(`DynMapReducer error (DataDynMap): 'filters' attribute is not iterable.`);
             }
          }
 
@@ -96,7 +99,7 @@ export class DynMapReducer
             }
             else
             {
-               throw new TypeError(`DynMapReducer error (DynMapData): 'sort' attribute is not a function.`);
+               throw new TypeError(`DynMapReducer error (DataDynMap): 'sort' attribute is not a function.`);
             }
          }
       }
@@ -120,7 +123,7 @@ export class DynMapReducer
 
       this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter);
 
-      // Add any filters and sort function defined by DynMapData.
+      // Add any filters and sort function defined by DataDynMap.
       if (filters) { this.filters.add(...filters); }
       if (sort) { this.sort.set(sort); }
    }

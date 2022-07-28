@@ -1,3 +1,66 @@
+// Data -------------------------------------------------------------------------------------------------------------
+
+/**
+ * @template T
+ *
+ * @typedef {object} DataDynArray
+ *
+ * @property {Iterable<T>}                         [data] -
+ *
+ * @property {Iterable<FilterFn<T>|DataFilter<T>>} [filters] -
+ *
+ * @property {CompareFn<T>}                        [sort] -
+ */
+
+/**
+ * @template K
+ *
+ * @template T
+ *
+ * @typedef {object} DataDynMap
+ *
+ * @property {Map<K, T>}                           [data] -
+ *
+ * @property {Iterable<FilterFn<T>|DataFilter<T>>} [filters] -
+ *
+ * @property {CompareFn<T>}                        [sort] -
+ */
+
+/**
+ * @template T
+ *
+ * @typedef {object} DataFilter
+ *
+ * @property {*}           [id=undefined] - An ID associated with this filter. Can be used to remove the filter.
+ *
+ * @property {FilterFn<T>} filter - Filter function that takes a value argument and returns a truthy value to
+ *                                  keep it.
+ *
+ * @property {number}      [weight=1] - A number between 0 and 1 inclusive to position this filter against others.
+ *
+ * @property {Function}    [subscribe] - Optional subscribe function following the Svelte store / subscribe pattern.
+ */
+
+/**
+ * @template D
+ *
+ * @typedef {[(D|null)]} DataHost
+ */
+
+/**
+ * @template T
+ *
+ * @typedef {object} DataSort
+ *
+ * @property {*}              [id=undefined] - An ID associated with this filter. Can be used to remove the filter.
+ *
+ * @property {CompareFn<T>}   compare - A callback function that compares two values.
+ *
+ * @property {Function} [subscribe] - Optional subscribe function following the Svelte store / subscribe pattern.
+ */
+
+// Functions ---------------------------------------------------------------------------------------------------------
+
 /**
  * @template T
  *
@@ -16,57 +79,7 @@
  * @property {Function} [subscribe] - Optional subscribe function following the Svelte store / subscribe pattern.
  */
 
-/**
- * @template T
- *
- * @typedef {object} DynArrayData
- *
- * @property {Iterable<T>}                         [data] -
- *
- * @property {Iterable<FilterFn<T>|FilterData<T>>} [filters] -
- *
- * @property {CompareFn<T>}                        [sort] -
- */
-
-/**
- * @template K
- * @template T
- *
- * @typedef {object} DynMapData
- *
- * @property {Map<K, T>}                           [data] -
- *
- * @property {Iterable<FilterFn<T>|FilterData<T>>} [filters] -
- *
- * @property {CompareFn<T>}                        [sort] -
- */
-
-/**
- * @template T
- *
- * @typedef {object} FilterData
- *
- * @property {*}           [id=undefined] - An ID associated with this filter. Can be used to remove the filter.
- *
- * @property {FilterFn<T>} filter - Filter function that takes a value argument and returns a truthy value to
- *                                  keep it.
- *
- * @property {number}      [weight=1] - A number between 0 and 1 inclusive to position this filter against others.
- *
- * @property {Function}    [subscribe] - Optional subscribe function following the Svelte store / subscribe pattern.
- */
-
-/**
- * @template T
- *
- * @typedef {object} SortData
- *
- * @property {*}              [id=undefined] - An ID associated with this filter. Can be used to remove the filter.
- *
- * @property {CompareFn<T>}   compare - A callback function that compares two values.
- *
- * @property {Function} [subscribe] - Optional subscribe function following the Svelte store / subscribe pattern.
- */
+// Public API --------------------------------------------------------------------------------------------------------
 
 /**
  * @template K

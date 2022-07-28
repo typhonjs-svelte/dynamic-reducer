@@ -27,24 +27,24 @@ export function run({ Module, chai })
          });
       });
 
-      describe(`ctor errors (DynMapData)`, () =>
+      describe(`ctor errors (DataDynMap)`, () =>
       {
          it(`'data' attribute is non-iterable`, () =>
          {
             expect(() => new DynMapReducer({ data: false })).to.throw(TypeError,
-             `DynMapReducer error (DynMapData): 'data' attribute is not a Map.`);
+             `DynMapReducer error (DataDynMap): 'data' attribute is not a Map.`);
          });
 
          it(`'filters' attribute is non-iterable`, () =>
          {
             expect(() => new DynMapReducer({ data: new Map(), filters: false })).to.throw(TypeError,
-             `DynMapReducer error (DynMapData): 'filters' attribute is not iterable.`);
+             `DynMapReducer error (DataDynMap): 'filters' attribute is not iterable.`);
          });
 
          it(`'sort' attribute is not a function`, () =>
          {
             expect(() => new DynMapReducer({ data: new Map(), sort: false })).to.throw(TypeError,
-             `DynMapReducer error (DynMapData): 'sort' attribute is not a function.`);
+             `DynMapReducer error (DataDynMap): 'sort' attribute is not a function.`);
          });
       });
 

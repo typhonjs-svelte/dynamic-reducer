@@ -27,24 +27,24 @@ export function run({ Module, chai })
          });
       });
 
-      describe(`ctor errors (DynArrayData)`, () =>
+      describe(`ctor errors (DataDynArray)`, () =>
       {
          it(`'data' attribute is non-iterable`, () =>
          {
             expect(() => new DynArrayReducer({ data: false })).to.throw(TypeError,
-             `DynArrayReducer error (DynArrayData): 'data' attribute is not iterable.`);
+             `DynArrayReducer error (DataDynArray): 'data' attribute is not iterable.`);
          });
 
          it(`'filters' attribute is non-iterable`, () =>
          {
             expect(() => new DynArrayReducer({ data: [], filters: false })).to.throw(TypeError,
-             `DynArrayReducer error (DynArrayData): 'filters' attribute is not iterable.`);
+             `DynArrayReducer error (DataDynArray): 'filters' attribute is not iterable.`);
          });
 
          it(`'sort' attribute is not a function`, () =>
          {
             expect(() => new DynArrayReducer({ data: [], sort: false })).to.throw(TypeError,
-             `DynArrayReducer error (DynArrayData): 'sort' attribute is not a function.`);
+             `DynArrayReducer error (DataDynArray): 'sort' attribute is not a function.`);
          });
       });
 

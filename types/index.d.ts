@@ -1,14 +1,4 @@
-/**
- * - A callback function that compares two values. Return > 0 to sort b
- * before a; * < 0 to sort a before b; or 0 to keep original order of a & b.
- */
-type CompareFn<T> = (arg0: T, arg1: T) => boolean;
-/**
- * - Filter function that takes a value argument and returns a truthy value to
- *                                            keep it.
- */
-type FilterFn<T> = (arg0: T) => boolean;
-type DynArrayData<T> = {
+type DataDynArray<T> = {
     /**
      * -
      */
@@ -16,27 +6,27 @@ type DynArrayData<T> = {
     /**
      * -
      */
-    filters?: Iterable<FilterFn<T> | FilterData<T>>;
+    filters?: Iterable<FilterFn<T> | DataFilter<T>>;
     /**
      * -
      */
     sort?: CompareFn<T>;
 };
-type DynMapData<T> = {
+type DataDynMap<K, T> = {
     /**
      * -
      */
-    data?: Map<any, T>;
+    data?: Map<K, T>;
     /**
      * -
      */
-    filters?: Iterable<FilterFn<T> | FilterData<T>>;
+    filters?: Iterable<FilterFn<T> | DataFilter<T>>;
     /**
      * -
      */
     sort?: CompareFn<T>;
 };
-type FilterData<T> = {
+type DataFilter<T> = {
     /**
      * - An ID associated with this filter. Can be used to remove the filter.
      */
@@ -55,7 +45,8 @@ type FilterData<T> = {
      */
     subscribe?: Function;
 };
-type SortData<T> = {
+type DataHost<D> = [(D | null)];
+type DataSort<T> = {
     /**
      * - An ID associated with this filter. Can be used to remove the filter.
      */
@@ -69,24 +60,17 @@ type SortData<T> = {
      */
     subscribe?: Function;
 };
-type IndexerAPI = {
-    /**
-     * - Current hash value of the index.
-     */
-    hash: number | null;
-    /**
-     * - Returns whether the indexer is active (IE filter or sort function active).
-     */
-    isActive: boolean;
-    /**
-     * - Getter returning length of reduced / indexed elements.
-     */
-    length: number;
-    /**
-     * - Manually invoke an update of the index.
-     */
-    update: (force?: boolean) => void;
-};
+/**
+ * - A callback function that compares two values. Return > 0 to sort b
+ * before a; * < 0 to sort a before b; or 0 to keep original order of a & b.
+ */
+type CompareFn<T> = (arg0: T, arg1: T) => boolean;
+/**
+ * - Filter function that takes a value argument and returns a truthy value to
+ *                                            keep it.
+ */
+type FilterFn<T> = (arg0: T) => boolean;
+type IndexerAPI<K> = Iterable<K>;
 
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -99,9 +83,9 @@ declare class DynArrayReducer<T> {
      * Initializes DynArrayReducer. Any iterable is supported for initial data. Take note that if `data` is an array it
      * will be used as the host array and not copied. All non-array iterables otherwise create a new array / copy.
      *
-     * @param {Iterable<T>|DynArrayData<T>}   [data] - Data iterable to store if array or copy otherwise.
+     * @param {Iterable<T>|DataDynArray<T>}   [data] - Data iterable to store if array or copy otherwise.
      */
-    constructor(data?: Iterable<T> | DynArrayData<T>);
+    constructor(data?: Iterable<T> | DataDynArray<T>);
     /**
      * Returns the internal data of this instance. Be careful!
      *
@@ -119,9 +103,9 @@ declare class DynArrayReducer<T> {
     /**
      * Returns the Indexer public API.
      *
-     * @returns {IndexerAPI & Iterable<number>} Indexer API - is also iterable.
+     * @returns {IndexerAPI<number>} Indexer API - is also iterable.
      */
-    get index(): IndexerAPI & Iterable<number>;
+    get index(): IndexerAPI<number>;
     /**
      * Gets the main data / items length.
      *
@@ -175,16 +159,18 @@ declare class DynArrayReducer<T> {
  * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
  * Svelte store support.
  *
+ * @template K
+ *
  * @template T
  */
-declare class DynMapReducer<T> {
+declare class DynMapReducer<K, T> {
     /**
      * Initializes DynMapReducer. Any iterable is supported for initial data. Take note that if `data` is a Map it
      * will be used as the host map and not copied.
      *
-     * @param {Map<*, T>|DynMapData<T>}   [data] - Source map.
+     * @param {Map<K, T>|DataDynMap<T>}   [data] - Source map.
      */
-    constructor(data?: Map<any, T> | DynMapData<T>);
+    constructor(data?: Map<K, T> | DataDynMap<T>);
     /**
      * Returns the internal data of this instance. Be careful!
      *
@@ -193,9 +179,9 @@ declare class DynMapReducer<T> {
      * performed to the data externally do invoke {@link index.update} with `true` to recalculate the index and notify
      * all subscribers.
      *
-     * @returns {Map<*, T>|null} The internal data.
+     * @returns {Map<K, T>|null} The internal data.
      */
-    get data(): Map<any, T>;
+    get data(): Map<K, T>;
     /**
      * @returns {AdapterFilters<T>} The filters adapter.
      */
@@ -203,9 +189,9 @@ declare class DynMapReducer<T> {
     /**
      * Returns the Indexer public API.
      *
-     * @returns {IndexerAPI & Iterable<number>} Indexer API - is also iterable.
+     * @returns {IndexerAPI<K>} Indexer API - is also iterable.
      */
-    get index(): IndexerAPI & Iterable<number>;
+    get index(): IndexerAPI<K>;
     /**
      * Gets the main data map length / size.
      *
@@ -232,11 +218,11 @@ declare class DynMapReducer<T> {
      * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
      * `replace` is set to true.
      *
-     * @param {Map<S, T> | null} data - New data to set to internal data.
+     * @param {Map<K, T> | null} data - New data to set to internal data.
      *
      * @param {boolean} [replace=false] - New data to set to internal data.
      */
-    setData(data: Map<any, T> | null, replace?: boolean): void;
+    setData(data: Map<K, T> | null, replace?: boolean): void;
     /**
      *
      * @param {function(DynMapReducer<T>): void} handler - Callback function that is invoked on update / changes.
@@ -244,7 +230,7 @@ declare class DynMapReducer<T> {
      *
      * @returns {(function(): void)} Unsubscribe function.
      */
-    subscribe(handler: (arg0: DynMapReducer<T>) => void): (() => void);
+    subscribe(handler: (arg0: DynMapReducer<T, any>) => void): (() => void);
     /**
      * Provides an iterator for data stored in DynMapReducer.
      *

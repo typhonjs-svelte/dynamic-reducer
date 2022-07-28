@@ -1,5 +1,10 @@
 import { AdapterIndexer } from '#common';
 
+/**
+ * @template D
+ *
+ * @template T
+ */
 export class Indexer extends AdapterIndexer
 {
    /**
@@ -9,7 +14,7 @@ export class Indexer extends AdapterIndexer
    {
       super.initAdapters(filtersAdapter, sortAdapter);
 
-      this.sortFn = (a, b) =>this.sortAdapter.compareFn(this.hostData[0].get(a), this.hostData[0].get(b));
+      this.sortFn = (a, b) => this.sortAdapter.compareFn(this.hostData[0].get(a), this.hostData[0].get(b));
    }
 
    /**
