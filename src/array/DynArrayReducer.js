@@ -144,7 +144,7 @@ export class DynArrayReducer
    /**
     * Returns the Indexer public API.
     *
-    * @returns {IndexerAPI & Iterable<number>} Indexer API - is also iterable.
+    * @returns {IndexerAPI<number>} Indexer API - is also iterable.
     */
    get index() { return this.#indexPublicAPI; }
 

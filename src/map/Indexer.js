@@ -1,7 +1,10 @@
-import { AdapterIndexer } from '../common/AdapterIndexer.js';
+import { AdapterIndexer } from '#common';
 
 export class Indexer extends AdapterIndexer
 {
+   /**
+    * @inheritDoc
+    */
    initAdapters(filtersAdapter, sortAdapter)
    {
       super.initAdapters(filtersAdapter, sortAdapter);

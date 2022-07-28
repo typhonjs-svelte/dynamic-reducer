@@ -9,11 +9,12 @@ import { Indexer }   from './Indexer.js';
  * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
  * Svelte store support.
  *
+ * @template K
  * @template T
  */
 export class DynMapReducer
 {
-   /** @type {Map<*, T>|null[]} */
+   /** @type {Map<K, T>|null[]} */
    #map = [null];
 
    /**
@@ -22,7 +23,7 @@ export class DynMapReducer
    #index;
 
    /**
-    * @type{IndexerAPI}
+    * @type{IndexerAPI<K>}
     */
    #indexPublicAPI;
 
@@ -57,7 +58,7 @@ export class DynMapReducer
     * Initializes DynMapReducer. Any iterable is supported for initial data. Take note that if `data` is a Map it
     * will be used as the host map and not copied.
     *
-    * @param {Map<*, T>|DynMapData<T>}   [data] - Source map.
+    * @param {Map<K, T>|DynMapData<T>}   [data] - Source map.
     */
    constructor(data)
    {
@@ -112,7 +113,7 @@ export class DynMapReducer
       // In the case of the main data being an array directly use the array otherwise create a copy.
       this.#map[0] = dataMap instanceof Map ? dataMap : null;
 
-      [this.#index, this.#indexPublicAPI] = new Indexer(this.#map, this.#notify.bind(this));
+      [this.#index, this.#indexPublicAPI] = new Indexer(this.#map, this.#updateSubscribers.bind(this));
 
       [this.#filters, this.#filtersAdapter] = new AdapterFilters(this.#indexPublicAPI.update);
       [this.#sort, this.#sortAdapter] = new AdapterSort(this.#indexPublicAPI.update);
@@ -132,7 +133,7 @@ export class DynMapReducer
     * performed to the data externally do invoke {@link index.update} with `true` to recalculate the index and notify
     * all subscribers.
     *
-    * @returns {Map<*, T>|null} The internal data.
+    * @returns {Map<K, T>|null} The internal data.
     */
    get data() { return this.#map[0]; }
 
@@ -144,7 +145,7 @@ export class DynMapReducer
    /**
     * Returns the Indexer public API.
     *
-    * @returns {IndexerAPI & Iterable<number>} Indexer API - is also iterable.
+    * @returns {IndexerAPI<K>} Indexer API - is also iterable.
     */
    get index() { return this.#indexPublicAPI; }
 
@@ -194,7 +195,7 @@ export class DynMapReducer
     * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
     * `replace` is set to true.
     *
-    * @param {Map<S, T> | null} data - New data to set to internal data.
+    * @param {Map<K, T> | null} data - New data to set to internal data.
     *
     * @param {boolean} [replace=false] - New data to set to internal data.
     */
@@ -267,7 +268,7 @@ export class DynMapReducer
    /**
     *
     */
-   #notify()
+   #updateSubscribers()
    {
       for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](this); }
    }

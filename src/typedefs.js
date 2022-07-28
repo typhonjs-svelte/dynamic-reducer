@@ -29,11 +29,12 @@
  */
 
 /**
+ * @template K
  * @template T
  *
  * @typedef {object} DynMapData
  *
- * @property {Map<*, T>}                           [data] -
+ * @property {Map<K, T>}                           [data] -
  *
  * @property {Iterable<FilterFn<T>|FilterData<T>>} [filters] -
  *
@@ -68,7 +69,9 @@
  */
 
 /**
- * @typedef {object} IndexerAPI
+ * @template K
+ *
+ * @typedef {Iterable<K>} IndexerAPI
  *
  * @property {number|null} hash - Current hash value of the index.
  *

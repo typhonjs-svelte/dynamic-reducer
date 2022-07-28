@@ -1,11 +1,26 @@
+import { DynReducerUtils } from '../DynReducerUtils.js';
+
+/**
+ * @template T
+ */
 export class AdapterIndexer
 {
-   constructor(hostData, hostUpdate)
+   /**
+    *
+    * @param hostData
+    *
+    * @param {Function}          hostUpdate -
+    *
+    * @param {AdapterIndexer<T>} parentIndexer -
+    *
+    * @returns {[AdapterIndexer<T>, IndexerAPI<number>]}
+    */
+   constructor(hostData, hostUpdate, parentIndexer)
    {
       this.hostData = hostData;
       this.hostUpdate = hostUpdate;
 
-      const indexData = { index: null, hash: null, reversed: false };
+      const indexData = { index: null, hash: null, reversed: false, parent: parentIndexer };
 
       let publicAPI = {
          update: this.update.bind(this),
@@ -51,8 +66,17 @@ export class AdapterIndexer
    }
 
    /* c8 ignore next */
+   /**
+    * @returns {boolean}
+    *
+    * c8 ignore next
+    */
    get reversed() { return this.indexData.reversed; }
 
+   /**
+    *
+    * @param {boolean}  reversed -
+    */
    set reversed(reversed) { this.indexData.reversed = reversed; }
 
    /**
@@ -99,43 +123,35 @@ export class AdapterIndexer
 
       this.indexData.hash = newHash;
 
-      if (actualForce || (oldHash === newHash ? !s_ARRAY_EQUALS(oldIndex, newIndex) : true)) { this.hostUpdate(); }
+      if (actualForce || (oldHash === newHash ? !DynReducerUtils.arrayEquals(oldIndex, newIndex) : true))
+      {
+         this.hostUpdate();
+      }
    }
 
+   /**
+    * Store associated filter and sort adapters that are constructed after the indexer.
+    *
+    * @param {AdapterFilters<T>} filtersAdapter - Associated AdapterFilters instance.
+    *
+    * @param {AdapterSort<T>}    sortAdapter - Associated AdapterSort instance.
+    */
    initAdapters(filtersAdapter, sortAdapter)
    {
+      /** @type {AdapterFilters<T>} */
       this.filtersAdapter = filtersAdapter;
+
+      /** @type {AdapterSort<T>} */
       this.sortAdapter = sortAdapter;
    }
 
+   /**
+    * Returns whether the index is active.
+    *
+    * @returns {boolean} Index active.
+    */
    isActive()
    {
       return this.filtersAdapter.filters.length > 0 || this.sortAdapter.compareFn !== null;
    }
-}
-
-/**
- * Checks for array equality between two arrays of numbers.
- *
- * @param {number[]} a - Array A
- *
- * @param {number[]} b - Array B
- *
- * @returns {boolean} Arrays equal
- */
-function s_ARRAY_EQUALS(a, b)
-{
-   if (a === b) { return true; }
-   if (a === null || b === null) { return false; }
-
-   /* c8 ignore next */
-   if (a.length !== b.length) { return false; }
-
-   for (let cntr = a.length; --cntr >= 0;)
-   {
-      /* c8 ignore next */
-      if (a[cntr] !== b[cntr]) { return false; }
-   }
-
-   return true;
 }
