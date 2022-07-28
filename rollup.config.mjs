@@ -1,3 +1,4 @@
+import alias               from '@rollup/plugin-alias';
 import { generateTSDef }   from '@typhonjs-build-test/esm-d-ts';
 
 // Generate TS Definition.
@@ -19,7 +20,14 @@ export default () =>
             format: 'es',
             preferConst: true,
             sourcemap: s_SOURCEMAP,
-         }]
+         }],
+         plugins: [
+            alias({
+               entries: [
+                  { find: '#common', replacement: './src/common/index.js' }
+               ]
+            })
+         ]
       }
    ];
 };
