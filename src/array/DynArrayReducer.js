@@ -1,6 +1,9 @@
-import { AdapterFilters }  from '../common/AdapterFilters.js';
-import { AdapterSort }     from '../common/AdapterSort.js';
-import { Indexer }         from './Indexer.js';
+import {
+   AdapterFilters,
+   AdapterSort,
+   DynReducerUtils } from '#common';
+
+import { Indexer }   from './Indexer.js';
 
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -15,7 +18,14 @@ export class DynArrayReducer
     */
    #array = [null];
 
+   /**
+    * @type {Indexer}
+    */
    #index;
+
+   /**
+    * @type{IndexerAPI}
+    */
    #indexPublicAPI;
 
    /**
@@ -58,9 +68,9 @@ export class DynArrayReducer
       let sort = void 0;
 
       // Potentially working with DynArrayData.
-      if (!DynArrayReducer.#isIterable(data) && data !== null && typeof data === 'object')
+      if (!DynReducerUtils.isIterable(data) && data !== null && typeof data === 'object')
       {
-         if (data.data !== void 0 && !DynArrayReducer.#isIterable(data.data))
+         if (data.data !== void 0 && !DynReducerUtils.isIterable(data.data))
          {
             throw new TypeError(`DynArrayReducer error (DynArrayData): 'data' attribute is not iterable.`);
          }
@@ -69,7 +79,7 @@ export class DynArrayReducer
 
          if (data.filters !== void 0)
          {
-            if (DynArrayReducer.#isIterable(data.filters))
+            if (DynReducerUtils.isIterable(data.filters))
             {
                filters = data.filters;
             }
@@ -93,7 +103,7 @@ export class DynArrayReducer
       }
       else
       {
-         if (data !== void 0 && !DynArrayReducer.#isIterable(data)) { throw new TypeError(`DynArrayReducer error: 'data' is not iterable.`); }
+         if (data !== void 0 && !DynReducerUtils.isIterable(data)) { throw new TypeError(`DynArrayReducer error: 'data' is not iterable.`); }
 
          dataIterable = data;
       }
@@ -104,8 +114,7 @@ export class DynArrayReducer
          this.#array[0] = Array.isArray(dataIterable) ? dataIterable : [...dataIterable];
       }
 
-      [this.#index, this.#indexPublicAPI] = new Indexer(this.#array, this.#notify.bind(this));
-
+      [this.#index, this.#indexPublicAPI] = new Indexer(this.#array, this.#updateSubscribers.bind(this));
       [this.#filters, this.#filtersAdapter] = new AdapterFilters(this.#indexPublicAPI.update);
       [this.#sort, this.#sortAdapter] = new AdapterSort(this.#indexPublicAPI.update);
 
@@ -114,18 +123,6 @@ export class DynArrayReducer
       // Add any filters and sort function defined by DynArrayData.
       if (filters) { this.filters.add(...filters); }
       if (sort) { this.sort.set(sort); }
-   }
-
-   /**
-    * Provides a utility method to determine if the given data is iterable / implements iterator protocol.
-    *
-    * @param {*}  data - Data to verify as iterable.
-    *
-    * @returns {boolean} Is data iterable.
-    */
-   static #isIterable(data)
-   {
-      return data !== null && data !== void 0 && typeof data === 'object' && typeof data[Symbol.iterator] === 'function';
    }
 
    /**
@@ -203,7 +200,7 @@ export class DynArrayReducer
     */
    setData(data, replace = false)
    {
-      if (data !== null && !DynArrayReducer.#isIterable(data))
+      if (data !== null && !DynReducerUtils.isIterable(data))
       {
          throw new TypeError(`DynArrayReducer.setData error: 'data' is not iterable.`);
       }
@@ -268,7 +265,7 @@ export class DynArrayReducer
    /**
     *
     */
-   #notify()
+   #updateSubscribers()
    {
       // Subscriptions are stored locally as on the browser Babel is still used for private class fields / Babel
       // support until 2023. IE not doing this will require several extra method calls otherwise.

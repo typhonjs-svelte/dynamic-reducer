@@ -1,6 +1,9 @@
-import { AdapterFilters }  from '../common/AdapterFilters.js';
-import { AdapterSort }     from '../common/AdapterSort.js';
-import { Indexer }         from './Indexer.js';
+import {
+   AdapterFilters,
+   AdapterSort,
+   DynReducerUtils } from '#common';
+
+import { Indexer }   from './Indexer.js';
 
 /**
  * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -13,7 +16,14 @@ export class DynMapReducer
    /** @type {Map<*, T>|null[]} */
    #map = [null];
 
+   /**
+    * @type {Indexer}
+    */
    #index;
+
+   /**
+    * @type{IndexerAPI}
+    */
    #indexPublicAPI;
 
    /**
@@ -67,7 +77,7 @@ export class DynMapReducer
 
          if (data.filters !== void 0)
          {
-            if (DynMapReducer.#isIterable(data.filters))
+            if (DynReducerUtils.isIterable(data.filters))
             {
                filters = data.filters;
             }
@@ -112,18 +122,6 @@ export class DynMapReducer
       // Add any filters and sort function defined by DynMapData.
       if (filters) { this.filters.add(...filters); }
       if (sort) { this.sort.set(sort); }
-   }
-
-   /**
-    * Provides a utility method to determine if the given data is iterable / implements iterator protocol.
-    *
-    * @param {*}  data - Data to verify as iterable.
-    *
-    * @returns {boolean} Is data iterable.
-    */
-   static #isIterable(data)
-   {
-      return data !== null && data !== void 0 && typeof data === 'object' && typeof data[Symbol.iterator] === 'function';
    }
 
    /**
