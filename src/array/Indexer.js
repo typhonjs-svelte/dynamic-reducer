@@ -36,20 +36,45 @@ export class Indexer extends AdapterIndexer
 
       let include = true;
 
-      for (let cntr = 0, length = array.length; cntr < length; cntr++)
+      const parentIndex = this.indexData.parent?.index;
+
+      if (Array.isArray(parentIndex))
       {
-         include = true;
-
-         for (let filCntr = 0, filLength = filters.length; filCntr < filLength; filCntr++)
+         for (let cntr = 0, length = parentIndex.length; cntr < length; cntr++)
          {
-            if (!filters[filCntr].filter(array[cntr]))
-            {
-               include = false;
-               break;
-            }
-         }
+            // TODO: range check?
+            const value = array[parentIndex[cntr]];
+            include = true;
 
-         if (include) { data.push(cntr); }
+            for (let filCntr = 0, filLength = filters.length; filCntr < filLength; filCntr++)
+            {
+               if (!filters[filCntr].filter(value))
+               {
+                  include = false;
+                  break;
+               }
+            }
+
+            if (include) { data.push(cntr); }
+         }
+      }
+      else
+      {
+         for (let cntr = 0, length = array.length; cntr < length; cntr++)
+         {
+            include = true;
+
+            for (let filCntr = 0, filLength = filters.length; filCntr < filLength; filCntr++)
+            {
+               if (!filters[filCntr].filter(array[cntr]))
+               {
+                  include = false;
+                  break;
+               }
+            }
+
+            if (include) { data.push(cntr); }
+         }
       }
 
       return data;

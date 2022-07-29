@@ -156,7 +156,8 @@ export class DynArrayReducer
    get length()
    {
       const array = this.#array[0];
-      return array ? array.length : 0;
+      return this.#index.isActive() ? this.#indexPublicAPI.length :
+       array ? array.length : 0;
    }
 
    /**

@@ -45,7 +45,7 @@ type DataFilter<T> = {
      */
     subscribe?: Function;
 };
-type DataHost<D> = [(D | null)];
+type DataHost<D> = (D | null)[];
 type DataSort<T> = {
     /**
      * - An ID associated with this filter. Can be used to remove the filter.
@@ -70,7 +70,25 @@ type CompareFn<T> = (arg0: T, arg1: T) => boolean;
  *                                            keep it.
  */
 type FilterFn<T> = (arg0: T) => boolean;
-type IndexerAPI<K> = Iterable<K>;
+type IndexerAPIImpl = {
+    /**
+     * - Current hash value of the index.
+     */
+    hash: number | null;
+    /**
+     * - Returns whether the indexer is active (IE filter or sort function active).
+     */
+    isActive: boolean;
+    /**
+     * - Getter returning length of reduced / indexed elements.
+     */
+    length: number;
+    /**
+     * - Manually invoke an update of the index.
+     */
+    update: (force?: boolean) => void;
+};
+type IndexerAPI<K> = Readonly<IndexerAPIImpl & Iterable<K>>;
 
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -105,7 +123,7 @@ declare class DynArrayReducer<T> {
      *
      * @returns {IndexerAPI<number>} Indexer API - is also iterable.
      */
-    get index(): IndexerAPI<number>;
+    get index(): Readonly<IndexerAPIImpl & Iterable<number>>;
     /**
      * Gets the main data / items length.
      *
@@ -168,9 +186,9 @@ declare class DynMapReducer<K, T> {
      * Initializes DynMapReducer. Any iterable is supported for initial data. Take note that if `data` is a Map it
      * will be used as the host map and not copied.
      *
-     * @param {Map<K, T>|DataDynMap<T>}   [data] - Source map.
+     * @param {Map<K, T>|DataDynMap<K, T>}   [data] - Source map.
      */
-    constructor(data?: Map<K, T> | DataDynMap<T>);
+    constructor(data?: Map<K, T> | DataDynMap<K, T>);
     /**
      * Returns the internal data of this instance. Be careful!
      *
@@ -191,7 +209,7 @@ declare class DynMapReducer<K, T> {
      *
      * @returns {IndexerAPI<K>} Indexer API - is also iterable.
      */
-    get index(): IndexerAPI<K>;
+    get index(): Readonly<IndexerAPIImpl & Iterable<K>>;
     /**
      * Gets the main data map length / size.
      *

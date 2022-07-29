@@ -9,6 +9,9 @@ import { Indexer }   from "../Indexer.js";
  */
 export class DerivedArrayReducer
 {
+   /**
+    * @type {DataHost<T[]>}
+    */
    #array;
 
    /**
@@ -48,11 +51,17 @@ export class DerivedArrayReducer
 
    #subscriptions = [];
 
-   constructor(array)
+   /**
+    *
+    * @param {DataHost<T[]>}     array - Data host array.
+    *
+    * @param {AdapterIndexer<T>} parentIndex - Parent indexer.
+    */
+   constructor(array, parentIndex)
    {
       this.#array = array;
 
-      [this.#index, this.#indexPublicAPI] = new Indexer(array, this.#updateSubscribers.bind(this));
+      [this.#index, this.#indexPublicAPI] = new Indexer(array, this.#updateSubscribers.bind(this), parentIndex);
       [this.#filters, this.#filtersAdapter] = new AdapterFilters(this.#indexPublicAPI.update);
       [this.#sort, this.#sortAdapter] = new AdapterSort(this.#indexPublicAPI.update);
    }
@@ -79,6 +88,49 @@ export class DerivedArrayReducer
     * @returns {IndexerAPI<number>} Indexer API - is also iterable.
     */
    get index() { return this.#indexPublicAPI; }
+
+   /**
+    * Gets the main data / items length.
+    *
+    * @returns {number} Main data / items length.
+    */
+   get length()
+   {
+      const array = this.#array[0];
+      return this.#index.isActive() ? this.index.length :
+       array ? array.length : 0;
+   }
+
+   /**
+    * Gets current reversed state.
+    *
+    * @returns {boolean} Reversed state.
+    */
+   get reversed() { return this.#reversed; }
+
+   /**
+    * @returns {AdapterSort<T>} The sort adapter.
+    */
+   get sort() { return this.#sort; }
+
+   /**
+    * Sets reversed state and notifies subscribers.
+    *
+    * @param {boolean} reversed - New reversed state.
+    */
+   set reversed(reversed)
+   {
+      if (typeof reversed !== 'boolean')
+      {
+         throw new TypeError(`DynArrayReducer.reversed error: 'reversed' is not a boolean.`);
+      }
+
+      this.#reversed = reversed;
+      this.#index.reversed = reversed;
+
+      // Recalculate index and force an update to any subscribers.
+      this.index.update(true);
+   }
 
 // -------------------------------------------------------------------------------------------------------------------
 

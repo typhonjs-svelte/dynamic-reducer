@@ -44,7 +44,7 @@
 /**
  * @template D
  *
- * @typedef {[(D|null)]} DataHost
+ * @typedef {(D|null)[]} DataHost
  */
 
 /**
@@ -82,15 +82,19 @@
 // Public API --------------------------------------------------------------------------------------------------------
 
 /**
+ * @typedef {object} IndexerAPIImpl
+ *
+ * @property {number|null}                hash - Current hash value of the index.
+ *
+ * @property {boolean}                    isActive - Returns whether the indexer is active (IE filter or sort function active).
+ *
+ * @property {number}                     length - Getter returning length of reduced / indexed elements.
+ *
+ * @property {(force?:boolean) => void}   update - Manually invoke an update of the index.
+ */
+
+/**
  * @template K
  *
- * @typedef {Iterable<K>} IndexerAPI
- *
- * @property {number|null} hash - Current hash value of the index.
- *
- * @property {boolean}     isActive - Returns whether the indexer is active (IE filter or sort function active).
- *
- * @property {number}      length - Getter returning length of reduced / indexed elements.
- *
- * @property {(force?:boolean) => void}    update - Manually invoke an update of the index.
+ * @typedef {Readonly<IndexerAPIImpl & Iterable<K>>} IndexerAPI
  */

@@ -45,6 +45,12 @@ export function run({ Module, chai })
          {
             const dynArray = new DynArrayReducer([1, 2]);
             assert.equal(dynArray.length, 2, 'length (getter) returns 2');
+            assert.equal(dynArray.index.length, 0, 'index length (getter) returns 0');
+
+            dynArray.filters.add((entry) => entry > 1);
+
+            assert.equal(dynArray.length, 1, 'length (getter) returns 1');
+            assert.equal(dynArray.index.length, 1, 'index length (getter) returns 1');
          });
 
          it(`length (getter no array)`, () =>
@@ -103,12 +109,14 @@ export function run({ Module, chai })
             const dynArray = new DynArrayReducer(array);
             dynArray.filters.add(() => true);
 
+            assert.equal(dynArray.length, 2, 'main length matches index length is 2');
             assert.equal(dynArray.index.length, 2, 'initial index length is 2');
 
             dynArray.setData(array2, true);
 
             assert.isTrue(dynArray.data === array2, 'setData replaces internal array');
 
+            assert.equal(dynArray.length, 3, 'main length matches index length is 2');
             assert.equal(dynArray.index.length, 3, 'initial index length is 3');
          });
 

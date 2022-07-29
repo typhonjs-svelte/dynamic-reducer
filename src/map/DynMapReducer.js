@@ -61,7 +61,7 @@ export class DynMapReducer
     * Initializes DynMapReducer. Any iterable is supported for initial data. Take note that if `data` is a Map it
     * will be used as the host map and not copied.
     *
-    * @param {Map<K, T>|DataDynMap<T>}   [data] - Source map.
+    * @param {Map<K, T>|DataDynMap<K, T>}   [data] - Source map.
     */
    constructor(data)
    {
