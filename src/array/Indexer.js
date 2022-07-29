@@ -10,9 +10,9 @@ export class Indexer extends AdapterIndexer
    /**
     * @inheritDoc
     */
-   initAdapters(filtersAdapter, sortAdapter)
+   initAdapters(filtersAdapter, sortAdapter, derivedAdapter)
    {
-      super.initAdapters(filtersAdapter, sortAdapter);
+      super.initAdapters(filtersAdapter, sortAdapter, derivedAdapter);
 
       this.sortFn = (a, b) => this.sortAdapter.compareFn(this.hostData[0][a], this.hostData[0][b]);
    }
@@ -36,14 +36,16 @@ export class Indexer extends AdapterIndexer
 
       let include = true;
 
-      const parentIndex = this.indexData.parent?.index;
+      const parentIndex = this.indexData.parent?.indexData?.index;
 
       if (Array.isArray(parentIndex))
       {
          for (let cntr = 0, length = parentIndex.length; cntr < length; cntr++)
          {
             // TODO: range check?
-            const value = array[parentIndex[cntr]];
+            const adjustedIndex = parentIndex[cntr];
+
+            const value = array[adjustedIndex];
             include = true;
 
             for (let filCntr = 0, filLength = filters.length; filCntr < filLength; filCntr++)
@@ -55,7 +57,7 @@ export class Indexer extends AdapterIndexer
                }
             }
 
-            if (include) { data.push(cntr); }
+            if (include) { data.push(adjustedIndex); }
          }
       }
       else

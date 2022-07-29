@@ -3,6 +3,8 @@ import { DynReducerUtils } from '../DynReducerUtils.js';
 /**
  * @template D
  *
+ * @template K
+ *
  * @template T
  */
 export class AdapterIndexer
@@ -15,7 +17,7 @@ export class AdapterIndexer
     *
     * @param {AdapterIndexer<T>} parentIndexer -
     *
-    * @returns {[AdapterIndexer<T>, IndexerAPI<number>]} Indexer instance and public API.
+    * @returns {[AdapterIndexer<T>, IndexerAPI<K>]} Indexer instance and public API.
     */
    constructor(hostData, hostUpdate, parentIndexer)
    {
@@ -60,6 +62,7 @@ export class AdapterIndexer
 
       Object.freeze(publicAPI);
 
+      /** @type {DataIndexer<K, T>} */
       this.indexData = indexData;
 
       return [this, publicAPI];
@@ -116,6 +119,9 @@ export class AdapterIndexer
       if (actualForce || (oldHash === newHash ? !DynReducerUtils.arrayEquals(oldIndex, newIndex) : true))
       {
          this.hostUpdate();
+
+         // Update all derived reducers.
+         this.derivedAdapter?.update(force);
       }
    }
 
@@ -125,14 +131,19 @@ export class AdapterIndexer
     * @param {AdapterFilters<T>} filtersAdapter - Associated AdapterFilters instance.
     *
     * @param {AdapterSort<T>}    sortAdapter - Associated AdapterSort instance.
+    *
+    * @param {AdapterDerived<T>} derivedAdapter - Associated AdapterDerived instance.
     */
-   initAdapters(filtersAdapter, sortAdapter)
+   initAdapters(filtersAdapter, sortAdapter, derivedAdapter)
    {
       /** @type {AdapterFilters<T>} */
       this.filtersAdapter = filtersAdapter;
 
       /** @type {AdapterSort<T>} */
       this.sortAdapter = sortAdapter;
+
+      /** @type {AdapterDerived<T>} */
+      this.derivedAdapter = derivedAdapter;
    }
 
    /**

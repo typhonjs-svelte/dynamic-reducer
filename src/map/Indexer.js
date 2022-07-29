@@ -10,9 +10,9 @@ export class Indexer extends AdapterIndexer
    /**
     * @inheritDoc
     */
-   initAdapters(filtersAdapter, sortAdapter)
+   initAdapters(filtersAdapter, sortAdapter, derivedAdapter)
    {
-      super.initAdapters(filtersAdapter, sortAdapter);
+      super.initAdapters(filtersAdapter, sortAdapter, derivedAdapter);
 
       this.sortFn = (a, b) => this.sortAdapter.compareFn(this.hostData[0].get(a), this.hostData[0].get(b));
    }

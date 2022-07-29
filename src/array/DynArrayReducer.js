@@ -1,9 +1,11 @@
 import {
+   AdapterDerived,
    AdapterFilters,
    AdapterSort,
-   DynReducerUtils } from '#common';
+   DynReducerUtils }             from '#common';
 
-import { Indexer }   from './Indexer.js';
+import { Indexer }               from './Indexer.js';
+import { DerivedArrayReducer }   from './derived/DerivedArrayReducer.js';
 
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -17,6 +19,10 @@ export class DynArrayReducer
     * @type {DataHost<T[]>}
     */
    #array = [null];
+
+   #derived;
+
+   #derivedPublicAPI;
 
    /**
     * @type {Indexer<T[], T>}
@@ -117,8 +123,9 @@ export class DynArrayReducer
       [this.#index, this.#indexPublicAPI] = new Indexer(this.#array, this.#updateSubscribers.bind(this));
       [this.#filters, this.#filtersAdapter] = new AdapterFilters(this.#indexPublicAPI.update);
       [this.#sort, this.#sortAdapter] = new AdapterSort(this.#indexPublicAPI.update);
+      [this.#derived, this.#derivedPublicAPI] = new AdapterDerived(this.#array, this.#index, DerivedArrayReducer);
 
-      this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter);
+      this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter, this.#derived);
 
       // Add any filters and sort function defined by DataDynArray.
       if (filters) { this.filters.add(...filters); }
@@ -135,6 +142,11 @@ export class DynArrayReducer
     * @returns {T[]|null} The internal data.
     */
    get data() { return this.#array[0]; }
+
+   /**
+    * @returns {*}
+    */
+   get derived() { return this.#derivedPublicAPI; }
 
    /**
     * @returns {AdapterFilters<T>} The filters adapter.

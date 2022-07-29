@@ -48,6 +48,22 @@
  */
 
 /**
+ * @template K
+ *
+ * @template T
+ *
+ * @typedef {object} DataIndexer
+ *
+ * @property {K[]|null}   index - The index array.
+ *
+ * @property {number|null}   hash - Hashcode for current index content.
+ *
+ * @property {boolean}   reversed - Is iteration reversed?
+ *
+ * @property {Readonly<IndexerAPIImpl> & {indexData: DataIndexer<K, T>}}   [parent] - Any associated parent AdapterIndexer.
+ */
+
+/**
  * @template T
  *
  * @typedef {object} DataSort

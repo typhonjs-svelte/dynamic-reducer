@@ -1,6 +1,8 @@
 import {
+   AdapterDerived,
    AdapterFilters,
-   AdapterSort }     from '#common';
+   AdapterSort
+} from '#common';
 
 import { Indexer }   from "../Indexer.js";
 
@@ -13,6 +15,10 @@ export class DerivedArrayReducer
     * @type {DataHost<T[]>}
     */
    #array;
+
+   #derived;
+
+   #derivedPublicAPI;
 
    /**
     * @type {AdapterFilters<T>}
@@ -57,13 +63,16 @@ export class DerivedArrayReducer
     *
     * @param {AdapterIndexer<T>} parentIndex - Parent indexer.
     */
-   constructor(array, parentIndex)
+   constructor(array, parentIndex, options)
    {
       this.#array = array;
 
       [this.#index, this.#indexPublicAPI] = new Indexer(array, this.#updateSubscribers.bind(this), parentIndex);
       [this.#filters, this.#filtersAdapter] = new AdapterFilters(this.#indexPublicAPI.update);
       [this.#sort, this.#sortAdapter] = new AdapterSort(this.#indexPublicAPI.update);
+      [this.#derived, this.#derivedPublicAPI] = new AdapterDerived(this.#array, this.#index, DerivedArrayReducer);
+
+      this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter, this.#derived);
    }
 
    /**
@@ -96,9 +105,9 @@ export class DerivedArrayReducer
     */
    get length()
    {
-      const array = this.#array[0];
+      const parentIndexer = this.#index.indexData?.parent;
       return this.#index.isActive() ? this.index.length :
-       array ? array.length : 0;
+       parentIndexer ? parentIndexer.length : 0;
    }
 
    /**
@@ -122,7 +131,7 @@ export class DerivedArrayReducer
    {
       if (typeof reversed !== 'boolean')
       {
-         throw new TypeError(`DynArrayReducer.reversed error: 'reversed' is not a boolean.`);
+         throw new TypeError(`DerivedArrayReducer.reversed error: 'reversed' is not a boolean.`);
       }
 
       this.#reversed = reversed;
@@ -130,6 +139,35 @@ export class DerivedArrayReducer
 
       // Recalculate index and force an update to any subscribers.
       this.index.update(true);
+   }
+
+   /**
+    * Provides an iterator for data stored in DynArrayReducer.
+    *
+    * @returns {Generator<*, T, *>} Generator / iterator of all data.
+    * @yields {T}
+    */
+   *[Symbol.iterator]()
+   {
+      const array = this.#array[0];
+
+      if (array === null || array?.length === 0) { return; }
+
+      if (this.#index.isActive())
+      {
+         for (const entry of this.index) { yield array[entry]; }
+      }
+      else
+      {
+         if (this.reversed)
+         {
+            for (let cntr = array.length; --cntr >= 0;) { yield array[cntr]; }
+         }
+         else
+         {
+            for (let cntr = 0; cntr < array.length; cntr++) { yield array[cntr]; }
+         }
+      }
    }
 
 // -------------------------------------------------------------------------------------------------------------------

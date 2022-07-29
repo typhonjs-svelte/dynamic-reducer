@@ -46,6 +46,26 @@ type DataFilter<T> = {
     subscribe?: Function;
 };
 type DataHost<D> = (D | null)[];
+type DataIndexer<K, T> = {
+    /**
+     * - The index array.
+     */
+    index: K[] | null;
+    /**
+     * - Hashcode for current index content.
+     */
+    hash: number | null;
+    /**
+     * - Is iteration reversed?
+     */
+    reversed: boolean;
+    /**
+     * - Any associated parent AdapterIndexer.
+     */
+    parent?: Readonly<IndexerAPIImpl> & {
+        indexData: DataIndexer<K, T>;
+    };
+};
 type DataSort<T> = {
     /**
      * - An ID associated with this filter. Can be used to remove the filter.
@@ -114,6 +134,10 @@ declare class DynArrayReducer<T> {
      * @returns {T[]|null} The internal data.
      */
     get data(): T[];
+    /**
+     * @returns {*}
+     */
+    get derived(): any;
     /**
      * @returns {AdapterFilters<T>} The filters adapter.
      */
