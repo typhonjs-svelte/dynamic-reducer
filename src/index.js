@@ -1,2 +1,2 @@
-export * from './array/DynArrayReducer.js';
-export * from './map/DynMapReducer.js';
+export * from './array/index.js';
+export * from './map/index.js';
