@@ -60,7 +60,7 @@
  *
  * @property {boolean}   reversed - Is iteration reversed?
  *
- * @property {Readonly<IndexerAPIImpl> & {indexData: DataIndexer<K, T>}}   [parent] - Any associated parent AdapterIndexer.
+ * @property {Readonly<APIImplIndexer> & {indexData: DataIndexer<K, T>}}   [parent] - Any associated parent AdapterIndexer.
  */
 
 /**
@@ -98,7 +98,48 @@
 // Public API --------------------------------------------------------------------------------------------------------
 
 /**
- * @typedef {object} IndexerAPIImpl
+ * @template C
+ *
+ * @typedef {new () => C} DerivedImpl
+ */
+
+/**
+ * @template C
+ * @template T
+ *
+ * @typedef {object} DataDerived
+ *
+ * @property {string} [name] -
+ *
+ * @property {DerivedImpl<C>} [impl] -
+ *
+ * @property {Iterable<FilterFn<T>>} [filters] -
+ *
+ * @property {CompareFn} [sort] -
+ */
+
+/**
+ * @template C
+ * @template T
+ *
+ * @typedef {string | DerivedImpl<C> | DataDerived<C, T>} OptionsDerivedCreate -
+ */
+
+/**
+ * @template C
+ * @template T
+ *
+ * @typedef {object} APIDerived
+ *
+ * @property {(options: OptionsDerivedCreate<C, T>) => C}   create -
+ *
+ * @property {(name: string) => boolean} delete -
+ *
+ * @property {(name: string) => C}       get -
+ */
+
+/**
+ * @typedef {object} APIImplIndexer
  *
  * @property {number|null}                hash - Current hash value of the index.
  *
@@ -112,5 +153,5 @@
 /**
  * @template K
  *
- * @typedef {Readonly<IndexerAPIImpl & Iterable<K>>} IndexerAPI
+ * @typedef {Readonly<APIImplIndexer & Iterable<K>>} APIIndexer
  */

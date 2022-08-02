@@ -17,7 +17,7 @@ export class AdapterIndexer
     *
     * @param {AdapterIndexer<T>} parentIndexer -
     *
-    * @returns {[AdapterIndexer<T>, IndexerAPI<K>]} Indexer instance and public API.
+    * @returns {[AdapterIndexer<T>, APIIndexer<K>]} Indexer instance and public API.
     */
    constructor(hostData, hostUpdate, parentIndexer)
    {

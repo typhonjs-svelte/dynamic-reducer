@@ -36,7 +36,7 @@ export class DerivedArrayReducer
    #index;
 
    /**
-    * @type {IndexerAPI<number>}
+    * @type {APIIndexer<number>}
     */
    #indexPublicAPI;
 
@@ -94,7 +94,7 @@ export class DerivedArrayReducer
    /**
     * Returns the Indexer public API.
     *
-    * @returns {IndexerAPI<number>} Indexer API - is also iterable.
+    * @returns {APIIndexer<number>} Indexer API - is also iterable.
     */
    get index() { return this.#indexPublicAPI; }
 

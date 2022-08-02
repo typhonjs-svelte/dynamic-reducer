@@ -12,7 +12,7 @@ export class AdapterDerived
    #hostData;
 
    /**
-    * @type {new () => C}
+    * @type {DerivedImpl<C>}
     */
    #DerivedImpl;
 
@@ -28,7 +28,7 @@ export class AdapterDerived
     *
     * @param {*}  parentIndex -
     *
-    * @param {new () => C}  DerivedImpl -
+    * @param {DerivedImpl<C>}  DerivedImpl -
     */
    constructor(hostData, parentIndex, DerivedImpl)
    {
@@ -47,31 +47,59 @@ export class AdapterDerived
       return [this, publicAPI];
    }
 
-   create({ name, ...options } = {})
+   /**
+    * @param {OptionsDerivedCreate<C, T>} options -
+    *
+    * @returns {C}
+    */
+   create(options)
    {
-      if (typeof name !== 'string') { throw new TypeError(`AdapterDerived.create error: 'name' is not a string.`); }
+      /** @type {string} */
+      let name;
 
-      const DerivedReducer = this.#DerivedImpl;
+      /** @type {object} */
+      let rest = {};
 
-      let derivedReducer;
+      /** @type {new () => C} */
+      let impl;
 
-      // A specific derived class implementation is provided. Verify that the `DerivedReducer` is in the prototype
-      // chain.
-      if (typeof options.class === 'function')
+      const DerivedImpl = this.#DerivedImpl;
+
+      if (typeof options === 'string')
       {
-         if (!DynReducerUtils.hasPrototype(options.class, DerivedReducer))
-         {
-            throw new TypeError(`AdapterDerived.create error: 'options.class' is not a '${DerivedReducer?.name}'.`);
-         }
-
-         const CustomDerivedReducer = options.class;
-
-         derivedReducer = new CustomDerivedReducer(this.#hostData, this.#parentIndex, options);
+         name = options;
+         impl = DerivedImpl;
+      }
+      else if (DynReducerUtils.hasPrototype(options, DerivedImpl))
+      {
+         impl = options;
+      }
+      else if (typeof options === 'object' && options !== null)
+      {
+         ({ name, impl = DerivedImpl, ...rest } = options);
       }
       else
       {
-         derivedReducer = new DerivedReducer(this.#hostData, this.#parentIndex, options);
+         throw new TypeError(`'AdapterDerived.create error: 'options' does not conform to allowed parameters.`);
       }
+
+      if (!DynReducerUtils.hasPrototype(impl, DerivedImpl))
+      {
+         throw new TypeError(`AdapterDerived.create error: 'impl' is not a '${DerivedImpl?.name}'.`);
+      }
+
+      /** @type {new () => C} */
+      const DerivedReducer = impl;
+
+      name = name ?? DerivedReducer?.name;
+
+      if (typeof name !== 'string') { throw new TypeError(`AdapterDerived.create error: 'name' is not a string.`); }
+
+      console.log(`! AdapterDerived.create - name: `, name);
+      console.log(`! AdapterDerived.create - rest: `, rest);
+      console.log(`! AdapterDerived.create - DerivedReducer: `, DerivedReducer);
+
+      const derivedReducer = new DerivedReducer(this.#hostData, this.#parentIndex, rest);
 
       this.#derived.set(name, derivedReducer);
 

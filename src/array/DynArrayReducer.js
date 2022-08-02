@@ -25,6 +25,9 @@ export class DynArrayReducer
     */
    #derived;
 
+   /**
+    * @type {APIDerived<DerivedArrayReducer<T>, T>}
+    */
    #derivedPublicAPI;
 
    /**
@@ -33,7 +36,7 @@ export class DynArrayReducer
    #index;
 
    /**
-    * @type {IndexerAPI<number>}
+    * @type {APIIndexer<number>}
     */
    #indexPublicAPI;
 
@@ -147,7 +150,7 @@ export class DynArrayReducer
    get data() { return this.#array[0]; }
 
    /**
-    * @returns {*}
+    * @returns {APIDerived<DerivedArrayReducer<T>, T>}
     */
    get derived() { return this.#derivedPublicAPI; }
 
@@ -159,7 +162,7 @@ export class DynArrayReducer
    /**
     * Returns the Indexer public API.
     *
-    * @returns {IndexerAPI<number>} Indexer API - is also iterable.
+    * @returns {APIIndexer<number>} Indexer API - is also iterable.
     */
    get index() { return this.#indexPublicAPI; }
 

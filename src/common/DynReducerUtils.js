@@ -27,16 +27,18 @@ export class DynReducerUtils
    }
 
    /**
-    * @template C
-    *
     * @param {new () => any}  target -
     *
-    * @param {new () => C}    Prototype -
+    * @param {new () => any}    Prototype -
     *
     * @returns {boolean} target constructor function has Prototype.
     */
    static hasPrototype(target, Prototype)
    {
+      if (typeof target !== 'function') { return false; }
+
+      if (target === Prototype) { return true; }
+
       // Walk parent prototype chain. Check for descriptor at each prototype level.
       for (let proto = Object.getPrototypeOf(target); proto; proto = Object.getPrototypeOf(proto))
       {

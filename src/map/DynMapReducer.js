@@ -26,7 +26,7 @@ export class DynMapReducer
    #index;
 
    /**
-    * @type {IndexerAPI<K>}
+    * @type {APIIndexer<K>}
     */
    #indexPublicAPI;
 
@@ -148,7 +148,7 @@ export class DynMapReducer
    /**
     * Returns the Indexer public API.
     *
-    * @returns {IndexerAPI<K>} Indexer API - is also iterable.
+    * @returns {APIIndexer<K>} Indexer API - is also iterable.
     */
    get index() { return this.#indexPublicAPI; }
 
