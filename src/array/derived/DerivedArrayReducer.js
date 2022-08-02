@@ -4,7 +4,7 @@ import {
    AdapterSort
 } from '#common';
 
-import { Indexer }   from "../Indexer.js";
+import { Indexer }   from '../Indexer.js';
 
 /**
  * @template T

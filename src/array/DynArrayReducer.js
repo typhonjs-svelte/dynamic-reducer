@@ -20,6 +20,9 @@ export class DynArrayReducer
     */
    #array = [null];
 
+   /**
+    * @type {AdapterDerived<DerivedArrayReducer, T>}
+    */
    #derived;
 
    #derivedPublicAPI;

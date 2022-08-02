@@ -27,6 +27,26 @@ export class DynReducerUtils
    }
 
    /**
+    * @template C
+    *
+    * @param {new () => any}  target -
+    *
+    * @param {new () => C}    Prototype -
+    *
+    * @returns {boolean} target constructor function has Prototype.
+    */
+   static hasPrototype(target, Prototype)
+   {
+      // Walk parent prototype chain. Check for descriptor at each prototype level.
+      for (let proto = Object.getPrototypeOf(target); proto; proto = Object.getPrototypeOf(proto))
+      {
+         if (proto === Prototype) { return true; }
+      }
+
+      return false;
+   }
+
+   /**
     * Provides a utility method to determine if the given data is iterable / implements iterator protocol.
     *
     * @param {*}  data - Data to verify as iterable.

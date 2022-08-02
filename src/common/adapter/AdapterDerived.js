@@ -1,4 +1,10 @@
+import { DynReducerUtils } from '../DynReducerUtils.js';
+
 /**
+ * Provides the `derived` API for all dynamic reducers.
+ *
+ * @template C
+ *
  * @template T
  */
 export class AdapterDerived
@@ -6,7 +12,7 @@ export class AdapterDerived
    #hostData;
 
    /**
-    * @type {T}
+    * @type {new () => C}
     */
    #DerivedImpl;
 
@@ -22,7 +28,7 @@ export class AdapterDerived
     *
     * @param {*}  parentIndex -
     *
-    * @param {T}  DerivedImpl -
+    * @param {new () => C}  DerivedImpl -
     */
    constructor(hostData, parentIndex, DerivedImpl)
    {
@@ -41,15 +47,35 @@ export class AdapterDerived
       return [this, publicAPI];
    }
 
-   create(name, options)
+   create({ name, ...options } = {})
    {
-      const ReducerClass = this.#DerivedImpl;
+      if (typeof name !== 'string') { throw new TypeError(`AdapterDerived.create error: 'name' is not a string.`); }
 
-      const reducer = new ReducerClass(this.#hostData, this.#parentIndex, options);
+      const DerivedReducer = this.#DerivedImpl;
 
-      this.#derived.set(name, reducer);
+      let derivedReducer;
 
-      return reducer;
+      // A specific derived class implementation is provided. Verify that the `DerivedReducer` is in the prototype
+      // chain.
+      if (typeof options.class === 'function')
+      {
+         if (!DynReducerUtils.hasPrototype(options.class, DerivedReducer))
+         {
+            throw new TypeError(`AdapterDerived.create error: 'options.class' is not a '${DerivedReducer?.name}'.`);
+         }
+
+         const CustomDerivedReducer = options.class;
+
+         derivedReducer = new CustomDerivedReducer(this.#hostData, this.#parentIndex, options);
+      }
+      else
+      {
+         derivedReducer = new DerivedReducer(this.#hostData, this.#parentIndex, options);
+      }
+
+      this.#derived.set(name, derivedReducer);
+
+      return derivedReducer;
    }
 
    delete(name)
@@ -62,11 +88,11 @@ export class AdapterDerived
       return this.#derived.get(name);
    }
 
-   update(force)
+   update(force = false)
    {
       for (const reducer of this.#derived.values())
       {
-         reducer.index.update();
+         reducer.index.update(force);
       }
    }
 }

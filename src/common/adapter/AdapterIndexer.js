@@ -128,21 +128,21 @@ export class AdapterIndexer
    /**
     * Store associated filter and sort adapters that are constructed after the indexer.
     *
-    * @param {AdapterFilters<T>} filtersAdapter - Associated AdapterFilters instance.
+    * @param {{filters: FilterFn<T>[]}}   filtersAdapter - Associated AdapterFilters instance.
     *
-    * @param {AdapterSort<T>}    sortAdapter - Associated AdapterSort instance.
+    * @param {{compareFn: CompareFn<T>}}  sortAdapter - Associated AdapterSort instance.
     *
-    * @param {AdapterDerived<T>} derivedAdapter - Associated AdapterDerived instance.
+    * @param {AdapterDerived<*, T>}       derivedAdapter - Associated AdapterDerived instance.
     */
    initAdapters(filtersAdapter, sortAdapter, derivedAdapter)
    {
-      /** @type {AdapterFilters<T>} */
+      /** @type {{filters: FilterFn<T>[]}} */
       this.filtersAdapter = filtersAdapter;
 
-      /** @type {AdapterSort<T>} */
+      /** @type {{compareFn: CompareFn<T>}} */
       this.sortAdapter = sortAdapter;
 
-      /** @type {AdapterDerived<T>} */
+      /** @type {AdapterDerived<*, T>} */
       this.derivedAdapter = derivedAdapter;
    }
 
