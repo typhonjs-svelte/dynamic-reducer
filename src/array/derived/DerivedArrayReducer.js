@@ -61,7 +61,11 @@ export class DerivedArrayReducer
     *
     * @param {DataHost<T[]>}     array - Data host array.
     *
-    * @param {AdapterIndexer<T>} parentIndex - Parent indexer.
+    * @param {Indexer<T>} parentIndex - Parent indexer.
+    *
+    * TODO: fix type
+    *
+    * @param {object}            options -
     */
    constructor(array, parentIndex, options)
    {

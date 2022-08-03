@@ -23,7 +23,7 @@
   "dependencies": {
   },
   "devDependencies": {
-    "@typhonjs-build-test/node": "^0.0.2",
+    "@typhonjs-build-test/node": "^0.0.3",
     "rollup": "^2",
     "@rollup/plugin-alias": "^3"
   },

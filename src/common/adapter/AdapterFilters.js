@@ -27,8 +27,19 @@
  */
 export class AdapterFilters
 {
+   /**
+    * @type {{filters: DataFilter<T>[]}}
+    */
    #filtersAdapter;
+
+   /**
+    * @type {Function}
+    */
    #indexUpdate;
+
+   /**
+    * @type {Map<Function, Function>}
+    */
    #mapUnsubscribe = new Map();
 
    /**
@@ -55,7 +66,7 @@ export class AdapterFilters
    /**
     * Provides an iterator for filters.
     *
-    * @returns {Generator<number|undefined, DataFilter<T>, *>} Generator / iterator of filters.
+    * @returns {Generator<DataFilter<T>, void, *> | void} Generator / iterator of filters.
     * @yields {DataFilter<T>}
     */
    *[Symbol.iterator]()
@@ -171,6 +182,9 @@ export class AdapterFilters
       if (subscribeCount < filters.length) { this.#indexUpdate(); }
    }
 
+   /**
+    * Clears and removes all filters.
+    */
    clear()
    {
       this.#filtersAdapter.filters.length = 0;
@@ -262,6 +276,9 @@ export class AdapterFilters
       if (length !== this.#filtersAdapter.filters.length) { this.#indexUpdate(); }
    }
 
+   /**
+    * @param {*}  ids - Removes filters by ID.
+    */
    removeById(...ids)
    {
       const length = this.#filtersAdapter.filters.length;

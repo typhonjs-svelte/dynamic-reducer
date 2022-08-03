@@ -1,11 +1,7 @@
 import { DynReducerUtils } from '../DynReducerUtils.js';
 
 /**
- * @template D
- *
- * @template K
- *
- * @template T
+ * @template D, K, T
  */
 export class AdapterIndexer
 {
@@ -15,17 +11,22 @@ export class AdapterIndexer
     *
     * @param {Function}          hostUpdate -
     *
-    * @param {AdapterIndexer<T>} parentIndexer -
+    * @param {APIIndexer<K>}     parentIndexer -
     *
     * @returns {[AdapterIndexer<T>, APIIndexer<K>]} Indexer instance and public API.
     */
    constructor(hostData, hostUpdate, parentIndexer)
    {
+      /** @type {DataHost<D>} */
       this.hostData = hostData;
+
+      /** @type {Function} */
       this.hostUpdate = hostUpdate;
 
+      /** @type {DataIndexer} */
       const indexData = { index: null, hash: null, reversed: false, parent: parentIndexer };
 
+      /** @type {APIIndexer} */
       const publicAPI = {
          update: this.update.bind(this),
 
@@ -126,6 +127,14 @@ export class AdapterIndexer
    }
 
    /**
+    * @returns {(a: K, b: K) => number}
+    */
+   createSortFn()
+   {
+      throw new Error('This method must be overridden with child implementation.');
+   }
+
+   /**
     * Store associated filter and sort adapters that are constructed after the indexer.
     *
     * @param {{filters: FilterFn<T>[]}}   filtersAdapter - Associated AdapterFilters instance.
@@ -144,6 +153,9 @@ export class AdapterIndexer
 
       /** @type {AdapterDerived<*, T>} */
       this.derivedAdapter = derivedAdapter;
+
+      /** @type {(a: K, b: K) => number} */
+      this.sortFn = this.createSortFn();
    }
 
    /**

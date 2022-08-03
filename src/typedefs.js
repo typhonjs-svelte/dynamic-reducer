@@ -13,9 +13,7 @@
  */
 
 /**
- * @template K
- *
- * @template T
+ * @template K, T
  *
  * @typedef {object} DataDynMap
  *
@@ -48,19 +46,17 @@
  */
 
 /**
- * @template K
- *
- * @template T
+ * @template K, T
  *
  * @typedef {object} DataIndexer
  *
- * @property {K[]|null}   index - The index array.
+ * @property {K[]|null}       index - The index array.
  *
- * @property {number|null}   hash - Hashcode for current index content.
+ * @property {number|null}    hash - Hashcode for current index content.
  *
- * @property {boolean}   reversed - Is iteration reversed?
+ * @property {boolean}        reversed - Is iteration reversed?
  *
- * @property {Readonly<APIImplIndexer> & {indexData: DataIndexer<K, T>}}   [parent] - Any associated parent AdapterIndexer.
+ * @property {APIIndexer<K>}  [parent] - Any associated parent AdapterIndexer.
  */
 
 /**
@@ -80,19 +76,22 @@
 /**
  * @template T
  *
- * @typedef {function(T, T): boolean} CompareFn - A callback function that compares two values. Return > 0 to sort b
- * before a; * < 0 to sort a before b; or 0 to keep original order of a & b.
+ * @typedef {{(a: T, b: T): boolean, subscribe?: (handler: (value: any) => void) => () => void}} CompareFn -
+ * A callback function that compares two values. Return > 0 to sort b before a; < 0 to sort a before b; or 0 to keep
+ * original order of a & b.
  *
- * @property {Function} [subscribe] - Optional subscribe function following the Svelte store / subscribe pattern.
+ * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a subscribe
+ * function is provided automatic updates to the reduced index is performed.
  */
 
 /**
  * @template T
  *
- * @typedef {function(T): boolean} FilterFn - Filter function that takes a value argument and returns a truthy value to
- *                                            keep it.
+ * @typedef {{(element: T): boolean, subscribe?: (handler: (value: any) => void) => () => void}} FilterFn -
+ * Filter function that takes an element argument and returns a truthy value to keep it.
  *
- * @property {Function} [subscribe] - Optional subscribe function following the Svelte store / subscribe pattern.
+ * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a subscribe
+ * function is provided automatic updates to the reduced index is performed.
  */
 
 // Public API --------------------------------------------------------------------------------------------------------
@@ -100,34 +99,31 @@
 /**
  * @template C
  *
- * @typedef {new () => C} DerivedImpl
+ * @typedef {new () => C} DerivedReducerCtor -
  */
 
 /**
- * @template C
- * @template T
+ * @template C, T
  *
  * @typedef {object} DataDerived
  *
  * @property {string} [name] -
  *
- * @property {DerivedImpl<C>} [impl] -
+ * @property {DerivedReducerCtor<C>} [ctor] -
  *
  * @property {Iterable<FilterFn<T>>} [filters] -
  *
- * @property {CompareFn} [sort] -
+ * @property {CompareFn<T>} [sort] -
  */
 
 /**
- * @template C
- * @template T
+ * @template C, T
  *
- * @typedef {string | DerivedImpl<C> | DataDerived<C, T>} OptionsDerivedCreate -
+ * @typedef {string | DerivedReducerCtor<C> | DataDerived<C, T>} OptionsDerivedCreate -
  */
 
 /**
- * @template C
- * @template T
+ * @template C, T
  *
  * @typedef {object} APIDerived
  *
@@ -153,5 +149,5 @@
 /**
  * @template K
  *
- * @typedef {Readonly<APIImplIndexer & Iterable<K>>} APIIndexer
+ * @typedef {APIImplIndexer & Iterable<K>} APIIndexer
  */

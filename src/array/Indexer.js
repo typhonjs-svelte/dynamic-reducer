@@ -1,21 +1,32 @@
 import { AdapterIndexer } from '#common';
 
 /**
- * @template D
+ * @template K, T
  *
- * @template T
+ * @augments {AdapterIndexer<T[], K, T>}
  */
 export class Indexer extends AdapterIndexer
 {
    /**
-    * @inheritDoc
+    * @returns {(a: K, b: K) => number}
     */
-   initAdapters(filtersAdapter, sortAdapter, derivedAdapter)
+   createSortFn()
    {
-      super.initAdapters(filtersAdapter, sortAdapter, derivedAdapter);
+      const c = this.hostData[0][0];
 
-      this.sortFn = (a, b) => this.sortAdapter.compareFn(this.hostData[0][a], this.hostData[0][b]);
+      /** @type {(a: K, b: K) => number} */
+      return (a, b) => this.sortAdapter.compareFn(this.hostData[0][a], this.hostData[0][b]);
    }
+
+   // /**
+   //  * @inheritDoc
+   //  */
+   // initAdapters(filtersAdapter, sortAdapter, derivedAdapter)
+   // {
+   //    super.initAdapters(filtersAdapter, sortAdapter, derivedAdapter);
+   //
+   //    this.sortFn = (a, b) => this.sortAdapter.compareFn(this.hostData[0][a], this.hostData[0][b]);
+   // }
 
    /**
     * Provides the custom filter / reduce step that is ~25-40% faster than implementing with `Array.reduce`.

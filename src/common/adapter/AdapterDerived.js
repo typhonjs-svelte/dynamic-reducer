@@ -3,18 +3,23 @@ import { DynReducerUtils } from '../DynReducerUtils.js';
 /**
  * Provides the `derived` API for all dynamic reducers.
  *
+ * @template D
+ *
  * @template C
  *
  * @template T
  */
 export class AdapterDerived
 {
+   /**
+    * @type {DataHost<D>}
+    */
    #hostData;
 
    /**
-    * @type {DerivedImpl<C>}
+    * @type {DerivedReducerCtor<C>}
     */
-   #DerivedImpl;
+   #DerivedReducerCtor;
 
    #parentIndex;
 
@@ -24,19 +29,19 @@ export class AdapterDerived
    #derived = new Map();
 
    /**
-    * @param {*}  hostData -
+    * @param {DataHost<D>}  hostData -
     *
     * @param {*}  parentIndex -
     *
-    * @param {DerivedImpl<C>}  DerivedImpl -
+    * @param {DerivedReducerCtor<C>}  DerivedReducerCtor -
     */
-   constructor(hostData, parentIndex, DerivedImpl)
+   constructor(hostData, parentIndex, DerivedReducerCtor)
    {
       this.#hostData = hostData;
 
       this.#parentIndex = parentIndex;
 
-      this.#DerivedImpl = DerivedImpl;
+      this.#DerivedReducerCtor = DerivedReducerCtor;
 
       const publicAPI = {
          create: this.create.bind(this),
@@ -50,7 +55,7 @@ export class AdapterDerived
    /**
     * @param {OptionsDerivedCreate<C, T>} options -
     *
-    * @returns {C}
+    * @returns {C} Newly created derived reducer.
     */
    create(options)
    {
@@ -61,35 +66,35 @@ export class AdapterDerived
       let rest = {};
 
       /** @type {new () => C} */
-      let impl;
+      let ctor;
 
-      const DerivedImpl = this.#DerivedImpl;
+      const DerivedReducerCtor = this.#DerivedReducerCtor;
 
       if (typeof options === 'string')
       {
          name = options;
-         impl = DerivedImpl;
+         ctor = DerivedReducerCtor;
       }
-      else if (DynReducerUtils.hasPrototype(options, DerivedImpl))
+      else if (DynReducerUtils.hasPrototype(options, DerivedReducerCtor))
       {
-         impl = options;
+         ctor = options;
       }
       else if (typeof options === 'object' && options !== null)
       {
-         ({ name, impl = DerivedImpl, ...rest } = options);
+         ({ name, ctor = DerivedReducerCtor, ...rest } = options);
       }
       else
       {
          throw new TypeError(`'AdapterDerived.create error: 'options' does not conform to allowed parameters.`);
       }
 
-      if (!DynReducerUtils.hasPrototype(impl, DerivedImpl))
+      if (!DynReducerUtils.hasPrototype(ctor, DerivedReducerCtor))
       {
-         throw new TypeError(`AdapterDerived.create error: 'impl' is not a '${DerivedImpl?.name}'.`);
+         throw new TypeError(`AdapterDerived.create error: 'impl' is not a '${DerivedReducerCtor?.name}'.`);
       }
 
       /** @type {new () => C} */
-      const DerivedReducer = impl;
+      const DerivedReducer = ctor;
 
       name = name ?? DerivedReducer?.name;
 
@@ -108,7 +113,7 @@ export class AdapterDerived
 
    delete(name)
    {
-
+      return this.#derived.delete(name);
    }
 
    get(name)

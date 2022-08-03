@@ -1,7 +1,7 @@
-export class DerivedMapReducer
-{
-   constructor(name, options)
-   {
-
-   }
-}
+// export class DerivedMapReducer
+// {
+//    constructor(name, options)
+//    {
+//
+//    }
+// }

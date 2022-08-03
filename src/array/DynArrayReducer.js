@@ -21,7 +21,7 @@ export class DynArrayReducer
    #array = [null];
 
    /**
-    * @type {AdapterDerived<DerivedArrayReducer, T>}
+    * @type {AdapterDerived<DerivedArrayReducer<T>, T>}
     */
    #derived;
 
@@ -31,7 +31,7 @@ export class DynArrayReducer
    #derivedPublicAPI;
 
    /**
-    * @type {Indexer<T[], T>}
+    * @type {Indexer<number, T>}
     */
    #index;
 
@@ -46,7 +46,7 @@ export class DynArrayReducer
    #filters;
 
    /**
-    * @type {{filters: FilterFn<T>[]}}
+    * @type {{filters: DataFilter<T>[]}}
     */
    #filtersAdapter;
 
@@ -76,7 +76,10 @@ export class DynArrayReducer
    constructor(data)
    {
       let dataIterable = void 0;
+
+      /** @type {Iterable<FilterFn<T>|DataFilter<T>>} */
       let filters = void 0;
+
       let sort = void 0;
 
       // Potentially working with DataDynArray.
@@ -262,10 +265,10 @@ export class DynArrayReducer
 
    /**
     *
-    * @param {function(DynArrayReducer<T>): void} handler - Callback function that is invoked on update / changes.
+    * @param {(value: DynArrayReducer<T>) => void} handler - Callback function that is invoked on update / changes.
     *                                                       Receives `this` reference.
     *
-    * @returns {(function(): void)} Unsubscribe function.
+    * @returns {() => void} Unsubscribe function.
     */
    subscribe(handler)
    {

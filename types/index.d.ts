@@ -62,9 +62,7 @@ type DataIndexer<K, T> = {
     /**
      * - Any associated parent AdapterIndexer.
      */
-    parent?: Readonly<IndexerAPIImpl> & {
-        indexData: DataIndexer<K, T>;
-    };
+    parent?: APIIndexer<K>;
 };
 type DataSort<T> = {
     /**
@@ -81,16 +79,69 @@ type DataSort<T> = {
     subscribe?: Function;
 };
 /**
- * - A callback function that compares two values. Return > 0 to sort b
- * before a; * < 0 to sort a before b; or 0 to keep original order of a & b.
+ * -
+ * A callback function that compares two values. Return > 0 to sort b before a; < 0 to sort a before b; or 0 to keep
+ * original order of a & b.
+ *
+ * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a subscribe
+ * function is provided automatic updates to the reduced index is performed.
  */
-type CompareFn<T> = (arg0: T, arg1: T) => boolean;
+type CompareFn<T> = {
+    (a: T, b: T): boolean;
+    subscribe?: (handler: (value: any) => void) => () => void;
+};
 /**
- * - Filter function that takes a value argument and returns a truthy value to
- *                                            keep it.
+ * -
+ * Filter function that takes an element argument and returns a truthy value to keep it.
+ *
+ * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a subscribe
+ * function is provided automatic updates to the reduced index is performed.
  */
-type FilterFn<T> = (arg0: T) => boolean;
-type IndexerAPIImpl = {
+type FilterFn<T> = {
+    (element: T): boolean;
+    subscribe?: (handler: (value: any) => void) => () => void;
+};
+/**
+ * -
+ */
+type DerivedReducerCtor<C> = new () => C;
+type DataDerived<C, T> = {
+    /**
+     * -
+     */
+    name?: string;
+    /**
+     * -
+     */
+    ctor?: DerivedReducerCtor<C>;
+    /**
+     * -
+     */
+    filters?: Iterable<FilterFn<T>>;
+    /**
+     * -
+     */
+    sort?: CompareFn<T>;
+};
+/**
+ * -
+ */
+type OptionsDerivedCreate<C, T> = string | DerivedReducerCtor<C> | DataDerived<C, T>;
+type APIDerived<C, T> = {
+    /**
+     * -
+     */
+    create: (options: OptionsDerivedCreate<C, T>) => C;
+    /**
+     * -
+     */
+    delete: (name: string) => boolean;
+    /**
+     * -
+     */
+    get: (name: string) => C;
+};
+type APIImplIndexer = {
     /**
      * - Current hash value of the index.
      */
@@ -108,7 +159,286 @@ type IndexerAPIImpl = {
      */
     update: (force?: boolean) => void;
 };
-type IndexerAPI<K> = Readonly<IndexerAPIImpl & Iterable<K>>;
+type APIIndexer<K> = APIImplIndexer & Iterable<K>;
+
+/**
+ * Provides the storage and sequencing of managed filters. Each filter added may be a bespoke function or a
+ * {@link DataFilter} object containing an `id`, `filter`, and `weight` attributes; `filter` is the only required
+ * attribute.
+ *
+ * The `id` attribute can be anything that creates a unique ID for the filter; recommended strings or numbers. This
+ * allows filters to be removed by ID easily.
+ *
+ * The `weight` attribute is a number between 0 and 1 inclusive that allows filters to be added in a
+ * predictable order which is especially handy if they are manipulated at runtime. A lower weighted filter always runs
+ * before a higher weighted filter. For speed and efficiency always set the heavier / more inclusive filter with a
+ * lower weight; an example of this is a keyword / name that will filter out many entries making any further filtering
+ * faster. If no weight is specified the default of '1' is assigned and it is appended to the end of the filters list.
+ *
+ * This class forms the public API which is accessible from the `.filters` getter in the main DynArrayReducer instance.
+ * ```
+ * const dynArray = new DynArrayReducer([...]);
+ * dynArray.filters.add(...);
+ * dynArray.filters.clear();
+ * dynArray.filters.length;
+ * dynArray.filters.remove(...);
+ * dynArray.filters.removeBy(...);
+ * dynArray.filters.removeById(...);
+ * ```
+ *
+ * @template T
+ */
+declare class AdapterFilters<T> {
+    /**
+     * @param {Function} indexUpdate - update function for the indexer.
+     *
+     * @returns {[AdapterFilters<T>, {filters: DataFilter<T>[]}]} Returns this and internal storage for filter adapters.
+     */
+    constructor(indexUpdate: Function);
+    /**
+     * @returns {number} Returns the length of the
+     */
+    get length(): number;
+    /**
+     * @param {...(FilterFn<T>|DataFilter<T>)}   filters -
+     */
+    add(...filters: (FilterFn<T> | DataFilter<T>)[]): void;
+    /**
+     * Clears and removes all filters.
+     */
+    clear(): void;
+    /**
+     * @param {...(FilterFn<T>|DataFilter<T>)}   filters -
+     */
+    remove(...filters: (FilterFn<T> | DataFilter<T>)[]): void;
+    /**
+     * Remove filters by the provided callback. The callback takes 3 parameters: `id`, `filter`, and `weight`.
+     * Any truthy value returned will remove that filter.
+     *
+     * @param {function(*, FilterFn<T>, number): boolean} callback - Callback function to evaluate each filter entry.
+     */
+    removeBy(callback: (arg0: any, arg1: FilterFn<T>, arg2: number) => boolean): void;
+    /**
+     * @param {*}  ids - Removes filters by ID.
+     */
+    removeById(...ids: any): void;
+    /**
+     * Provides an iterator for filters.
+     *
+     * @returns {Generator<DataFilter<T>, void, *> | void} Generator / iterator of filters.
+     * @yields {DataFilter<T>}
+     */
+    [Symbol.iterator](): Generator<DataFilter<T>, void, any> | void;
+    #private;
+}
+
+/**
+ * @template T
+ */
+declare class AdapterSort<T> {
+    /**
+     * @param {Function} indexUpdate - Function to update indexer.
+     *
+     * @returns {[AdapterSort<T>, {compareFn: CompareFn<T>}]} This and the internal sort adapter data.
+     */
+    constructor(indexUpdate: Function);
+    /**
+     * @param {CompareFn<T>|DataSort<T>}  data -
+     *
+     * A callback function that compares two values. Return > 0 to sort b before a;
+     * < 0 to sort a before b; or 0 to keep original order of a & b.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#parameters
+     */
+    set(data: CompareFn<T> | DataSort<T>): void;
+    reset(): void;
+    #private;
+}
+
+/**
+ * @template D, K, T
+ */
+declare class AdapterIndexer<D, K, T> {
+    /**
+     *
+     * @param {DataHost<D>}       hostData -
+     *
+     * @param {Function}          hostUpdate -
+     *
+     * @param {APIIndexer<K>}     parentIndexer -
+     *
+     * @returns {[AdapterIndexer<T>, APIIndexer<K>]} Indexer instance and public API.
+     */
+    constructor(hostData: DataHost<D>, hostUpdate: Function, parentIndexer: APIIndexer<K>);
+    /** @type {DataHost<D>} */
+    hostData: DataHost<D>;
+    /** @type {Function} */
+    hostUpdate: Function;
+    /** @type {DataIndexer<K, T>} */
+    indexData: DataIndexer<K, T>;
+    /**
+     *
+     * @param {boolean}  reversed -
+     */
+    set reversed(arg: boolean);
+    /**
+     * @returns {boolean}
+     *
+     * c8 ignore next
+     */
+    get reversed(): boolean;
+    /**
+     * Calculates a new hash value for the new index array if any. If the new index array is null then the hash value
+     * is set to null. Set calculated new hash value to the index adapter hash value.
+     *
+     * After hash generation compare old and new hash values and perform an update if they are different. If they are
+     * equal check for array equality between the old and new index array and perform an update if they are not equal.
+     *
+     * @param {number[]}    oldIndex - Old index array.
+     *
+     * @param {number|null} oldHash - Old index hash value.
+     *
+     * @param {boolean}     [force=false] - When true forces an update to subscribers.
+     */
+    calcHashUpdate(oldIndex: number[], oldHash: number | null, force?: boolean): void;
+    /**
+     * @returns {(a: K, b: K) => number}
+     */
+    createSortFn(): (a: K, b: K) => number;
+    /**
+     * Store associated filter and sort adapters that are constructed after the indexer.
+     *
+     * @param {{filters: FilterFn<T>[]}}   filtersAdapter - Associated AdapterFilters instance.
+     *
+     * @param {{compareFn: CompareFn<T>}}  sortAdapter - Associated AdapterSort instance.
+     *
+     * @param {AdapterDerived<*, T>}       derivedAdapter - Associated AdapterDerived instance.
+     */
+    initAdapters(filtersAdapter: {
+        filters: FilterFn<T>[];
+    }, sortAdapter: {
+        compareFn: CompareFn<T>;
+    }, derivedAdapter: AdapterDerived<any, T>): void;
+    /** @type {{filters: FilterFn<T>[]}} */
+    filtersAdapter: {
+        filters: FilterFn<T>[];
+    };
+    /** @type {{compareFn: CompareFn<T>}} */
+    sortAdapter: {
+        compareFn: CompareFn<T>;
+    };
+    /** @type {AdapterDerived<*, T>} */
+    derivedAdapter: AdapterDerived<any, T>;
+    /** @type {(a: K, b: K) => number} */
+    sortFn: (a: K, b: K) => number;
+    /**
+     * Returns whether the index is active.
+     *
+     * @returns {boolean} Index active.
+     */
+    isActive(): boolean;
+}
+
+/**
+ * @template K, T
+ *
+ * @augments {AdapterIndexer<T[], K, T>}
+ */
+declare class Indexer<K, T> extends AdapterIndexer<T[], K, T> {
+    constructor(hostData: DataHost<T[]>, hostUpdate: Function, parentIndexer: APIIndexer<K>);
+    /**
+     * Provides the custom filter / reduce step that is ~25-40% faster than implementing with `Array.reduce`.
+     *
+     * Note: Other loop unrolling techniques like Duff's Device gave a slight faster lower bound on large data sets,
+     * but the maintenance factor is not worth the extra complication.
+     *
+     * @returns {number[]} New filtered index array.
+     */
+    reduceImpl(): number[];
+    /**
+     * Update the reducer indexes. If there are changes subscribers are notified. If data order is changed externally
+     * pass in true to force an update to subscribers.
+     *
+     * @param {boolean}  [force=false] - When true forces an update to subscribers.
+     */
+    update(force?: boolean): void;
+}
+
+/**
+ * @template T
+ */
+declare class DerivedArrayReducer<T> {
+    /**
+     *
+     * @param {DataHost<T[]>}     array - Data host array.
+     *
+     * @param {Indexer<T>} parentIndex - Parent indexer.
+     *
+     * TODO: fix type
+     *
+     * @param {object}            options -
+     */
+    constructor(array: DataHost<T[]>, parentIndex: Indexer<T, any>, options: object);
+    /**
+     * Returns the internal data of this instance. Be careful!
+     *
+     * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
+     * performed to the data externally do invoke {@link index.update} with `true` to recalculate the index and notify
+     * all subscribers.
+     *
+     * @returns {T[]|null} The internal data.
+     */
+    get data(): T[];
+    /**
+     * @returns {AdapterFilters<T>} The filters adapter.
+     */
+    get filters(): AdapterFilters<T>;
+    /**
+     * Returns the Indexer public API.
+     *
+     * @returns {APIIndexer<number>} Indexer API - is also iterable.
+     */
+    get index(): APIIndexer<number>;
+    /**
+     * Gets the main data / items length.
+     *
+     * @returns {number} Main data / items length.
+     */
+    get length(): number;
+    /**
+     * Sets reversed state and notifies subscribers.
+     *
+     * @param {boolean} reversed - New reversed state.
+     */
+    set reversed(arg: boolean);
+    /**
+     * Gets current reversed state.
+     *
+     * @returns {boolean} Reversed state.
+     */
+    get reversed(): boolean;
+    /**
+     * @returns {AdapterSort<T>} The sort adapter.
+     */
+    get sort(): AdapterSort<T>;
+    /**
+     * Subscribe to this DerivedArrayReducer.
+     *
+     * @param {function(DerivedArrayReducer<T>): void} handler - Callback function that is invoked on update / changes.
+     *                                                           Receives `this` reference.
+     *
+     * @returns {(function(): void)} Unsubscribe function.
+     */
+    subscribe(handler: (arg0: DerivedArrayReducer<T>) => void): (() => void);
+    /**
+     * Provides an iterator for data stored in DynArrayReducer.
+     *
+     * @returns {Generator<*, T, *>} Generator / iterator of all data.
+     * @yields {T}
+     */
+    [Symbol.iterator](): Generator<any, T, any>;
+    #private;
+}
 
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -135,19 +465,19 @@ declare class DynArrayReducer<T> {
      */
     get data(): T[];
     /**
-     * @returns {*}
+     * @returns {APIDerived<DerivedArrayReducer<T>, T>}
      */
-    get derived(): any;
+    get derived(): APIDerived<DerivedArrayReducer<T>, T>;
     /**
      * @returns {AdapterFilters<T>} The filters adapter.
      */
-    get filters(): any;
+    get filters(): AdapterFilters<T>;
     /**
      * Returns the Indexer public API.
      *
-     * @returns {IndexerAPI<number>} Indexer API - is also iterable.
+     * @returns {APIIndexer<number>} Indexer API - is also iterable.
      */
-    get index(): Readonly<IndexerAPIImpl & Iterable<number>>;
+    get index(): APIIndexer<number>;
     /**
      * Gets the main data / items length.
      *
@@ -169,7 +499,7 @@ declare class DynArrayReducer<T> {
     /**
      * @returns {AdapterSort<T>} The sort adapter.
      */
-    get sort(): any;
+    get sort(): AdapterSort<T>;
     /**
      * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
      * `replace` is set to true.
@@ -181,12 +511,12 @@ declare class DynArrayReducer<T> {
     setData(data: T[] | Iterable<T> | null, replace?: boolean): void;
     /**
      *
-     * @param {function(DynArrayReducer<T>): void} handler - Callback function that is invoked on update / changes.
+     * @param {(value: DynArrayReducer<T>) => void} handler - Callback function that is invoked on update / changes.
      *                                                       Receives `this` reference.
      *
-     * @returns {(function(): void)} Unsubscribe function.
+     * @returns {() => void} Unsubscribe function.
      */
-    subscribe(handler: (arg0: DynArrayReducer<T>) => void): (() => void);
+    subscribe(handler: (value: DynArrayReducer<T>) => void): () => void;
     /**
      * Provides an iterator for data stored in DynArrayReducer.
      *
@@ -197,90 +527,4 @@ declare class DynArrayReducer<T> {
     #private;
 }
 
-/**
- * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
- * Svelte store support.
- *
- * @template K
- *
- * @template T
- */
-declare class DynMapReducer<K, T> {
-    /**
-     * Initializes DynMapReducer. Any iterable is supported for initial data. Take note that if `data` is a Map it
-     * will be used as the host map and not copied.
-     *
-     * @param {Map<K, T>|DataDynMap<K, T>}   [data] - Source map.
-     */
-    constructor(data?: Map<K, T> | DataDynMap<K, T>);
-    /**
-     * Returns the internal data of this instance. Be careful!
-     *
-     * TODO: UPDATE
-     * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
-     * performed to the data externally do invoke {@link index.update} with `true` to recalculate the index and notify
-     * all subscribers.
-     *
-     * @returns {Map<K, T>|null} The internal data.
-     */
-    get data(): Map<K, T>;
-    /**
-     * @returns {AdapterFilters<T>} The filters adapter.
-     */
-    get filters(): any;
-    /**
-     * Returns the Indexer public API.
-     *
-     * @returns {IndexerAPI<K>} Indexer API - is also iterable.
-     */
-    get index(): Readonly<IndexerAPIImpl & Iterable<K>>;
-    /**
-     * Gets the main data map length / size.
-     *
-     * @returns {number} Main data map length / size.
-     */
-    get length(): number;
-    /**
-     * Sets reversed state and notifies subscribers.
-     *
-     * @param {boolean} reversed - New reversed state.
-     */
-    set reversed(arg: boolean);
-    /**
-     * Gets current reversed state.
-     *
-     * @returns {boolean} Reversed state.
-     */
-    get reversed(): boolean;
-    /**
-     * @returns {AdapterSort<T>} The sort adapter.
-     */
-    get sort(): any;
-    /**
-     * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
-     * `replace` is set to true.
-     *
-     * @param {Map<K, T> | null} data - New data to set to internal data.
-     *
-     * @param {boolean} [replace=false] - New data to set to internal data.
-     */
-    setData(data: Map<K, T> | null, replace?: boolean): void;
-    /**
-     *
-     * @param {function(DynMapReducer<T>): void} handler - Callback function that is invoked on update / changes.
-     *                                                       Receives `this` reference.
-     *
-     * @returns {(function(): void)} Unsubscribe function.
-     */
-    subscribe(handler: (arg0: DynMapReducer<T, any>) => void): (() => void);
-    /**
-     * Provides an iterator for data stored in DynMapReducer.
-     *
-     * @returns {Generator<*, T, *>} Generator / iterator of all data.
-     * @yields {T}
-     */
-    [Symbol.iterator](): Generator<any, T, any>;
-    #private;
-}
-
-export { DynArrayReducer, DynMapReducer };
+export { DerivedArrayReducer, DynArrayReducer };
