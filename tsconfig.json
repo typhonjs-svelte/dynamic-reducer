@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "es2022",
+    "moduleResolution": "nodenext",
+    "target": "es2022",
+    "baseUrl": ".",
+
+    "importsNotUsedAsValues": "error",
+    "sourceMap": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true
+  },
+
+  "include": ["src/**/*"],
+  "exclude": ["node_modules/*"]
+}
