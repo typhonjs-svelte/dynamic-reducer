@@ -22,54 +22,45 @@
  * dynArray.filters.removeBy(...);
  * dynArray.filters.removeById(...);
  * ```
- *
- * @template T
  */
-export class AdapterFilters
+import type {
+   DataFilter,
+   FilterFn }  from '../../types.js';
+
+export class AdapterFilters<T>
 {
-   /**
-    * @type {{filters: DataFilter<T>[]}}
-    */
-   #filtersAdapter;
+   #filtersAdapter: { filters: DataFilter<T>[] };
+
+   readonly #indexUpdate: Function;
+
+   #mapUnsubscribe: Map<Function, Function> = new Map();
 
    /**
-    * @type {Function}
-    */
-   #indexUpdate;
-
-   /**
-    * @type {Map<Function, Function>}
-    */
-   #mapUnsubscribe = new Map();
-
-   /**
-    * @param {Function} indexUpdate - update function for the indexer.
+    * @param indexUpdate - update function for the indexer.
     *
-    * @returns {[AdapterFilters<T>, {filters: DataFilter<T>[]}]} Returns this and internal storage for filter adapters.
+    * @param filtersAdapter - Stores the filter function data.
     */
-   constructor(indexUpdate)
+   constructor(indexUpdate, filtersAdapter: { filters: DataFilter<T>[] })
    {
       this.#indexUpdate = indexUpdate;
 
-      this.#filtersAdapter = { filters: [] };
+      this.#filtersAdapter = filtersAdapter;
 
       Object.seal(this);
-
-      return [this, this.#filtersAdapter];
    }
 
    /**
-    * @returns {number} Returns the length of the
+    * @returns Returns the length of the filter data.
     */
-   get length() { return this.#filtersAdapter.filters.length; }
+   get length(): number { return this.#filtersAdapter.filters.length; }
 
    /**
     * Provides an iterator for filters.
     *
-    * @returns {Generator<DataFilter<T>, void, *> | void} Generator / iterator of filters.
+    * @returns Generator / iterator of filters.
     * @yields {DataFilter<T>}
     */
-   *[Symbol.iterator]()
+   *[Symbol.iterator](): Generator<DataFilter<T>, DataFilter<T>, DataFilter<T>> | void
    {
       if (this.#filtersAdapter.filters.length === 0) { return; }
 
@@ -80,16 +71,14 @@ export class AdapterFilters
    }
 
    /**
-    * @param {...(FilterFn<T>|DataFilter<T>)}   filters -
+    * @param filters -
     */
-   add(...filters)
+   add(...filters: (FilterFn<T>|DataFilter<T>)[])
    {
       /**
        * Tracks the number of filters added that have subscriber functionality.
-       *
-       * @type {number}
        */
-      let subscribeCount = 0;
+      let subscribeCount: number = 0;
 
       for (const filter of filters)
       {
@@ -103,39 +92,37 @@ export class AdapterFilters
          let data = void 0;
          let subscribeFn = void 0;
 
-         switch (filterType)
+         if (filterType === 'function')
          {
-            case 'function':
-               data = {
-                  id: void 0,
-                  filter,
-                  weight: 1
-               };
+            data = {
+               id: void 0,
+               filter,
+               weight: 1
+            };
 
-               subscribeFn = filter.subscribe;
-               break;
+            subscribeFn = filter.subscribe;
+         }
+         else if ('filter' in filter)
+         {
+            if (typeof filter.filter !== 'function')
+            {
+               throw new TypeError(`AdapterFilters error: 'filter' attribute is not a function.`);
+            }
 
-            case 'object':
-               if (typeof filter.filter !== 'function')
-               {
-                  throw new TypeError(`AdapterFilters error: 'filter' attribute is not a function.`);
-               }
+            if (filter.weight !== void 0 && typeof filter.weight !== 'number' ||
+             (filter.weight < 0 || filter.weight > 1))
+            {
+               throw new TypeError(
+                `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
+            }
 
-               if (filter.weight !== void 0 && typeof filter.weight !== 'number' ||
-                (filter.weight < 0 || filter.weight > 1))
-               {
-                  throw new TypeError(
-                   `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
-               }
+            data = {
+               id: filter.id !== void 0 ? filter.id : void 0,
+               filter: filter.filter,
+               weight: filter.weight || 1
+            };
 
-               data = {
-                  id: filter.id !== void 0 ? filter.id : void 0,
-                  filter: filter.filter,
-                  weight: filter.weight || 1
-               };
-
-               subscribeFn = filter.filter.subscribe ?? filter.subscribe;
-               break;
+            subscribeFn = filter.filter.subscribe ?? filter.subscribe;
          }
 
          // Find the index to insert where data.weight is less than existing values weight.
@@ -201,9 +188,9 @@ export class AdapterFilters
    }
 
    /**
-    * @param {...(FilterFn<T>|DataFilter<T>)}   filters -
+    * @param filters -
     */
-   remove(...filters)
+   remove(...filters: (FilterFn<T>|DataFilter<T>)[])
    {
       const length = this.#filtersAdapter.filters.length;
 
@@ -242,9 +229,9 @@ export class AdapterFilters
     * Remove filters by the provided callback. The callback takes 3 parameters: `id`, `filter`, and `weight`.
     * Any truthy value returned will remove that filter.
     *
-    * @param {function(*, FilterFn<T>, number): boolean} callback - Callback function to evaluate each filter entry.
+    * @param callback - Callback function to evaluate each filter entry.
     */
-   removeBy(callback)
+   removeBy(callback: (id: any, filter: FilterFn<T>, weight: number) => boolean)
    {
       const length = this.#filtersAdapter.filters.length;
 
@@ -277,9 +264,9 @@ export class AdapterFilters
    }
 
    /**
-    * @param {*}  ids - Removes filters by ID.
+    * @param ids - Removes filters by ID.
     */
-   removeById(...ids)
+   removeById(...ids: any[])
    {
       const length = this.#filtersAdapter.filters.length;
 
@@ -287,12 +274,12 @@ export class AdapterFilters
 
       this.#filtersAdapter.filters = this.#filtersAdapter.filters.filter((data) =>
       {
-         let remove = false;
+         let remove = 0;
 
-         for (const id of ids) { remove |= data.id === id; }
+         for (const id of ids) { remove |= (data.id === id ? 1 : 0); }
 
          // If not keeping invoke any unsubscribe function for given filter then remove from tracking.
-         if (remove)
+         if (!!remove)
          {
             let unsubscribe;
             if (typeof (unsubscribe = this.#mapUnsubscribe.get(data.filter)) === 'function')

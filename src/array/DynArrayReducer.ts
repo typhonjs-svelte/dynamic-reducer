@@ -2,68 +2,48 @@ import {
    AdapterDerived,
    AdapterFilters,
    AdapterSort,
-   DynReducerUtils }             from '#common';
+   DynReducerUtils,
+   IndexerAPI
+} from '../common/index.js';
 
 import { Indexer }               from './Indexer.js';
+
+import type {
+   CompareFn,
+   DataDynArray,
+   DataFilter,
+   DataHost,
+   FilterFn}                     from '../types.js';
+
 import { DerivedArrayReducer }   from './derived/DerivedArrayReducer.js';
+
+import { DerivedAPI }            from '../common/index.js';
 
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
  * Svelte store support.
- *
- * @template T
  */
-export class DynArrayReducer
+export class DynArrayReducer<T>
 {
-   /**
-    * @type {DataHost<T[]>}
-    */
-   #array = [null];
+   #array: DataHost<T[]> = [null];
 
-   /**
-    * @type {AdapterDerived<DerivedArrayReducer<T>, T>}
-    */
-   #derived;
+   readonly #derived: AdapterDerived<T[], number, T>;
 
-   /**
-    * @type {APIDerived<DerivedArrayReducer<T>, T>}
-    */
-   #derivedPublicAPI;
+   readonly #derivedPublicAPI: DerivedAPI<number, T>;
 
-   /**
-    * @type {Indexer<number, T>}
-    */
-   #index;
+   readonly #filters: AdapterFilters<T>;
 
-   /**
-    * @type {APIIndexer<number>}
-    */
-   #indexPublicAPI;
+   readonly #filtersAdapter: { filters: DataFilter<T>[] } = { filters: [] };
 
-   /**
-    * @type {AdapterFilters<T>}
-    */
-   #filters;
+   readonly #index: Indexer<T>;
 
-   /**
-    * @type {{filters: DataFilter<T>[]}}
-    */
-   #filtersAdapter;
+   readonly #indexPublicAPI: IndexerAPI<number, T>;
 
-   /**
-    * @type {boolean}
-    */
-   #reversed = false;
+   #reversed: boolean = false;
 
-   /**
-    * @type {AdapterSort<T>}
-    */
-   #sort;
+   readonly #sort: AdapterSort<T>;
 
-   /**
-    * @type {{compareFn: CompareFn<T>}}
-    */
-   #sortAdapter;
+   #sortAdapter: { compareFn: CompareFn<T> } = { compareFn: null };
 
    #subscriptions = [];
 
@@ -71,19 +51,26 @@ export class DynArrayReducer
     * Initializes DynArrayReducer. Any iterable is supported for initial data. Take note that if `data` is an array it
     * will be used as the host array and not copied. All non-array iterables otherwise create a new array / copy.
     *
-    * @param {Iterable<T>|DataDynArray<T>}   [data] - Data iterable to store if array or copy otherwise.
+    * @param [data] - Data iterable to store if array or copy otherwise.
     */
-   constructor(data)
+   constructor(data?: Iterable<T>|DataDynArray<T>)
    {
       let dataIterable = void 0;
 
-      /** @type {Iterable<FilterFn<T>|DataFilter<T>>} */
-      let filters = void 0;
+      let filters: Iterable<FilterFn<T>|DataFilter<T>> = void 0;
 
       let sort = void 0;
 
-      // Potentially working with DataDynArray.
-      if (!DynReducerUtils.isIterable(data) && data !== null && typeof data === 'object')
+      if (Symbol.iterator in (data as Iterable<T>))
+      {
+         if (data !== void 0 && !DynReducerUtils.isIterable(data))
+         {
+            throw new TypeError(`DynArrayReducer error: 'data' is not iterable.`);
+         }
+
+         dataIterable = data;
+      }
+      else if ('data' in data || 'filters' in data || 'sort' in data)
       {
          if (data.data !== void 0 && !DynReducerUtils.isIterable(data.data))
          {
@@ -116,12 +103,6 @@ export class DynArrayReducer
             }
          }
       }
-      else
-      {
-         if (data !== void 0 && !DynReducerUtils.isIterable(data)) { throw new TypeError(`DynArrayReducer error: 'data' is not iterable.`); }
-
-         dataIterable = data;
-      }
 
       // In the case of the main data being an array directly use the array otherwise create a copy.
       if (dataIterable)
@@ -129,10 +110,15 @@ export class DynArrayReducer
          this.#array[0] = Array.isArray(dataIterable) ? dataIterable : [...dataIterable];
       }
 
-      [this.#index, this.#indexPublicAPI] = new Indexer(this.#array, this.#updateSubscribers.bind(this));
-      [this.#filters, this.#filtersAdapter] = new AdapterFilters(this.#indexPublicAPI.update);
-      [this.#sort, this.#sortAdapter] = new AdapterSort(this.#indexPublicAPI.update);
-      [this.#derived, this.#derivedPublicAPI] = new AdapterDerived(this.#array, this.#index, DerivedArrayReducer);
+      this.#index = new Indexer(this.#array, this.#updateSubscribers.bind(this));
+      this.#indexPublicAPI = new IndexerAPI<number, T>(this.#index);
+
+      this.#filters = new AdapterFilters(this.#indexPublicAPI.update, this.#filtersAdapter);
+
+      this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortAdapter);
+
+      this.#derived = new AdapterDerived(this.#array, this.#indexPublicAPI, DerivedArrayReducer);
+      this.#derivedPublicAPI = new DerivedAPI<number, T>(this.#derived);
 
       this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter, this.#derived);
 
@@ -145,29 +131,27 @@ export class DynArrayReducer
     * Returns the internal data of this instance. Be careful!
     *
     * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
-    * performed to the data externally do invoke {@link index.update} with `true` to recalculate the index and notify
-    * all subscribers.
+    * performed to the data externally do invoke {@link AdapterIndexer.index.update} with `true` to recalculate the
+    * index and notify all subscribers.
     *
-    * @returns {T[]|null} The internal data.
+    * @returns The internal data.
     */
-   get data() { return this.#array[0]; }
+   get data(): T[]|null { return this.#array[0]; }
 
    /**
-    * @returns {APIDerived<DerivedArrayReducer<T>, T>}
+    * @returns Derived public API.
     */
-   get derived() { return this.#derivedPublicAPI; }
+   get derived(): DerivedAPI<number, T> { return this.#derivedPublicAPI; }
 
    /**
-    * @returns {AdapterFilters<T>} The filters adapter.
+    * @returns The filters adapter.
     */
-   get filters() { return this.#filters; }
+   get filters(): AdapterFilters<T> { return this.#filters; }
 
    /**
-    * Returns the Indexer public API.
-    *
-    * @returns {APIIndexer<number>} Indexer API - is also iterable.
+    * @returns Returns the Indexer public API.
     */
-   get index() { return this.#indexPublicAPI; }
+   get index(): IndexerAPI<number, T> { return this.#indexPublicAPI; }
 
    /**
     * Gets the main data / items length.
@@ -177,7 +161,7 @@ export class DynArrayReducer
    get length()
    {
       const array = this.#array[0];
-      return this.#index.isActive() ? this.#indexPublicAPI.length :
+      return this.#index.isActive ? this.#indexPublicAPI.length :
        array ? array.length : 0;
    }
 
@@ -189,16 +173,16 @@ export class DynArrayReducer
    get reversed() { return this.#reversed; }
 
    /**
-    * @returns {AdapterSort<T>} The sort adapter.
+    * @returns The sort adapter.
     */
-   get sort() { return this.#sort; }
+   get sort(): AdapterSort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.
     *
-    * @param {boolean} reversed - New reversed state.
+    * @param reversed - New reversed state.
     */
-   set reversed(reversed)
+   set reversed(reversed: boolean)
    {
       if (typeof reversed !== 'boolean')
       {
@@ -216,11 +200,11 @@ export class DynArrayReducer
     * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
     * `replace` is set to true.
     *
-    * @param {T[] | Iterable<T> | null} data - New data to set to internal data.
+    * @param data - New data to set to internal data.
     *
-    * @param {boolean} [replace=false] - New data to set to internal data.
+    * @param replace=false - New data to set to internal data.
     */
-   setData(data, replace = false)
+   setData(data: T[] | Iterable<T> | null, replace: boolean = false)
    {
       if (data !== null && !DynReducerUtils.isIterable(data))
       {
@@ -265,12 +249,11 @@ export class DynArrayReducer
 
    /**
     *
-    * @param {(value: DynArrayReducer<T>) => void} handler - Callback function that is invoked on update / changes.
-    *                                                       Receives `this` reference.
+    * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
     *
-    * @returns {() => void} Unsubscribe function.
+    * @returns Unsubscribe function.
     */
-   subscribe(handler)
+   subscribe(handler: (value: DynArrayReducer<T>) => void): () => void
    {
       this.#subscriptions.push(handler); // add handler to the array of subscribers
 
@@ -295,16 +278,16 @@ export class DynArrayReducer
    /**
     * Provides an iterator for data stored in DynArrayReducer.
     *
-    * @returns {Generator<*, T, *>} Generator / iterator of all data.
+    * @returns Generator / iterator of all data.
     * @yields {T}
     */
-   *[Symbol.iterator]()
+   *[Symbol.iterator](): Generator<T, T, T>
    {
       const array = this.#array[0];
 
       if (array === null || array?.length === 0) { return; }
 
-      if (this.#index.isActive())
+      if (this.#index.isActive)
       {
          for (const entry of this.index) { yield array[entry]; }
       }

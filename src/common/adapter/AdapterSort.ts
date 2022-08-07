@@ -1,37 +1,34 @@
-/**
- * @template T
- */
-export class AdapterSort
+import type {CompareFn, DataSort} from '../../types.js';
+
+export class AdapterSort<T>
 {
-   #sortAdapter;
-   #indexUpdate;
-   #unsubscribe;
+   #sortAdapter: { compareFn: CompareFn<T> };
+
+   readonly #indexUpdate: Function;
+
+   #unsubscribe: Function;
 
    /**
-    * @param {Function} indexUpdate - Function to update indexer.
+    * @param indexUpdate - Function to update indexer.
     *
-    * @returns {[AdapterSort<T>, {compareFn: CompareFn<T>}]} This and the internal sort adapter data.
+    * @param sortAdapter - Storage for compare function.
     */
-   constructor(indexUpdate)
+   constructor(indexUpdate: Function, sortAdapter: { compareFn: CompareFn<T> })
    {
       this.#indexUpdate = indexUpdate;
 
-      this.#sortAdapter = { compareFn: null };
+      this.#sortAdapter = sortAdapter;
 
       Object.seal(this);
-
-      return [this, this.#sortAdapter];
    }
 
    /**
-    * @param {CompareFn<T>|DataSort<T>}  data -
-    *
-    * A callback function that compares two values. Return > 0 to sort b before a;
+    * @param data - A callback function that compares two values. Return > 0 to sort b before a;
     * < 0 to sort a before b; or 0 to keep original order of a & b.
     *
     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#parameters
     */
-   set(data)
+   set(data: CompareFn<T>|DataSort<T>)
    {
       if (typeof this.#unsubscribe === 'function')
       {

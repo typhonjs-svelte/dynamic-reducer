@@ -1,15 +1,17 @@
+import type { IDerivedReducerCtor } from '../types.js';
+
 export class DynReducerUtils
 {
    /**
     * Checks for array equality between two arrays of numbers.
     *
-    * @param {number[]} a - Array A
+    * @param a - Array A
     *
-    * @param {number[]} b - Array B
+    * @param b - Array B
     *
     * @returns {boolean} Arrays equal
     */
-   static arrayEquals(a, b)
+   static arrayEquals(a: any[], b: any[]): boolean
    {
       if (a === b) { return true; }
       if (a === null || b === null) { return false; }
@@ -27,13 +29,13 @@ export class DynReducerUtils
    }
 
    /**
-    * @param {new () => any}  target -
+    * @param target -
     *
-    * @param {new () => any}    Prototype -
+    * @param Prototype -
     *
-    * @returns {boolean} target constructor function has Prototype.
+    * @returns target constructor function has Prototype.
     */
-   static hasPrototype(target, Prototype)
+   static hasPrototype(target: any, Prototype: IDerivedReducerCtor): boolean
    {
       if (typeof target !== 'function') { return false; }
 
@@ -51,12 +53,13 @@ export class DynReducerUtils
    /**
     * Provides a utility method to determine if the given data is iterable / implements iterator protocol.
     *
-    * @param {*}  data - Data to verify as iterable.
+    * @param data - Data to verify as iterable.
     *
-    * @returns {boolean} Is data iterable.
+    * @returns Is data iterable.
     */
-   static isIterable(data)
+   static isIterable(data: any): boolean
    {
-      return data !== null && data !== void 0 && typeof data === 'object' && typeof data[Symbol.iterator] === 'function';
+      return data !== null && data !== void 0 && typeof data === 'object' &&
+       typeof data[Symbol.iterator] === 'function';
    }
 }

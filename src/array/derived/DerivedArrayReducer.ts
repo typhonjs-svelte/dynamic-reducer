@@ -1,80 +1,65 @@
 import {
-   AdapterDerived,
    AdapterFilters,
-   AdapterSort
-} from '#common';
+   AdapterSort,
+   IndexerAPI
+} from '../../common/index.js';
 
-import { Indexer }   from '../Indexer.js';
+import { Indexer }      from '../Indexer.js';
+
+import type {
+   IDerivedReducer,
+   CompareFn,
+   DataFilter,
+   DataHost
+} from "../../types.js";
 
 /**
  * @template T
  */
-export class DerivedArrayReducer
+export class DerivedArrayReducer<T> implements IDerivedReducer
 {
-   /**
-    * @type {DataHost<T[]>}
-    */
-   #array;
+   readonly #array: DataHost<T[]>;
 
    #derived;
 
    #derivedPublicAPI;
 
-   /**
-    * @type {AdapterFilters<T>}
-    */
-   #filters;
+   readonly #filters: AdapterFilters<T>;
 
-   /**
-    * @type {{filters: FilterFn<T>[]}}
-    */
-   #filtersAdapter;
+   readonly #filtersAdapter: { filters: DataFilter<T>[] } = { filters: [] };
 
-   /**
-    * @type {Indexer}
-    */
-   #index;
+   readonly #index: Indexer<T>;
 
-   /**
-    * @type {APIIndexer<number>}
-    */
-   #indexPublicAPI;
+   readonly #indexPublicAPI: IndexerAPI<number, T>;
 
-   /**
-    * @type {boolean}
-    */
-   #reversed = false;
+   #reversed: boolean = false;
 
-   /**
-    * @type {AdapterSort<T>}
-    */
-   #sort;
+   readonly #sort: AdapterSort<T>;
 
-   /**
-    * @type {{compareFn: CompareFn<T>}}
-    */
-   #sortAdapter;
+   #sortAdapter: { compareFn: CompareFn<T> } = { compareFn: null };
 
    #subscriptions = [];
 
    /**
     *
-    * @param {DataHost<T[]>}     array - Data host array.
+    * @param array - Data host array.
     *
-    * @param {Indexer<T>} parentIndex - Parent indexer.
+    * @param parentIndex - Parent indexer.
     *
     * TODO: fix type
     *
-    * @param {object}            options -
+    * @param options -
     */
-   constructor(array, parentIndex, options)
+   constructor(array: DataHost<T[]>, parentIndex: IndexerAPI<number, T>, options: object)
    {
       this.#array = array;
 
-      [this.#index, this.#indexPublicAPI] = new Indexer(array, this.#updateSubscribers.bind(this), parentIndex);
-      [this.#filters, this.#filtersAdapter] = new AdapterFilters(this.#indexPublicAPI.update);
-      [this.#sort, this.#sortAdapter] = new AdapterSort(this.#indexPublicAPI.update);
-      [this.#derived, this.#derivedPublicAPI] = new AdapterDerived(this.#array, this.#index, DerivedArrayReducer);
+      this.#index = new Indexer(this.#array, this.#updateSubscribers.bind(this), parentIndex);
+      this.#indexPublicAPI = new IndexerAPI<number, T>(this.#index);
+
+      this.#filters = new AdapterFilters(this.#indexPublicAPI.update, this.#filtersAdapter);
+
+      this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortAdapter);
 
       this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter, this.#derived);
    }
@@ -110,7 +95,7 @@ export class DerivedArrayReducer
    get length()
    {
       const parentIndexer = this.#index.indexData?.parent;
-      return this.#index.isActive() ? this.index.length :
+      return this.#index.isActive ? this.index.length :
        parentIndexer ? parentIndexer.length : 0;
    }
 
@@ -157,7 +142,7 @@ export class DerivedArrayReducer
 
       if (array === null || array?.length === 0) { return; }
 
-      if (this.#index.isActive())
+      if (this.#index.isActive)
       {
          for (const entry of this.index) { yield array[entry]; }
       }

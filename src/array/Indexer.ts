@@ -1,32 +1,18 @@
-import { AdapterIndexer } from '#common';
+import {
+   AdapterIndexer,
+   DynReducerUtils } from '../common/index.js';
 
 /**
- * @template K, T
- *
- * @augments {AdapterIndexer<T[], K, T>}
  */
-export class Indexer extends AdapterIndexer
+export class Indexer<T> extends AdapterIndexer<T[], number, T>
 {
    /**
-    * @returns {(a: K, b: K) => number}
+    * @inheritDoc
     */
-   createSortFn()
+   createSortFn(): (a: number, b: number) => number
    {
-      const c = this.hostData[0][0];
-
-      /** @type {(a: K, b: K) => number} */
       return (a, b) => this.sortAdapter.compareFn(this.hostData[0][a], this.hostData[0][b]);
    }
-
-   // /**
-   //  * @inheritDoc
-   //  */
-   // initAdapters(filtersAdapter, sortAdapter, derivedAdapter)
-   // {
-   //    super.initAdapters(filtersAdapter, sortAdapter, derivedAdapter);
-   //
-   //    this.sortFn = (a, b) => this.sortAdapter.compareFn(this.hostData[0][a], this.hostData[0][b]);
-   // }
 
    /**
     * Provides the custom filter / reduce step that is ~25-40% faster than implementing with `Array.reduce`.
@@ -47,15 +33,12 @@ export class Indexer extends AdapterIndexer
 
       let include = true;
 
-      const parentIndex = this.indexData.parent?.indexData?.index;
+      const parentIndex = this.indexData.parent;
 
-      if (Array.isArray(parentIndex))
+      if (DynReducerUtils.isIterable(parentIndex))
       {
-         for (let cntr = 0, length = parentIndex.length; cntr < length; cntr++)
+         for (const adjustedIndex of parentIndex)
          {
-            // TODO: range check?
-            const adjustedIndex = parentIndex[cntr];
-
             const value = array[adjustedIndex];
             include = true;
 
