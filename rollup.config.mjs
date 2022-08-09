@@ -38,7 +38,7 @@ export default () =>
                   { find: '#common', replacement: './src/common/index.js' }
                ]
             }),
-            typescript({ sourceMap: false }),
+            typescript({ sourceMap: false, inlineSources: false }),
             dts()
          ]
       }
