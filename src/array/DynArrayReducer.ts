@@ -61,16 +61,21 @@ export class DynArrayReducer<T>
 
       let sort = void 0;
 
-      if (Symbol.iterator in (data as Iterable<T>))
+      if (data === null)
       {
-         if (data !== void 0 && !DynReducerUtils.isIterable(data))
-         {
-            throw new TypeError(`DynArrayReducer error: 'data' is not iterable.`);
-         }
+         throw new TypeError(`DynArrayReducer error: 'data' is not iterable.`);
+      }
 
+      if (data !== void 0 && typeof data !== 'object' && !DynReducerUtils.isIterable(data))
+      {
+         throw new TypeError(`DynArrayReducer error: 'data' is not iterable.`);
+      }
+
+      if (data !== void 0 && Symbol.iterator in (data as Iterable<T>))
+      {
          dataIterable = data;
       }
-      else if ('data' in data || 'filters' in data || 'sort' in data)
+      else if (data !== void 0 && ('data' in data || 'filters' in data || 'sort' in data))
       {
          if (data.data !== void 0 && !DynReducerUtils.isIterable(data.data))
          {

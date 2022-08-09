@@ -84,7 +84,7 @@ export class AdapterFilters<T>
       {
          const filterType = typeof filter;
 
-         if (filterType !== 'function' && filterType !== 'object' || filter === null)
+         if (filterType !== 'function' && (filterType !== 'object' || filter === null))
          {
             throw new TypeError(`AdapterFilters error: 'filter' is not a function or object.`);
          }
@@ -102,27 +102,34 @@ export class AdapterFilters<T>
 
             subscribeFn = filter.subscribe;
          }
-         else if ('filter' in filter)
+         else if (filterType === 'object')
          {
-            if (typeof filter.filter !== 'function')
+            if ('filter' in filter)
+            {
+               if (typeof filter.filter !== 'function')
+               {
+                  throw new TypeError(`AdapterFilters error: 'filter' attribute is not a function.`);
+               }
+
+               if (filter.weight !== void 0 && typeof filter.weight !== 'number' ||
+                   (filter.weight < 0 || filter.weight > 1))
+               {
+                  throw new TypeError(
+                      `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
+               }
+
+               data = {
+                  id: filter.id !== void 0 ? filter.id : void 0,
+                  filter: filter.filter,
+                  weight: filter.weight || 1
+               };
+
+               subscribeFn = filter.filter.subscribe ?? filter.subscribe;
+            }
+            else
             {
                throw new TypeError(`AdapterFilters error: 'filter' attribute is not a function.`);
             }
-
-            if (filter.weight !== void 0 && typeof filter.weight !== 'number' ||
-             (filter.weight < 0 || filter.weight > 1))
-            {
-               throw new TypeError(
-                `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
-            }
-
-            data = {
-               id: filter.id !== void 0 ? filter.id : void 0,
-               filter: filter.filter,
-               weight: filter.weight || 1
-            };
-
-            subscribeFn = filter.filter.subscribe ?? filter.subscribe;
          }
 
          // Find the index to insert where data.weight is less than existing values weight.
