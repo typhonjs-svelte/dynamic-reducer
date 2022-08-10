@@ -1,15 +1,17 @@
-import { createFixtures } from '../../fixture/array/createFixtures.js';
-
-/**
- * @param {object}            opts - Test options
- *
- * @param {import('../../../../../types')} opts.Module - Module to test
- */
 export function run({ Module })
 {
-   const { DynArrayReducer } = Module;
+   /** @type {import('../../../../../types').DynArrayReducer} */
+   const DynArrayReducer = Module.DynArrayReducer;
 
-   const { CustomDerivedReducer } = createFixtures(Module);
+   /** @type {import('../../../../../types').DerivedArrayReducer} */
+   const DerivedArrayReducer = Module.DerivedArrayReducer;
+
+   class CustomDerivedReducer extends DynArrayReducer
+   {
+
+   }
+
+   // const { CustomDerivedReducer } = createFixtures(Module);
 
    describe(`(Array) SequenceTest`, () =>
    {
@@ -19,8 +21,9 @@ export function run({ Module })
          const filterLessTwo = (value) => value > 2;
          const filterDynamicModulo = { id: 'dynamic modulo', filter: (value) => value % modulo === 0, weight: 0.1 };
 
-         /** @type DynArrayReducer<number> */
+         /** @type {import('../../../../../types').DynArrayReducer<number>} */
          const arrayReducer = new DynArrayReducer(data);
+         // const arrayReducer = new DynArrayReducer({ data });
 
          // arrayReducer.index
 
@@ -29,7 +32,7 @@ export function run({ Module })
          // arrayReducer.derived.create({});
          // arrayReducer.derived.create({ ctor: void 0 });
          // arrayReducer.derived.create(DynArrayReducer);
-         //
+
          // arrayReducer.derived.create({ name: 'test' });
          // arrayReducer.derived.create(CustomDerivedReducer);
          // arrayReducer.derived.create({ name: 'test', filters: [] });
@@ -38,7 +41,6 @@ export function run({ Module })
          // arrayReducer.derived.create({ ctor: CustomDerivedReducer, filters: [] });
 
          const derivedReducer = arrayReducer.derived.create('blog');
-
 
          console.log(`! arrayReducer: `, [...arrayReducer]);
          console.log(`! derivedReducer: `, [...derivedReducer]);

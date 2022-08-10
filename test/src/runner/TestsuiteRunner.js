@@ -15,9 +15,9 @@ import {
 
 export default new TestsuiteRunner(
 {
-   // ArrayAPIErrors,
-   // ArrayAPITests,
-   ArraySequenceTests,  // For visual inspection
+   ArrayAPIErrors,
+   ArrayAPITests,
+   // ArraySequenceTests,  // For visual inspection
    // ArrayPerfTest        // For performance comparison
 
    // MapAPIErrors,
