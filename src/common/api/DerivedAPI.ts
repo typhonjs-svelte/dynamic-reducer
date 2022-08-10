@@ -4,14 +4,14 @@ import type {
     IDerivedReducer,
     OptionsDerivedCreate }      from '../../types.js';
 
-export class DerivedAPI<K, T>
+export class DerivedAPI<D, K, T>
 {
     /**
      * @param options -
      *
      * @returns Newly created derived reducer.
      */
-    create: (options: OptionsDerivedCreate<T>) => IDerivedReducer;
+    create: (options: OptionsDerivedCreate<T>) => IDerivedReducer<D, K, T>;
 
     /**
      * Deletes and destroys a derived reducer.
@@ -25,9 +25,9 @@ export class DerivedAPI<K, T>
      *
      * @param name - Name of derived reducer.
      */
-    get: (name: string) => IDerivedReducer
+    get: (name: string) => IDerivedReducer<D, K, T>
 
-    constructor(adapterDerived: AdapterDerived<any, K, T>)
+    constructor(adapterDerived: AdapterDerived<D, K, T>)
     {
         this.create = adapterDerived.create.bind(adapterDerived);
         this.delete = adapterDerived.delete.bind(adapterDerived);

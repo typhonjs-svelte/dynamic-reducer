@@ -11,6 +11,11 @@ export class IndexerAPI<K, T>
     readonly isActive: boolean;
 
     /**
+     * Provides length of reduced / indexed elements.
+     */
+    readonly length: number;
+
+    /**
      * Manually invoke an update of the index.
      *
      * @param force - Force update to any subscribers.
@@ -26,6 +31,7 @@ export class IndexerAPI<K, T>
         // Defines getters on the public API to get the index hash, isActive state, and index length.
         Object.defineProperties(this, {
            isActive: { get: () => adapterIndexer.isActive },
+           length: { get: () => adapterIndexer.length }
         });
 
         Object.seal(this);
@@ -42,10 +48,12 @@ export class IndexerAPI<K, T>
     /**
      * @returns Returns length of reduced / indexed elements.
      */
-    get length(): number
-    {
-        return Array.isArray(this.#indexData.index) ? this.#indexData.index.length : 0
-    }
+//     get length(): number
+//     {
+// console.log(`! IndexerAPI - length - 0 - Array.isArray(this.#indexData.index): `, Array.isArray(this.#indexData.index))
+// console.log(`! IndexerAPI - length - 1 - this.#indexData.index.length: `, this.#indexData.index?.length)
+//         return Array.isArray(this.#indexData.index) ? this.#indexData.index.length : 0
+//     }
 
     /**
      * Provides an iterator over the index array.

@@ -1,6 +1,7 @@
 import {
+   AdapterDerived,
    AdapterFilters,
-   AdapterSort,
+   AdapterSort, DerivedAPI,
    IndexerAPI
 } from '../../common/index.js';
 
@@ -14,15 +15,14 @@ import type {
 } from "../../types.js";
 
 /**
- * @template T
  */
-export class DerivedArrayReducer<T> implements IDerivedReducer
+export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
 {
    readonly #array: DataHost<T[]>;
 
-   #derived;
+   readonly #derived;
 
-   #derivedPublicAPI;
+   readonly #derivedPublicAPI;
 
    readonly #filters: AdapterFilters<T>;
 
@@ -46,8 +46,6 @@ export class DerivedArrayReducer<T> implements IDerivedReducer
     *
     * @param parentIndex - Parent indexer.
     *
-    * TODO: fix type
-    *
     * @param options -
     */
    constructor(array: DataHost<T[]>, parentIndex: IndexerAPI<number, T>, options: object)
@@ -61,6 +59,9 @@ export class DerivedArrayReducer<T> implements IDerivedReducer
 
       this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortAdapter);
 
+      this.#derived = new AdapterDerived(this.#array, this.#indexPublicAPI, DerivedArrayReducer);
+      this.#derivedPublicAPI = new DerivedAPI<T[], number, T>(this.#derived);
+
       this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter, this.#derived);
    }
 
@@ -71,52 +72,56 @@ export class DerivedArrayReducer<T> implements IDerivedReducer
     * performed to the data externally do invoke {@link index.update} with `true` to recalculate the index and notify
     * all subscribers.
     *
-    * @returns {T[]|null} The internal data.
+    * @returns The internal data.
     */
-   get data() { return this.#array[0]; }
+   get data(): T[]|null { return this.#array[0]; }
 
    /**
-    * @returns {AdapterFilters<T>} The filters adapter.
+    * @returns Derived public API.
     */
-   get filters() { return this.#filters; }
+   get derived(): DerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
+
+   /**
+    * @returns The filters adapter.
+    */
+   get filters(): AdapterFilters<T> { return this.#filters; }
 
    /**
     * Returns the Indexer public API.
     *
-    * @returns {APIIndexer<number>} Indexer API - is also iterable.
+    * @returns Indexer API - is also iterable.
     */
-   get index() { return this.#indexPublicAPI; }
+   get index(): IndexerAPI<number, T> { return this.#indexPublicAPI; }
 
    /**
-    * Gets the main data / items length.
-    *
-    * @returns {number} Main data / items length.
+    * @returns Main data / items length or indexed length.
     */
-   get length()
+   get length(): number
    {
       const parentIndexer = this.#index.indexData?.parent;
+      const array = this.#array[0];
+
       return this.#index.isActive ? this.index.length :
-       parentIndexer ? parentIndexer.length : 0;
+       parentIndexer && parentIndexer.isActive ? parentIndexer.length :
+        array ? array.length : 0;
    }
 
    /**
-    * Gets current reversed state.
-    *
-    * @returns {boolean} Reversed state.
+    * @returns Gets current reversed state.
     */
-   get reversed() { return this.#reversed; }
+   get reversed(): boolean { return this.#reversed; }
 
    /**
-    * @returns {AdapterSort<T>} The sort adapter.
+    * @returns The sort adapter.
     */
-   get sort() { return this.#sort; }
+   get sort(): AdapterSort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.
     *
-    * @param {boolean} reversed - New reversed state.
+    * @param reversed - New reversed state.
     */
-   set reversed(reversed)
+   set reversed(reversed: boolean)
    {
       if (typeof reversed !== 'boolean')
       {
@@ -131,12 +136,11 @@ export class DerivedArrayReducer<T> implements IDerivedReducer
    }
 
    /**
-    * Provides an iterator for data stored in DynArrayReducer.
+    * Provides an iterator for data stored in DerivedArrayReducer.
     *
-    * @returns {Generator<*, T, *>} Generator / iterator of all data.
-    * @yields {T}
+    * @returns Generator / iterator of all data.
     */
-   *[Symbol.iterator]()
+   *[Symbol.iterator](): Generator<T, T, T>
    {
       const array = this.#array[0];
 
@@ -164,12 +168,11 @@ export class DerivedArrayReducer<T> implements IDerivedReducer
    /**
     * Subscribe to this DerivedArrayReducer.
     *
-    * @param {function(DerivedArrayReducer<T>): void} handler - Callback function that is invoked on update / changes.
-    *                                                           Receives `this` reference.
+    * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
     *
-    * @returns {(function(): void)} Unsubscribe function.
+    * @returns Unsubscribe function.
     */
-   subscribe(handler)
+   subscribe(handler: (value: DerivedArrayReducer<T>) => void): () => void
    {
       this.#subscriptions.push(handler); // add handler to the array of subscribers
 

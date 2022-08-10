@@ -15,11 +15,11 @@ export class AdapterDerived<D, K, T>
 {
    readonly #hostData: DataHost<D>;
 
-   readonly #DerivedReducerCtor: IDerivedReducerCtor;
+   readonly #DerivedReducerCtor: IDerivedReducerCtor<T>;
 
    readonly #parentIndex: IndexerAPI<K, T>;
 
-   #derived: Map<string, IDerivedReducer> = new Map();
+   #derived: Map<string, IDerivedReducer<D, K, T>> = new Map();
 
    /**
     * @param hostData -
@@ -28,7 +28,7 @@ export class AdapterDerived<D, K, T>
     *
     * @param DerivedReducerCtor -
     */
-   constructor(hostData: DataHost<D>, parentIndex: IndexerAPI<K, T>, DerivedReducerCtor: IDerivedReducerCtor)
+   constructor(hostData: DataHost<D>, parentIndex: IndexerAPI<K, T>, DerivedReducerCtor: IDerivedReducerCtor<T>)
    {
       this.#hostData = hostData;
 
@@ -42,15 +42,15 @@ export class AdapterDerived<D, K, T>
     *
     * @returns Newly created derived reducer.
     */
-   create(options: OptionsDerivedCreate<T>): IDerivedReducer
+   create(options: OptionsDerivedCreate<T>): IDerivedReducer<D, K, T>
    {
       let name: string;
 
       let rest: object = {};
 
-      let ctor: IDerivedReducerCtor;
+      let ctor: IDerivedReducerCtor<T>;
 
-      const DerivedReducerCtor: IDerivedReducerCtor = this.#DerivedReducerCtor;
+      const DerivedReducerCtor: IDerivedReducerCtor<T> = this.#DerivedReducerCtor;
 
       if (typeof options === 'string')
       {
@@ -67,12 +67,12 @@ export class AdapterDerived<D, K, T>
       }
       else
       {
-         throw new TypeError(`'AdapterDerived.create error: 'options' does not conform to allowed parameters.`);
+         throw new TypeError(`AdapterDerived.create error: 'options' does not conform to allowed parameters.`);
       }
 
       if (!DynReducerUtils.hasPrototype(ctor, DerivedReducerCtor))
       {
-         throw new TypeError(`AdapterDerived.create error: 'impl' is not a '${DerivedReducerCtor?.name}'.`);
+         throw new TypeError(`AdapterDerived.create error: 'ctor' is not a '${DerivedReducerCtor?.name}'.`);
       }
 
       name = name ?? ctor?.name;
@@ -105,12 +105,17 @@ console.log(`! AdapterDerived.create - ctor: `, ctor);
      *
      * @param name - Name of derived reducer.
      */
-   get(name: string): IDerivedReducer
+   get(name: string): IDerivedReducer<D, K, T>
    {
       return this.#derived.get(name);
    }
 
-   update(force = false)
+   /**
+    * Updates all managed derived reducer indexes.
+    *
+    * @param [force] - Force an update to subscribers.
+    */
+   update(force: boolean = false)
    {
       for (const reducer of this.#derived.values())
       {

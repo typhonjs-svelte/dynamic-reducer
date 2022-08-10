@@ -29,7 +29,7 @@ export class DynArrayReducer<T>
 
    readonly #derived: AdapterDerived<T[], number, T>;
 
-   readonly #derivedPublicAPI: DerivedAPI<number, T>;
+   readonly #derivedPublicAPI: DerivedAPI<T[], number, T>;
 
    readonly #filters: AdapterFilters<T>;
 
@@ -123,7 +123,7 @@ export class DynArrayReducer<T>
       this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortAdapter);
 
       this.#derived = new AdapterDerived(this.#array, this.#indexPublicAPI, DerivedArrayReducer);
-      this.#derivedPublicAPI = new DerivedAPI<number, T>(this.#derived);
+      this.#derivedPublicAPI = new DerivedAPI<T[], number, T>(this.#derived);
 
       this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter, this.#derived);
 
@@ -146,7 +146,7 @@ export class DynArrayReducer<T>
    /**
     * @returns Derived public API.
     */
-   get derived(): DerivedAPI<number, T> { return this.#derivedPublicAPI; }
+   get derived(): DerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.

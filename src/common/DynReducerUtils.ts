@@ -35,8 +35,9 @@ export class DynReducerUtils
     *
     * @returns target constructor function has Prototype.
     */
-   static hasPrototype(target: any, Prototype: IDerivedReducerCtor): boolean
+   static hasPrototype(target: any, Prototype: IDerivedReducerCtor<any>): boolean
    {
+      /* c8 ignore next */
       if (typeof target !== 'function') { return false; }
 
       if (target === Prototype) { return true; }

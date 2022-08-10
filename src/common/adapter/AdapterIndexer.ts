@@ -51,10 +51,7 @@ export abstract class AdapterIndexer<D, K, T>
    /**
     * @returns Returns whether the index is active.
     */
-   get isActive(): boolean
-   {
-      return this.filtersAdapter.filters.length > 0 || this.sortAdapter.compareFn !== null;
-   }
+   get isActive(): boolean { return this.filtersAdapter.filters.length > 0 || this.sortAdapter.compareFn !== null; }
 
    /**
     * @returns Returns length of reduced index.
@@ -112,9 +109,6 @@ export abstract class AdapterIndexer<D, K, T>
       if (actualForce || (oldHash === newHash ? !DynReducerUtils.arrayEquals(oldIndex, newIndex) : true))
       {
          this.hostUpdate();
-
-         // Update all derived reducers.
-         this.derivedAdapter?.update(force);
       }
    }
 
