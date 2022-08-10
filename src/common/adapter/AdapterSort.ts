@@ -22,6 +22,22 @@ export class AdapterSort<T>
       Object.seal(this);
    }
 
+   clear()
+   {
+      const oldCompareFn = this.#sortData.compareFn;
+
+      this.#sortData.compareFn = null;
+
+      if (typeof this.#unsubscribe === 'function')
+      {
+         this.#unsubscribe();
+         this.#unsubscribe = void 0;
+      }
+
+      // Only update index if an old compare function is set.
+      if (typeof oldCompareFn === 'function') { this.#indexUpdate(); }
+   }
+
    /**
     * @param data - A callback function that compares two values. Return > 0 to sort b before a;
     * < 0 to sort a before b; or 0 to keep original order of a & b.
@@ -91,21 +107,5 @@ export class AdapterSort<T>
          // Only manually update the index if there is no subscriber functionality.
          this.#indexUpdate();
       }
-   }
-
-   reset()
-   {
-      const oldCompareFn = this.#sortData.compareFn;
-
-      this.#sortData.compareFn = null;
-
-      if (typeof this.#unsubscribe === 'function')
-      {
-         this.#unsubscribe();
-         this.#unsubscribe = void 0;
-      }
-
-      // Only update index if an old compare function is set.
-      if (typeof oldCompareFn === 'function') { this.#indexUpdate(); }
    }
 }

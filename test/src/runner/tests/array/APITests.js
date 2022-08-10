@@ -486,7 +486,7 @@ export function run({ Module, chai })
 
             assert.deepEqual([...dar], [2, 1], 'reverse sorts numbers');
 
-            dar.sort.reset();
+            dar.sort.clear();
 
             assert.deepEqual([...dar], [1, 2], 'initial order');
             assert.isTrue(unsubscribeCalled);
@@ -508,7 +508,7 @@ export function run({ Module, chai })
 
             assert.deepEqual([...dar], [2, 1], 'reverse sorts numbers');
 
-            dar.sort.reset();
+            dar.sort.clear();
 
             assert.deepEqual([...dar], [1, 2], 'initial order');
             assert.isTrue(unsubscribeCalled);
@@ -632,8 +632,8 @@ export function run({ Module, chai })
 
             assert.deepEqual([...dr], [2, 3], 'correct sorted derived filter data');
 
-            dar.sort.reset();
-            dr.sort.reset();
+            dar.sort.clear();
+            dr.sort.clear();
             dr.filters.clear();
             dr.reversed = true;
 
@@ -791,7 +791,7 @@ export function run({ Module, chai })
 
             assert.equal(dar.index.length, 2, 'length is correct');
 
-            dar.sort.reset();
+            dar.sort.clear();
 
             assert.equal(dar.index.length, 0, 'length is correct');
 
@@ -812,7 +812,7 @@ export function run({ Module, chai })
 
             assert.deepEqual([...dar.index], [0, 1], 'reverse sorted index');
 
-            dar.sort.reset();
+            dar.sort.clear();
 
             assert.deepEqual([...dar.index], [], 'no index');
          });
@@ -827,7 +827,7 @@ export function run({ Module, chai })
 
             assert.isNumber(dar.index.hash);
 
-            dar.sort.reset();
+            dar.sort.clear();
 
             assert.isNull(dar.index.hash);
          });
@@ -842,7 +842,7 @@ export function run({ Module, chai })
 
             assert.isTrue(dar.index.isActive);
 
-            dar.sort.reset();
+            dar.sort.clear();
 
             assert.isFalse(dar.index.isActive);
          });
@@ -857,7 +857,7 @@ export function run({ Module, chai })
 
             assert.equal(dar.index.length, 2);
 
-            dar.sort.reset();
+            dar.sort.clear();
 
             assert.equal(dar.index.length, 0);
          });
