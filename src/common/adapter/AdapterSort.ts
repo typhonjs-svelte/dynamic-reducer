@@ -2,7 +2,7 @@ import type {CompareFn, DataSort} from '../../types.js';
 
 export class AdapterSort<T>
 {
-   #sortAdapter: { compareFn: CompareFn<T> };
+   #sortData: { compareFn: CompareFn<T> };
 
    readonly #indexUpdate: Function;
 
@@ -11,13 +11,13 @@ export class AdapterSort<T>
    /**
     * @param indexUpdate - Function to update indexer.
     *
-    * @param sortAdapter - Storage for compare function.
+    * @param sortData - Storage for compare function.
     */
-   constructor(indexUpdate: Function, sortAdapter: { compareFn: CompareFn<T> })
+   constructor(indexUpdate: Function, sortData: { compareFn: CompareFn<T> })
    {
       this.#indexUpdate = indexUpdate;
 
-      this.#sortAdapter = sortAdapter;
+      this.#sortData = sortData;
 
       Object.seal(this);
    }
@@ -62,12 +62,12 @@ export class AdapterSort<T>
 
       if (typeof compareFn === 'function')
       {
-         this.#sortAdapter.compareFn = compareFn;
+         this.#sortData.compareFn = compareFn;
       }
       else
       {
-         const oldCompareFn = this.#sortAdapter.compareFn;
-         this.#sortAdapter.compareFn = null;
+         const oldCompareFn = this.#sortData.compareFn;
+         this.#sortData.compareFn = null;
 
          // Update index if the old compare function exists.
          if (typeof oldCompareFn === 'function') { this.#indexUpdate(); }
@@ -95,9 +95,9 @@ export class AdapterSort<T>
 
    reset()
    {
-      const oldCompareFn = this.#sortAdapter.compareFn;
+      const oldCompareFn = this.#sortData.compareFn;
 
-      this.#sortAdapter.compareFn = null;
+      this.#sortData.compareFn = null;
 
       if (typeof this.#unsubscribe === 'function')
       {

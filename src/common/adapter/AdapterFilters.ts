@@ -29,7 +29,7 @@ import type {
 
 export class AdapterFilters<T>
 {
-   #filtersAdapter: { filters: DataFilter<T>[] };
+   #filtersData: { filters: DataFilter<T>[] };
 
    readonly #indexUpdate: Function;
 
@@ -44,7 +44,7 @@ export class AdapterFilters<T>
    {
       this.#indexUpdate = indexUpdate;
 
-      this.#filtersAdapter = filtersAdapter;
+      this.#filtersData = filtersAdapter;
 
       Object.seal(this);
    }
@@ -52,7 +52,7 @@ export class AdapterFilters<T>
    /**
     * @returns Returns the length of the filter data.
     */
-   get length(): number { return this.#filtersAdapter.filters.length; }
+   get length(): number { return this.#filtersData.filters.length; }
 
    /**
     * Provides an iterator for filters.
@@ -62,9 +62,9 @@ export class AdapterFilters<T>
     */
    *[Symbol.iterator](): Generator<DataFilter<T>, DataFilter<T>, DataFilter<T>> | void
    {
-      if (this.#filtersAdapter.filters.length === 0) { return; }
+      if (this.#filtersData.filters.length === 0) { return; }
 
-      for (const entry of this.#filtersAdapter.filters)
+      for (const entry of this.#filtersData.filters)
       {
          yield { ...entry };
       }
@@ -133,7 +133,7 @@ export class AdapterFilters<T>
          }
 
          // Find the index to insert where data.weight is less than existing values weight.
-         const index = this.#filtersAdapter.filters.findIndex((value) =>
+         const index = this.#filtersData.filters.findIndex((value) =>
          {
             return data.weight < value.weight;
          });
@@ -141,11 +141,11 @@ export class AdapterFilters<T>
          // If an index was found insert at that location.
          if (index >= 0)
          {
-            this.#filtersAdapter.filters.splice(index, 0, data);
+            this.#filtersData.filters.splice(index, 0, data);
          }
          else // push to end of filters.
          {
-            this.#filtersAdapter.filters.push(data);
+            this.#filtersData.filters.push(data);
          }
 
          if (typeof subscribeFn === 'function')
@@ -181,7 +181,7 @@ export class AdapterFilters<T>
     */
    clear()
    {
-      this.#filtersAdapter.filters.length = 0;
+      this.#filtersData.filters.length = 0;
 
       // Unsubscribe from all filters with subscription support.
       for (const unsubscribe of this.#mapUnsubscribe.values())
@@ -199,7 +199,7 @@ export class AdapterFilters<T>
     */
    remove(...filters: (FilterFn<T>|DataFilter<T>)[])
    {
-      const length = this.#filtersAdapter.filters.length;
+      const length = this.#filtersData.filters.length;
 
       if (length === 0) { return; }
 
@@ -211,11 +211,11 @@ export class AdapterFilters<T>
 
          if (!actualFilter) { continue; }
 
-         for (let cntr = this.#filtersAdapter.filters.length; --cntr >= 0;)
+         for (let cntr = this.#filtersData.filters.length; --cntr >= 0;)
          {
-            if (this.#filtersAdapter.filters[cntr].filter === actualFilter)
+            if (this.#filtersData.filters[cntr].filter === actualFilter)
             {
-               this.#filtersAdapter.filters.splice(cntr, 1);
+               this.#filtersData.filters.splice(cntr, 1);
 
                // Invoke any unsubscribe function for given filter then remove from tracking.
                let unsubscribe = void 0;
@@ -229,7 +229,7 @@ export class AdapterFilters<T>
       }
 
       // Update the index a filter was removed.
-      if (length !== this.#filtersAdapter.filters.length) { this.#indexUpdate(); }
+      if (length !== this.#filtersData.filters.length) { this.#indexUpdate(); }
    }
 
    /**
@@ -240,7 +240,7 @@ export class AdapterFilters<T>
     */
    removeBy(callback: (id: any, filter: FilterFn<T>, weight: number) => boolean)
    {
-      const length = this.#filtersAdapter.filters.length;
+      const length = this.#filtersData.filters.length;
 
       if (length === 0) { return; }
 
@@ -249,7 +249,7 @@ export class AdapterFilters<T>
          throw new TypeError(`AdapterFilters error: 'callback' is not a function.`);
       }
 
-      this.#filtersAdapter.filters = this.#filtersAdapter.filters.filter((data) =>
+      this.#filtersData.filters = this.#filtersData.filters.filter((data) =>
       {
          const remove = callback.call(callback, { ...data });
 
@@ -267,7 +267,7 @@ export class AdapterFilters<T>
          return !remove;
       });
 
-      if (length !== this.#filtersAdapter.filters.length) { this.#indexUpdate(); }
+      if (length !== this.#filtersData.filters.length) { this.#indexUpdate(); }
    }
 
    /**
@@ -275,11 +275,11 @@ export class AdapterFilters<T>
     */
    removeById(...ids: any[])
    {
-      const length = this.#filtersAdapter.filters.length;
+      const length = this.#filtersData.filters.length;
 
       if (length === 0) { return; }
 
-      this.#filtersAdapter.filters = this.#filtersAdapter.filters.filter((data) =>
+      this.#filtersData.filters = this.#filtersData.filters.filter((data) =>
       {
          let remove = 0;
 
@@ -299,6 +299,6 @@ export class AdapterFilters<T>
          return !remove; // Swap here to actually remove the item via array filter method.
       });
 
-      if (length !== this.#filtersAdapter.filters.length) { this.#indexUpdate(); }
+      if (length !== this.#filtersData.filters.length) { this.#indexUpdate(); }
    }
 }

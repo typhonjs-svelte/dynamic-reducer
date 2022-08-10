@@ -11,7 +11,7 @@ export class Indexer<T> extends AdapterIndexer<T[], number, T>
     */
    createSortFn(): (a: number, b: number) => number
    {
-      return (a, b) => this.sortAdapter.compareFn(this.hostData[0][a], this.hostData[0][b]);
+      return (a, b) => this.sortData.compareFn(this.hostData[0][a], this.hostData[0][b]);
    }
 
    /**
@@ -29,7 +29,7 @@ export class Indexer<T> extends AdapterIndexer<T[], number, T>
       const array = this.hostData[0];
       if (!array) { return data; }
 
-      const filters = this.filtersAdapter.filters;
+      const filters = this.filtersData.filters;
 
       let include = true;
 
@@ -90,16 +90,16 @@ export class Indexer<T> extends AdapterIndexer<T[], number, T>
       const array = this.hostData[0];
 
       // Clear index if there are no filters and no sort function or the index length doesn't match the item length.
-      if ((this.filtersAdapter.filters.length === 0 && !this.sortAdapter.compareFn) ||
+      if ((this.filtersData.filters.length === 0 && !this.sortData.compareFn) ||
        (this.indexData.index && array?.length !== this.indexData.index.length))
       {
          this.indexData.index = null;
       }
 
       // If there are filters build new index.
-      if (this.filtersAdapter.filters.length > 0) { this.indexData.index = this.reduceImpl(); }
+      if (this.filtersData.filters.length > 0) { this.indexData.index = this.reduceImpl(); }
 
-      if (this.sortAdapter.compareFn && Array.isArray(array))
+      if (this.sortData.compareFn && Array.isArray(array))
       {
          // If there is no index then create one with keys matching host item length.
          if (!this.indexData.index) { this.indexData.index = [...Array(array.length).keys()]; }

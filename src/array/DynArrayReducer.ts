@@ -2,9 +2,9 @@ import {
    AdapterDerived,
    AdapterFilters,
    AdapterSort,
+   DerivedAPI,
    DynReducerUtils,
-   IndexerAPI
-} from '../common/index.js';
+   IndexerAPI }                  from '../common/index.js';
 
 import { Indexer }               from './Indexer.js';
 
@@ -16,8 +16,6 @@ import type {
    FilterFn}                     from '../types.js';
 
 import { DerivedArrayReducer }   from './derived/DerivedArrayReducer.js';
-
-import { DerivedAPI }            from '../common/index.js';
 
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -33,7 +31,7 @@ export class DynArrayReducer<T>
 
    readonly #filters: AdapterFilters<T>;
 
-   readonly #filtersAdapter: { filters: DataFilter<T>[] } = { filters: [] };
+   readonly #filtersData: { filters: DataFilter<T>[] } = { filters: [] };
 
    readonly #index: Indexer<T>;
 
@@ -43,7 +41,7 @@ export class DynArrayReducer<T>
 
    readonly #sort: AdapterSort<T>;
 
-   #sortAdapter: { compareFn: CompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: CompareFn<T> } = { compareFn: null };
 
    #subscriptions = [];
 
@@ -118,14 +116,14 @@ export class DynArrayReducer<T>
       this.#index = new Indexer(this.#array, this.#updateSubscribers.bind(this));
       this.#indexPublicAPI = new IndexerAPI<number, T>(this.#index);
 
-      this.#filters = new AdapterFilters(this.#indexPublicAPI.update, this.#filtersAdapter);
+      this.#filters = new AdapterFilters(this.#indexPublicAPI.update, this.#filtersData);
 
-      this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortAdapter);
+      this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortData);
 
       this.#derived = new AdapterDerived(this.#array, this.#indexPublicAPI, DerivedArrayReducer);
       this.#derivedPublicAPI = new DerivedAPI<T[], number, T>(this.#derived);
 
-      this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter, this.#derived);
+      this.#index.initAdapters(this.#filtersData, this.#sortData, this.#derived);
 
       // Add any filters and sort function defined by DataDynArray.
       if (filters) { this.filters.add(...filters); }

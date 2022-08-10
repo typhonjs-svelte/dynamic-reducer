@@ -17,7 +17,7 @@ export abstract class AdapterIndexer<D, K, T>
 {
    public derivedAdapter: AdapterDerived<D, K, T>
 
-   public filtersAdapter: { filters: DataFilter<T>[] };
+   public filtersData: { filters: DataFilter<T>[] };
 
    public hostData: DataHost<D>;
 
@@ -25,7 +25,7 @@ export abstract class AdapterIndexer<D, K, T>
 
    public indexData: DataIndexer<K, T>;
 
-   public sortAdapter: { compareFn: CompareFn<T> };
+   public sortData: { compareFn: CompareFn<T> };
 
    public sortFn: (a: K, b: K) => number;
 
@@ -51,7 +51,7 @@ export abstract class AdapterIndexer<D, K, T>
    /**
     * @returns Returns whether the index is active.
     */
-   get isActive(): boolean { return this.filtersAdapter.filters.length > 0 || this.sortAdapter.compareFn !== null; }
+   get isActive(): boolean { return this.filtersData.filters.length > 0 || this.sortData.compareFn !== null; }
 
    /**
     * @returns Returns length of reduced index.
@@ -118,19 +118,20 @@ export abstract class AdapterIndexer<D, K, T>
    abstract createSortFn(): (a: K, b: K) => number;
 
    /**
-    * Store associated filter and sort adapters that are constructed after the indexer.
+    * Store associated filter and sort data that are constructed after the indexer.
     *
-    * @param filtersAdapter - Associated AdapterFilters instance.
+    * @param filtersData - Associated AdapterFilters instance.
     *
-    * @param sortAdapter - Associated AdapterSort instance.
+    * @param sortData - Associated AdapterSort instance.
     *
     * @param derivedAdapter - Associated AdapterDerived instance.
     */
-   initAdapters(filtersAdapter: { filters: DataFilter<T>[] }, sortAdapter: { compareFn: CompareFn<T> }, derivedAdapter)
+   initAdapters(filtersData: { filters: DataFilter<T>[] }, sortData: { compareFn: CompareFn<T> },
+    derivedAdapter: AdapterDerived<D, K, T>)
    {
-      this.filtersAdapter = filtersAdapter;
+      this.filtersData = filtersData;
 
-      this.sortAdapter = sortAdapter;
+      this.sortData = sortData;
 
       this.derivedAdapter = derivedAdapter;
 
