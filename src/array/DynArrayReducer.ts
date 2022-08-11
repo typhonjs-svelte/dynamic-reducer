@@ -57,7 +57,7 @@ export class DynArrayReducer<T>
    constructor(data?: Iterable<T>|DataDynArray<T>)
    {
       let dataIterable = void 0;
-      let filters: Iterable<FilterFn<T>|DataFilter<T>> = void 0;
+      let filters: Iterable<FilterFn<T> | DataFilter<T>> = void 0;
       let sort: CompareFn<T> | DataSort<T> = void 0;
 
       if (data === null)
