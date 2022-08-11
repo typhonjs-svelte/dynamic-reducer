@@ -21,7 +21,7 @@ import type {
  */
 export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
 {
-   readonly #array: DataHost<T[]>;
+   #array: DataHost<T[]>;
 
    readonly #derived;
 
@@ -42,6 +42,8 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
    #sortAdapter: { compareFn: CompareFn<T> } = { compareFn: null };
 
    #subscriptions = [];
+
+   #destroyed = false;
 
    /**
     *
@@ -140,6 +142,11 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
    get index(): IndexerAPI<number, T> { return this.#indexPublicAPI; }
 
    /**
+    * Returns whether this derived reducer is destroyed.
+    */
+   get isDestroyed(): boolean { return this.#destroyed; }
+
+   /**
     * @returns Main data / items length or indexed length.
     */
    get length(): number
@@ -180,6 +187,24 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
    }
 
    /**
+    * Removes all derived reducers, subscriptions, and cleans up all resources.
+    */
+   destroy()
+   {
+      this.#destroyed = true;
+
+      // Remove all subscriptions.
+      this.#subscriptions.length = 0;
+
+      this.#derived.destroy();
+      this.#index.destroy();
+      this.#filters.clear();
+      this.#sort.clear();
+
+      this.#array = [null];
+   }
+
+   /**
     * Provides a callback for custom derived reducers to initialize any data / custom configuration. This allows
     * child classes to avoid implementing the constructor.
     *
@@ -196,7 +221,7 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
    {
       const array = this.#array[0];
 
-      if (array === null || array?.length === 0) { return; }
+      if (this.#destroyed || array === null || array?.length === 0) { return; }
 
       if (this.#index.isActive)
       {

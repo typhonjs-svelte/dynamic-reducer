@@ -84,6 +84,8 @@ export class Indexer<T> extends AdapterIndexer<T[], number, T>
     */
    update(force: boolean = false)
    {
+      if (this.destroyed) { return; }
+
       const oldIndex = this.indexData.index;
       const oldHash = this.indexData.hash;
 

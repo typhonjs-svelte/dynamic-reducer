@@ -46,6 +46,8 @@ export class DynArrayReducer<T>
 
    #subscriptions = [];
 
+   #destroyed = false;
+
    /**
     * Initializes DynArrayReducer. Any iterable is supported for initial data. Take note that if `data` is an array it
     * will be used as the host array and not copied. All non-array iterables otherwise create a new array / copy.
@@ -161,6 +163,11 @@ export class DynArrayReducer<T>
    get index(): IndexerAPI<number, T> { return this.#indexPublicAPI; }
 
    /**
+    * Returns whether this instance is destroyed.
+    */
+   get isDestroyed(): boolean { return this.#destroyed; }
+
+   /**
     * Gets the main data / items length.
     *
     * @returns {number} Main data / items length.
@@ -201,6 +208,26 @@ export class DynArrayReducer<T>
 
       // Recalculate index and force an update to any subscribers.
       this.index.update(true);
+   }
+
+   /**
+    * Removes all derived reducers, subscriptions, and cleans up all resources.
+    */
+   destroy()
+   {
+      if (this.#destroyed) { return; }
+
+      this.#destroyed = true;
+
+      // Remove all subscriptions.
+      this.#subscriptions.length = 0;
+
+      this.#derived.destroy();
+      this.#index.destroy();
+      this.#filters.clear();
+      this.#sort.clear();
+
+      this.#array = [null];
    }
 
    /**
@@ -292,7 +319,7 @@ export class DynArrayReducer<T>
    {
       const array = this.#array[0];
 
-      if (array === null || array?.length === 0) { return; }
+      if (this.#destroyed || array === null || array?.length === 0) { return; }
 
       if (this.#index.isActive)
       {

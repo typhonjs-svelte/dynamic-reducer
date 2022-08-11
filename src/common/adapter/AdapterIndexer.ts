@@ -28,6 +28,8 @@ export abstract class AdapterIndexer<D, K, T>
 
    public sortFn: (a: K, b: K) => number;
 
+   public destroyed = false;
+
    /**
     *
     * @param hostData -
@@ -113,6 +115,21 @@ export abstract class AdapterIndexer<D, K, T>
       {
          this.hostUpdate();
       }
+   }
+
+   /**
+    * Destroys all resources.
+    */
+   destroy()
+   {
+      if (this.destroyed) { return; }
+
+      this.indexData.index = null;
+      this.indexData.hash = null;
+      this.indexData.reversed = null;
+      this.indexData.parent = null;
+
+      this.destroyed = true;
    }
 
    /**

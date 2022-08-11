@@ -14,13 +14,15 @@ import type { IndexerAPI } from '../api/IndexerAPI.js';
  */
 export class AdapterDerived<D, K, T>
 {
-   readonly #hostData: DataHost<D>;
+   #hostData: DataHost<D>;
 
    readonly #DerivedReducerCtor: IDerivedReducerCtor<T>;
 
-   readonly #parentIndex: IndexerAPI<K, T>;
+   #parentIndex: IndexerAPI<K, T>;
 
    #derived: Map<string, IDerivedReducer<D, K, T>> = new Map();
+
+   #destroyed = false;
 
    /**
     * @param hostData -
@@ -47,6 +49,8 @@ export class AdapterDerived<D, K, T>
     */
    create(options: OptionsDerivedCreate<T>): IDerivedReducer<D, K, T>
    {
+      if (this.#destroyed) { throw Error(`AdapterDerived.create error: this instance has been destroyed.`); }
+
       let name: string;
 
       let rest: DataDerivedOptions<T> = {};
@@ -90,13 +94,46 @@ export class AdapterDerived<D, K, T>
    }
 
    /**
-    * Deletes and destroys a derived reducer.
+    * Removes all derived reducers and associated subscriptions.
+    */
+   clear()
+   {
+      if (this.#destroyed) { return; }
+
+      for (const reducer of this.#derived.values()) { reducer.destroy(); }
+
+      this.#derived.clear();
+   }
+
+   /**
+    * Deletes and destroys a derived reducer by name.
     *
     * @param name - Name of the derived reducer.
     */
    delete(name: string): boolean
    {
+      if (this.#destroyed) { throw Error(`AdapterDerived.delete error: this instance has been destroyed.`); }
+
+      const reducer = this.#derived.get(name);
+
+      if (reducer) { reducer.destroy(); }
+
       return this.#derived.delete(name);
+   }
+
+   /**
+    * Removes all derived reducers, subscriptions, and cleans up all resources.
+    */
+   destroy()
+   {
+      if (this.#destroyed) { return; }
+
+      this.clear();
+
+      this.#hostData = [null];
+      this.#parentIndex = null;
+
+      this.#destroyed = true;
    }
 
    /**
@@ -106,6 +143,8 @@ export class AdapterDerived<D, K, T>
     */
    get(name: string): IDerivedReducer<D, K, T>
    {
+      if (this.#destroyed) { throw Error(`AdapterDerived.get error: this instance has been destroyed.`); }
+
       return this.#derived.get(name);
    }
 
@@ -116,6 +155,9 @@ export class AdapterDerived<D, K, T>
     */
    update(force: boolean = false)
    {
+      /* c8 ignore next */
+      if (this.#destroyed) { throw Error(`AdapterDerived.update error: this instance has been destroyed.`); }
+
       for (const reducer of this.#derived.values()) { reducer.index.update(force); }
    }
 }

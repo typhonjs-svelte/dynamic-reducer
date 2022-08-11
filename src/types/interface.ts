@@ -46,6 +46,11 @@ export interface IDerivedReducer<D, K, T>
     get index(): IndexerAPI<K, T>;
 
     /**
+     * Returns whether this derived reducer is destroyed.
+     */
+    get isDestroyed(): boolean;
+
+    /**
      * @returns Main data / items length or indexed length.
      */
     get length(): number;
@@ -66,6 +71,11 @@ export interface IDerivedReducer<D, K, T>
      * @param reversed - New reversed state.
      */
     set reversed(reversed: boolean);
+
+    /**
+     * Removes all derived reducers, subscriptions, and cleans up all resources.
+     */
+    destroy();
 
     /**
      * Subscribe to this IDerivedReducer.
