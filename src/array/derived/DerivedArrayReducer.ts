@@ -63,6 +63,9 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
       this.#derivedPublicAPI = new DerivedAPI<T[], number, T>(this.#derived);
 
       this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter, this.#derived);
+
+      // Invoke an custom initialization for child classes.
+      this.initialize();
    }
 
    /**
@@ -132,6 +135,14 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
       // Recalculate index and force an update to any subscribers.
       this.index.update(true);
    }
+
+   /**
+    * Provides a callback for custom derived reducers to initialize any data / custom configuration. This allows
+    * child classes to avoid implementing the constructor.
+    *
+    * @protected
+    */
+   initialize() {}
 
    /**
     * Provides an iterator for data stored in DerivedArrayReducer.
