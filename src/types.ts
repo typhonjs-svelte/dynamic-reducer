@@ -71,17 +71,17 @@ export interface IDerivedReducer<D, K, T>
 
 export type DataDynArray<T> = {
     /**
-     * -
+     * Initial data iterable list.
      */
     data?: Iterable<T>;
     /**
-     * -
+     * Iterable list of filters.
      */
     filters?: Iterable<FilterFn<T> | DataFilter<T>>;
     /**
-     * -
+     * Compare function.
      */
-    sort?: CompareFn<T>;
+    sort?: CompareFn<T> | DataSort<T>;
 };
 
 export type DataDynMap<K, T> = {
@@ -96,7 +96,7 @@ export type DataDynMap<K, T> = {
     /**
      * -
      */
-    sort?: CompareFn<T>;
+    sort?: CompareFn<T> | DataSort<T>;
 };
 
 export type DataFilter<T> = {
@@ -141,10 +141,6 @@ export type DataIndexer<K, T> = {
 };
 
 export type DataSort<T> = {
-    /**
-     * - An ID associated with this filter. Can be used to remove the filter.
-     */
-    id?: any;
     /**
      * - A callback function that compares two values.
      */
@@ -192,15 +188,18 @@ export type DataDerived<T> = {
      * -
      */
     ctor?: IDerivedReducerCtor<T>;
+} & DataDerivedOptions<T>;
+
+export type DataDerivedOptions<T> = {
     /**
-     * -
+     * Iterable list of filters.
      */
-    filters?: Iterable<FilterFn<T>>;
+    filters?: Iterable<FilterFn<T> | DataFilter<T>>;
     /**
-     * -
+     * Compare function.
      */
-    sort?: CompareFn<T>;
-};
+    sort?: CompareFn<T> | DataSort<T>;
+}
 
 /**
  * -
