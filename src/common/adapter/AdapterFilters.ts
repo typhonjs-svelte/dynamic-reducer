@@ -46,7 +46,7 @@ export class AdapterFilters<T>
 
       this.#filtersData = filtersAdapter;
 
-      Object.seal(this);
+      Object.freeze(this);
    }
 
    /**

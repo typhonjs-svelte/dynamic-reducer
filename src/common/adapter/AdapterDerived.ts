@@ -36,6 +36,8 @@ export class AdapterDerived<D, K, T>
       this.#parentIndex = parentIndex;
 
       this.#DerivedReducerCtor = DerivedReducerCtor;
+
+      Object.freeze(this);
    }
 
    /**

@@ -21,7 +21,7 @@ export class AdapterSort<T>
 
       this.#sortData = sortData;
 
-      Object.seal(this);
+      Object.freeze(this);
    }
 
    clear()
