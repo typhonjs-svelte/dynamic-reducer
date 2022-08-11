@@ -60,6 +60,28 @@ export function run({ Module, chai })
             assert.equal(dar.data, array, 'data (getter) returns same array');
          });
 
+         it(`destroy`, () =>
+         {
+            const dar = createReducer([1, 2]);
+            const dr = dar.derived.create('test');
+
+            assert.deepEqual([...dr], [1, 2], 'correct initial data');
+
+            assert.isFalse(dar.isDestroyed);
+            assert.isFalse(dr.isDestroyed);
+
+            dar.destroy();
+
+            assert.isTrue(dar.isDestroyed);
+            assert.isTrue(dr.isDestroyed);
+
+            assert.deepEqual([...dar], [], 'no data');
+            assert.deepEqual([...dr], [], 'no data');
+
+            // Invoke destroy again for early out coverage.
+            dar.destroy();
+         });
+
          it(`length (getter)`, () =>
          {
             const dar = createReducer([1, 2]);
@@ -599,7 +621,28 @@ export function run({ Module, chai })
 
             assert.isFunction(dr.derived.create);
             assert.isFunction(dr.derived.delete);
+            assert.isFunction(dr.derived.destroy);
             assert.isFunction(dr.derived.get);
+         });
+
+         it(`derived (clear)`, () =>
+         {
+            const dar = createReducer([1, 2]);
+            const dr = dar.derived.create('test');
+
+            assert.deepEqual([...dr], [1, 2], 'correct initial data');
+
+            assert.isFalse(dr.isDestroyed);
+
+            dar.derived.clear();
+
+            assert.isTrue(dr.isDestroyed);
+
+            assert.deepEqual([...dr], [], 'no data');
+
+            // Can create a new derived instance after clearing.
+            const dr2 = dar.derived.create('test');
+            assert.deepEqual([...dr2], [1, 2], 'correct initial data');
          });
 
          it(`Extended prototype is valid (create / get / delete)`, () =>

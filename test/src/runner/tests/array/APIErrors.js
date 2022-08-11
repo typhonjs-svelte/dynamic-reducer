@@ -258,6 +258,26 @@ export function run({ Module, chai })
             expect(() => dr.reversed = null).to.throw(Error,
              `DerivedArrayReducer.reversed error: 'reversed' is not a boolean.`);
          });
+
+         it(`destroy - verify all thrown errors.`, () =>
+         {
+            const dar = createReducer();
+            const dr = dar.derived.create('test');
+
+            dr.destroy();
+
+            expect(() => dr.derived.clear()).to.not.throw(Error);
+            expect(() => dr.derived.destroy()).to.not.throw(Error);
+
+            expect(() => dr.derived.create('dummy')).to.throw(Error,
+             `AdapterDerived.create error: this instance has been destroyed.`);
+
+            expect(() => dr.derived.delete('dummy')).to.throw(Error,
+             `AdapterDerived.delete error: this instance has been destroyed.`);
+
+            expect(() => dr.derived.get('dummy')).to.throw(Error,
+             `AdapterDerived.get error: this instance has been destroyed.`);
+         });
       });
    });
 }
