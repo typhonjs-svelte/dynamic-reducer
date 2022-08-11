@@ -11,6 +11,8 @@ import type {
 import type { AdapterDerived }   from './AdapterDerived.js';
 
 /**
+ * Provides construction and management of indexed data when there are parent indexes or filter / sort functions
+ * applied.
  */
 export abstract class AdapterIndexer<D, K, T>
 {
@@ -31,14 +33,13 @@ export abstract class AdapterIndexer<D, K, T>
    public destroyed = false;
 
    /**
+    * @param hostData - Hosted data structure.
     *
-    * @param hostData -
+    * @param hostUpdate - Host update function invoked on index updates.
     *
-    * @param hostUpdate -
+    * @param [parentIndexer] - Any associated parent index API.
     *
-    * @param [parentIndexer] -
-    *
-    * @returns Indexer instance and public API.
+    * @returns Indexer adapter instance.
     */
    constructor(hostData: DataHost<D>, hostUpdate: Function, parentIndexer?: IndexerAPI<K, T>)
    {
@@ -74,7 +75,7 @@ export abstract class AdapterIndexer<D, K, T>
    /* c8 ignore end */
 
    /**
-    * @param reversed -
+    * @param reversed - New reversed state.
     */
    set reversed(reversed: boolean) { this.indexData.reversed = reversed; }
 
@@ -118,6 +119,11 @@ export abstract class AdapterIndexer<D, K, T>
    }
 
    /**
+    * @returns Sort function adapting host data.
+    */
+   abstract createSortFn(): (a: K, b: K) => number;
+
+   /**
     * Destroys all resources.
     */
    destroy()
@@ -131,11 +137,6 @@ export abstract class AdapterIndexer<D, K, T>
 
       this.destroyed = true;
    }
-
-   /**
-    * @returns Sort function adapting host data.
-    */
-   abstract createSortFn(): (a: K, b: K) => number;
 
    /**
     * Store associated filter and sort data that are constructed after the indexer.
@@ -158,5 +159,10 @@ export abstract class AdapterIndexer<D, K, T>
       this.sortFn = this.createSortFn();
    }
 
+   /**
+    * Handles updating the index in child implementation specific to the backing data structure.
+    *
+    * @param [force] - Force an update to any subscribers.
+    */
    abstract update(force: boolean): void;
 }

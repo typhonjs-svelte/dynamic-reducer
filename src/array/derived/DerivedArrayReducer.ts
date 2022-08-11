@@ -18,6 +18,7 @@ import type {
    FilterFn }        from '../../types/index.js';
 
 /**
+ * Provides the base implementation derived reducer for arrays / DynArrayReducer.
  */
 export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
 {
@@ -29,7 +30,7 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
 
    readonly #filters: AdapterFilters<T>;
 
-   readonly #filtersAdapter: { filters: DataFilter<T>[] } = { filters: [] };
+   readonly #filtersData: { filters: DataFilter<T>[] } = { filters: [] };
 
    readonly #index: Indexer<T>;
 
@@ -39,14 +40,13 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
 
    readonly #sort: AdapterSort<T>;
 
-   #sortAdapter: { compareFn: CompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: CompareFn<T> } = { compareFn: null };
 
    #subscriptions = [];
 
    #destroyed = false;
 
    /**
-    *
     * @param array - Data host array.
     *
     * @param parentIndex - Parent indexer.
@@ -60,14 +60,14 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
       this.#index = new Indexer(this.#array, this.#updateSubscribers.bind(this), parentIndex);
       this.#indexPublicAPI = new IndexerAPI<number, T>(this.#index);
 
-      this.#filters = new AdapterFilters(this.#indexPublicAPI.update, this.#filtersAdapter);
+      this.#filters = new AdapterFilters(this.#indexPublicAPI.update, this.#filtersData);
 
-      this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortAdapter);
+      this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortData);
 
       this.#derived = new AdapterDerived(this.#array, this.#indexPublicAPI, DerivedArrayReducer);
       this.#derivedPublicAPI = new DerivedAPI<T[], number, T>(this.#derived);
 
-      this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter, this.#derived);
+      this.#index.initAdapters(this.#filtersData, this.#sortData, this.#derived);
 
       let filters: Iterable<FilterFn<T>|DataFilter<T>> = void 0;
       let sort: CompareFn<T> | DataSort<T> = void 0;
@@ -264,7 +264,7 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
    }
 
    /**
-    *
+    * Updates subscribers on changes.
     */
    #updateSubscribers()
    {

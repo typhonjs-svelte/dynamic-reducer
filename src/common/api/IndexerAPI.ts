@@ -1,6 +1,18 @@
 import type { AdapterIndexer }  from '../../common/adapter/AdapterIndexer.js';
 import type { DataIndexer }     from '../../types/index.js';
 
+/**
+ * Provides the public API for accessing the index API.
+ *
+ * This class forms the public API which is accessible from the `.index` getter in the main reducer implementation.
+ * ```
+ * const dynArray = new DynArrayReducer([...]);
+ * dynArray.index.hash;
+ * dynArray.index.isActive;
+ * dynArray.index.length;
+ * dynArray.index.update(...);
+ * ```
+ */
 export class IndexerAPI<K, T>
 {
     readonly #indexData: DataIndexer<K, T>

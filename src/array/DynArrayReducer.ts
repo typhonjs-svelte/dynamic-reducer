@@ -282,6 +282,7 @@ export class DynArrayReducer<T>
    }
 
    /**
+    * Add a subscriber to this DynArrayReducer instance.
     *
     * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
     *
@@ -302,7 +303,7 @@ export class DynArrayReducer<T>
    }
 
    /**
-    *
+    * Updates subscribers on changes.
     */
    #updateSubscribers()
    {

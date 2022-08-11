@@ -1,3 +1,7 @@
+import type {
+   DataFilter,
+   FilterFn }  from '../../types/index.js';
+
 /**
  * Provides the storage and sequencing of managed filters. Each filter added may be a bespoke function or a
  * {@link DataFilter} object containing an `id`, `filter`, and `weight` attributes; `filter` is the only required
@@ -12,7 +16,7 @@
  * lower weight; an example of this is a keyword / name that will filter out many entries making any further filtering
  * faster. If no weight is specified the default of '1' is assigned and it is appended to the end of the filters list.
  *
- * This class forms the public API which is accessible from the `.filters` getter in the main DynArrayReducer instance.
+ * This class forms the public API which is accessible from the `.filters` getter in the main reducer implementation.
  * ```
  * const dynArray = new DynArrayReducer([...]);
  * dynArray.filters.add(...);
@@ -23,10 +27,6 @@
  * dynArray.filters.removeById(...);
  * ```
  */
-import type {
-   DataFilter,
-   FilterFn }  from '../../types/index.js';
-
 export class AdapterFilters<T>
 {
    #filtersData: { filters: DataFilter<T>[] };

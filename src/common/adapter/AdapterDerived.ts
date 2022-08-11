@@ -25,11 +25,11 @@ export class AdapterDerived<D, K, T>
    #destroyed = false;
 
    /**
-    * @param hostData -
+    * @param hostData - Hosted data structure.
     *
-    * @param parentIndex -
+    * @param parentIndex - Any associated parent index API.
     *
-    * @param DerivedReducerCtor -
+    * @param DerivedReducerCtor - The default derived reducer constructor function.
     */
    constructor(hostData: DataHost<D>, parentIndex: IndexerAPI<K, T>, DerivedReducerCtor: IDerivedReducerCtor<T>)
    {
@@ -43,7 +43,9 @@ export class AdapterDerived<D, K, T>
    }
 
    /**
-    * @param options -
+    * Creates a new derived reducer.
+    *
+    * @param options - Options defining the new derived reducer.
     *
     * @returns Newly created derived reducer.
     */

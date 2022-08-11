@@ -35,6 +35,7 @@ export class Indexer<T> extends AdapterIndexer<T[], number, T>
 
       const parentIndex = this.indexData.parent;
 
+      // Source index data is coming from an active parent index.
       if (DynReducerUtils.isIterable(parentIndex) && parentIndex.isActive)
       {
          for (const adjustedIndex of parentIndex)
