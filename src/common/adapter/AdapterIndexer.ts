@@ -94,7 +94,7 @@ export abstract class AdapterIndexer<D, K, T>
     *
     * @param [force=false] - When true forces an update to subscribers.
     */
-   calcHashUpdate(oldIndex: K[], oldHash: number|null, force: boolean = false)
+   calcHashUpdate(oldIndex: K[], oldHash: number | null, force: boolean = false)
    {
       // Use force if a boolean otherwise default to false.
       const actualForce = typeof force === 'boolean' ? force : /* c8 ignore next */ false;
