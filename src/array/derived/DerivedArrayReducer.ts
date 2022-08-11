@@ -98,12 +98,10 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
     */
    get length(): number
    {
-      const parentIndexer = this.#index.indexData?.parent;
       const array = this.#array[0];
 
       return this.#index.isActive ? this.index.length :
-       parentIndexer && parentIndexer.isActive ? parentIndexer.length :
-        array ? array.length : 0;
+       array ? array.length : 0;
    }
 
    /**
