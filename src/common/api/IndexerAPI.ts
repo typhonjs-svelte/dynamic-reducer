@@ -7,8 +7,8 @@ import type { DataIndexer }     from '../../types/index.js';
  * This class forms the public API which is accessible from the `.index` getter in the main reducer implementation.
  * ```
  * const dynArray = new DynArrayReducer([...]);
+ * dynArray.index.active;
  * dynArray.index.hash;
- * dynArray.index.isActive;
  * dynArray.index.length;
  * dynArray.index.update(...);
  * ```
@@ -20,7 +20,7 @@ export class IndexerAPI<K, T>
     /**
      * Provides a getter to determine if the index is active.
      */
-    readonly isActive: boolean;
+    readonly active: boolean;
 
     /**
      * Provides length of reduced / indexed elements.
@@ -40,9 +40,9 @@ export class IndexerAPI<K, T>
 
         this.update = adapterIndexer.update.bind(adapterIndexer);
 
-        // Defines getters on the public API to get the index hash, isActive state, and index length.
+        // Defines getters on the public API to get the index hash, active state, and index length.
         Object.defineProperties(this, {
-           isActive: { get: () => adapterIndexer.isActive },
+           active: { get: () => adapterIndexer.active },
            length: { get: () => adapterIndexer.length }
         });
 

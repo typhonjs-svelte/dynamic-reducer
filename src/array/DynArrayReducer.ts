@@ -165,7 +165,7 @@ export class DynArrayReducer<T>
    /**
     * Returns whether this instance is destroyed.
     */
-   get isDestroyed(): boolean { return this.#destroyed; }
+   get destroyed(): boolean { return this.#destroyed; }
 
    /**
     * Gets the main data / items length.
@@ -175,7 +175,7 @@ export class DynArrayReducer<T>
    get length()
    {
       const array = this.#array[0];
-      return this.#index.isActive ? this.#indexPublicAPI.length :
+      return this.#index.active ? this.#indexPublicAPI.length :
        array ? array.length : 0;
    }
 
@@ -322,7 +322,7 @@ export class DynArrayReducer<T>
 
       if (this.#destroyed || array === null || array?.length === 0) { return; }
 
-      if (this.#index.isActive)
+      if (this.#index.active)
       {
          for (const entry of this.index) { yield array[entry]; }
       }

@@ -48,7 +48,7 @@ export interface IDerivedReducer<D, K, T>
     /**
      * Returns whether this derived reducer is destroyed.
      */
-    get isDestroyed(): boolean;
+    get destroyed(): boolean;
 
     /**
      * @returns Main data / items length or indexed length.

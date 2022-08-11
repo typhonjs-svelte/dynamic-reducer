@@ -53,10 +53,10 @@ export abstract class AdapterIndexer<D, K, T>
    /**
     * @returns Returns whether the index is active.
     */
-   get isActive(): boolean
+   get active(): boolean
    {
       return this.filtersData.filters.length > 0 || this.sortData.compareFn !== null ||
-       this.indexData.parent?.isActive === true;
+       this.indexData.parent?.active === true;
    }
 
    /**

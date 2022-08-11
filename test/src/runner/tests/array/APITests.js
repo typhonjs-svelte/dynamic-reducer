@@ -67,13 +67,13 @@ export function run({ Module, chai })
 
             assert.deepEqual([...dr], [1, 2], 'correct initial data');
 
-            assert.isFalse(dar.isDestroyed);
-            assert.isFalse(dr.isDestroyed);
+            assert.isFalse(dar.destroyed);
+            assert.isFalse(dr.destroyed);
 
             dar.destroy();
 
-            assert.isTrue(dar.isDestroyed);
-            assert.isTrue(dr.isDestroyed);
+            assert.isTrue(dar.destroyed);
+            assert.isTrue(dr.destroyed);
 
             assert.deepEqual([...dar], [], 'no data');
             assert.deepEqual([...dr], [], 'no data');
@@ -632,11 +632,11 @@ export function run({ Module, chai })
 
             assert.deepEqual([...dr], [1, 2], 'correct initial data');
 
-            assert.isFalse(dr.isDestroyed);
+            assert.isFalse(dr.destroyed);
 
             dar.derived.clear();
 
-            assert.isTrue(dr.isDestroyed);
+            assert.isTrue(dr.destroyed);
 
             assert.deepEqual([...dr], [], 'no data');
 
@@ -891,19 +891,19 @@ export function run({ Module, chai })
             assert.isNull(dar.index.hash);
          });
 
-         it(`isActive is false / sort set & isActive is true / reset & isActive is false`, () =>
+         it(`active is false / sort set & active is true / reset & active is false`, () =>
          {
             const dar = createReducer([1, 2]);
 
-            assert.isFalse(dar.index.isActive);
+            assert.isFalse(dar.index.active);
 
             dar.sort.set((a, b) => b - a);
 
-            assert.isTrue(dar.index.isActive);
+            assert.isTrue(dar.index.active);
 
             dar.sort.clear();
 
-            assert.isFalse(dar.index.isActive);
+            assert.isFalse(dar.index.active);
          });
 
          it(`length when index defined and reset`, () =>

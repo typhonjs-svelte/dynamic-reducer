@@ -144,7 +144,7 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
    /**
     * Returns whether this derived reducer is destroyed.
     */
-   get isDestroyed(): boolean { return this.#destroyed; }
+   get destroyed(): boolean { return this.#destroyed; }
 
    /**
     * @returns Main data / items length or indexed length.
@@ -153,7 +153,7 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
    {
       const array = this.#array[0];
 
-      return this.#index.isActive ? this.index.length :
+      return this.#index.active ? this.index.length :
        array ? array.length : 0;
    }
 
@@ -223,7 +223,7 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
 
       if (this.#destroyed || array === null || array?.length === 0) { return; }
 
-      if (this.#index.isActive)
+      if (this.#index.active)
       {
          for (const entry of this.index) { yield array[entry]; }
       }

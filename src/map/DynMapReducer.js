@@ -288,7 +288,7 @@
 //
 //       if (map === null || map?.size === 0) { return; }
 //
-//       if (this.#index.isActive())
+//       if (this.#index.active())
 //       {
 //          for (const key of this.index) { yield map.get(key); }
 //       }
