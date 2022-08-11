@@ -13,7 +13,8 @@ import type {
    DataDynArray,
    DataFilter,
    DataHost,
-   FilterFn}                     from '../types.js';
+   DataSort,
+   FilterFn }                    from '../types.js';
 
 import { DerivedArrayReducer }   from './derived/DerivedArrayReducer.js';
 
@@ -54,10 +55,8 @@ export class DynArrayReducer<T>
    constructor(data?: Iterable<T>|DataDynArray<T>)
    {
       let dataIterable = void 0;
-
       let filters: Iterable<FilterFn<T>|DataFilter<T>> = void 0;
-
-      let sort = void 0;
+      let sort: CompareFn<T> | DataSort<T> = void 0;
 
       if (data === null)
       {
@@ -100,9 +99,14 @@ export class DynArrayReducer<T>
             {
                sort = data.sort;
             }
+            else if (typeof data.sort === 'object' && data.sort !== null)
+            {
+               sort = data.sort;
+            }
             else
             {
-               throw new TypeError(`DynArrayReducer error (DataDynArray): 'sort' attribute is not a function.`);
+               throw new TypeError(
+                `DynArrayReducer error (DataDynArray): 'sort' attribute is not a function or object.`);
             }
          }
       }

@@ -1,18 +1,22 @@
 import {
    AdapterDerived,
    AdapterFilters,
-   AdapterSort, DerivedAPI,
-   IndexerAPI
-} from '../../common/index.js';
+   AdapterSort,
+   DerivedAPI,
+   DynReducerUtils,
+   IndexerAPI }         from '../../common/index.js';
 
 import { Indexer }      from '../Indexer.js';
 
 import type {
    IDerivedReducer,
    CompareFn,
+   DataDerivedOptions,
    DataFilter,
-   DataHost
-} from "../../types.js";
+   DataHost,
+   DataSort,
+   FilterFn
+} from '../../types.js';
 
 /**
  */
@@ -46,9 +50,9 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
     *
     * @param parentIndex - Parent indexer.
     *
-    * @param options -
+    * @param options - Any filters and sort functions to apply.
     */
-   constructor(array: DataHost<T[]>, parentIndex: IndexerAPI<number, T>, options: object)
+   constructor(array: DataHost<T[]>, parentIndex: IndexerAPI<number, T>, options: DataDerivedOptions<T>)
    {
       this.#array = array;
 
@@ -63,6 +67,46 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
       this.#derivedPublicAPI = new DerivedAPI<T[], number, T>(this.#derived);
 
       this.#index.initAdapters(this.#filtersAdapter, this.#sortAdapter, this.#derived);
+
+      let filters: Iterable<FilterFn<T>|DataFilter<T>> = void 0;
+      let sort: CompareFn<T> | DataSort<T> = void 0;
+
+      if (options !== void 0 && ('filters' in options || 'sort' in options))
+      {
+         if (options.filters !== void 0)
+         {
+            if (DynReducerUtils.isIterable(options.filters))
+            {
+               filters = options.filters;
+            }
+            else
+            {
+               throw new TypeError(
+                `DerivedArrayReducer error (DataDerivedOptions): 'filters' attribute is not iterable.`);
+            }
+         }
+
+         if (options.sort !== void 0)
+         {
+            if (typeof options.sort === 'function')
+            {
+               sort = options.sort;
+            }
+            else if (typeof options.sort === 'object' && options.sort !== null)
+            {
+               sort = options.sort;
+            }
+            else
+            {
+               throw new TypeError(
+                `DerivedArrayReducer error (DataDerivedOptions): 'sort' attribute is not a function or object.`);
+            }
+         }
+      }
+
+      // Add any filters and sort function defined by DataDynArray.
+      if (filters) { this.filters.add(...filters); }
+      if (sort) { this.sort.set(sort); }
 
       // Invoke an custom initialization for child classes.
       this.initialize();

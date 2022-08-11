@@ -3,6 +3,7 @@ import { DynReducerUtils } from '../DynReducerUtils.js';
 import type {
    IDerivedReducer,
    IDerivedReducerCtor,
+   DataDerivedOptions,
    DataHost,
    OptionsDerivedCreate }  from '../../types.js';
 
@@ -46,7 +47,7 @@ export class AdapterDerived<D, K, T>
    {
       let name: string;
 
-      let rest: object = {};
+      let rest: DataDerivedOptions<T> = {};
 
       let ctor: IDerivedReducerCtor<T>;
 
@@ -79,10 +80,6 @@ export class AdapterDerived<D, K, T>
 
       if (typeof name !== 'string') { throw new TypeError(`AdapterDerived.create error: 'name' is not a string.`); }
 
-console.log(`! AdapterDerived.create - name: `, name);
-console.log(`! AdapterDerived.create - rest: `, rest);
-console.log(`! AdapterDerived.create - ctor: `, ctor);
-
       const derivedReducer = new ctor(this.#hostData, this.#parentIndex, rest);
 
       this.#derived.set(name, derivedReducer);
@@ -90,21 +87,21 @@ console.log(`! AdapterDerived.create - ctor: `, ctor);
       return derivedReducer;
    }
 
-    /**
-     * Deletes and destroys a derived reducer.
-     *
-     * @param name - Name of the derived reducer.
-     */
+   /**
+    * Deletes and destroys a derived reducer.
+    *
+    * @param name - Name of the derived reducer.
+    */
    delete(name: string): boolean
    {
       return this.#derived.delete(name);
    }
 
-    /**
-     * Returns an existing derived reducer.
-     *
-     * @param name - Name of derived reducer.
-     */
+   /**
+    * Returns an existing derived reducer.
+    *
+    * @param name - Name of derived reducer.
+    */
    get(name: string): IDerivedReducer<D, K, T>
    {
       return this.#derived.get(name);
@@ -117,9 +114,6 @@ console.log(`! AdapterDerived.create - ctor: `, ctor);
     */
    update(force: boolean = false)
    {
-      for (const reducer of this.#derived.values())
-      {
-         reducer.index.update(force);
-      }
+      for (const reducer of this.#derived.values()) { reducer.index.update(force); }
    }
 }
