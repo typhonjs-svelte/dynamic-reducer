@@ -162,6 +162,17 @@ export function run({ Module, chai })
             assert.deepEqual([...dar], [3, 2]);
          });
 
+         it(`set from DynData w/ DataFilter & DataSort`, () =>
+         {
+            const dar = createReducer({
+               data: [1, 3, 2],
+               filters: [{ filter: (val) => val > 1 }],
+               sort: { compare: (a, b) => b - a }
+            });
+
+            assert.deepEqual([...dar], [3, 2]);
+         });
+
          it(`set from DynData / iterable`, () =>
          {
             const dar = createReducer({
@@ -605,6 +616,42 @@ export function run({ Module, chai })
             assert.instanceOf(dr2, ExtendedArrayReducer, 'is extended reducer');
          });
 
+         it(`added filter and sort in create method`, () =>
+         {
+            const dar = createReducer([1, 2, 3]);
+            const dr = dar.derived.create({
+               name: 'test',
+               filters: [(entry) => entry >= 2],
+               sort: (a, b) => b - a
+            });
+
+            assert.deepEqual([...dar], [1, 2, 3], 'correct initial data');
+            assert.deepEqual([...dr], [3, 2], 'correct derived filter sorted data');
+
+            dr.sort.clear();
+            dr.filters.clear();
+
+            assert.deepEqual([...dr], [1, 2, 3], 'correct original data');
+         });
+
+         it(`added filter and sort in create method with data`, () =>
+         {
+            const dar = createReducer([1, 2, 3]);
+            const dr = dar.derived.create({
+               name: 'test',
+               filters: [{ id: 'test', filter: (entry) => entry >= 2, weight: 0.5 }],
+               sort: { compare: (a, b) => b - a }
+            });
+
+            assert.deepEqual([...dar], [1, 2, 3], 'correct initial data');
+            assert.deepEqual([...dr], [3, 2], 'correct derived filter sorted data');
+
+            dr.sort.clear();
+            dr.filters.clear();
+
+            assert.deepEqual([...dr], [1, 2, 3], 'correct original data');
+         });
+
          it(`added filter with parent index updates correctly + reversed`, () =>
          {
             const dar = createReducer([1, 2, 3]);
@@ -735,37 +782,6 @@ export function run({ Module, chai })
 
             unsubscribe();
          });
-
-         // TODO derived of derived
-         // it(`derived of derived - length with and without index`, () =>
-         // {
-         //    const dar = createReducer([1, 2]);
-         //    const dr = dar.derived.create('test');
-         //    const dr2 = dr.derived.create('test2');
-         //
-         //    assert.equal(dr.length, [...dr].length, 'initial length is correct / no index');
-         //    assert.equal(dr2.length, [...dr2].length, 'initial length is correct / no index');
-         //
-         //    dr.filters.add((entry) => entry >= 2);
-         //
-         //    assert.equal(dr.length, [...dr].length, 'filtered length is correct w/ index');
-         //    assert.equal(dr2.length, [...dr2].length, 'filtered length is correct w/ index');
-         //
-         //    dar.sort.set((a, b) => b - a);
-         //
-         //    assert.equal(dr.length, [...dr].length, 'filtered length is correct w/ parent index');
-         //    assert.equal(dr2.length, [...dr2].length, 'filtered length is correct w/ parent index');
-         //
-         //    dr.filters.clear();
-         //
-         //    assert.equal(dr.length, [...dr].length, 'initial length is correct w/ parent index');
-         //    assert.equal(dr2.length, [...dr2].length, 'initial length is correct w/ parent index');
-         //
-         //    dar.filters.clear();
-         //
-         //    assert.equal(dr.length, [...dr].length, 'initial length is correct without parent index');
-         //    assert.equal(dr2.length, [...dr2].length, 'initial length is correct without parent index');
-         // });
       });
 
       describe(`Indexer`, () =>

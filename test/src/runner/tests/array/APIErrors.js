@@ -60,7 +60,7 @@ export function run({ Module, chai })
          it(`'sort' attribute is not a function`, () =>
          {
             expect(() => new DynArrayReducer({ sort: false })).to.throw(TypeError,
-             `DynArrayReducer error (DataDynArray): 'sort' attribute is not a function.`);
+             `DynArrayReducer error (DataDynArray): 'sort' attribute is not a function or object.`);
          });
       });
 
@@ -202,7 +202,7 @@ export function run({ Module, chai })
 
       describe(`DerivedAPI errors`, () =>
       {
-         it(`create - parameter not conforming - 1`, () =>
+         it(`create - parameter not conforming - wrong type`, () =>
          {
             const dar = createReducer();
 
@@ -210,7 +210,7 @@ export function run({ Module, chai })
              `AdapterDerived.create error: 'options' does not conform to allowed parameters.`);
          });
 
-         it(`create - parameter not conforming - 1`, () =>
+         it(`create - parameter not conforming - wrong class`, () =>
          {
             const dar = createReducer();
 
@@ -218,7 +218,7 @@ export function run({ Module, chai })
              `AdapterDerived.create error: 'options' does not conform to allowed parameters.`);
          });
 
-         it(`create - parameter not conforming - 2`, () =>
+         it(`create - parameter not conforming - incorrect 'name' attribute`, () =>
          {
             const dar = createReducer();
 
@@ -226,12 +226,28 @@ export function run({ Module, chai })
              `AdapterDerived.create error: 'name' is not a string.`);
          });
 
-         it(`create - ctor parameter incorrect prototype`, () =>
+         it(`create - parameter not conforming - incorrect 'ctor' attribute`, () =>
          {
             const dar = createReducer();
 
             expect(() => dar.derived.create({ ctor: false })).to.throw(Error,
              `AdapterDerived.create error: 'ctor' is not a 'DerivedArrayReducer'.`);
+         });
+
+         it(`create - parameter not conforming - incorrect 'filters' attribute`, () =>
+         {
+            const dar = createReducer();
+
+            expect(() => dar.derived.create({ filters: false })).to.throw(Error,
+             `DerivedArrayReducer error (DataDerivedOptions): 'filters' attribute is not iterable.`);
+         });
+
+         it(`create - parameter not conforming - incorrect 'sort' attribute`, () =>
+         {
+            const dar = createReducer();
+
+            expect(() => dar.derived.create({ sort: false })).to.throw(Error,
+             `DerivedArrayReducer error (DataDerivedOptions): 'sort' attribute is not a function or object.`);
          });
 
          it(`derived - wrong reversed setter`, () =>
