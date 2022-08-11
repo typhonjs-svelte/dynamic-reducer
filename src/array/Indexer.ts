@@ -88,6 +88,7 @@ export class Indexer<T> extends AdapterIndexer<T[], number, T>
       const oldHash = this.indexData.hash;
 
       const array = this.hostData[0];
+      const parentIndex = this.indexData.parent;
 
       // Clear index if there are no filters and no sort function or the index length doesn't match the item length.
       if ((this.filtersData.filters.length === 0 && !this.sortData.compareFn) ||
@@ -97,12 +98,24 @@ export class Indexer<T> extends AdapterIndexer<T[], number, T>
       }
 
       // If there are filters build new index.
-      if (this.filtersData.filters.length > 0) { this.indexData.index = this.reduceImpl(); }
+      if (this.filtersData.filters.length > 0)
+      {
+         this.indexData.index = this.reduceImpl();
+      }
+
+      // If the index isn't built yet and there is an active parent index then create it from the parent.
+      if (!this.indexData.index && parentIndex?.isActive)
+      {
+         this.indexData.index = [...parentIndex];
+      }
 
       if (this.sortData.compareFn && Array.isArray(array))
       {
          // If there is no index then create one with keys matching host item length.
-         if (!this.indexData.index) { this.indexData.index = [...Array(array.length).keys()]; }
+         if (!this.indexData.index)
+         {
+            this.indexData.index = [...Array(array.length).keys()];
+         }
 
          this.indexData.index.sort(this.sortFn);
       }
