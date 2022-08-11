@@ -5,7 +5,7 @@ import type {
    IDerivedReducerCtor,
    DataDerivedOptions,
    DataHost,
-   OptionsDerivedCreate }  from '../../types.js';
+   OptionsDerivedCreate }  from '../../types/index.js';
 
 import type { IndexerAPI } from '../api/IndexerAPI.js';
 

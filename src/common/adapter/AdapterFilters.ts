@@ -25,7 +25,7 @@
  */
 import type {
    DataFilter,
-   FilterFn }  from '../../types.js';
+   FilterFn }  from '../../types/index.js';
 
 export class AdapterFilters<T>
 {

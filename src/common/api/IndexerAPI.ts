@@ -1,5 +1,5 @@
 import type { AdapterIndexer }  from '../../common/adapter/AdapterIndexer.js';
-import type { DataIndexer }     from '../../types.js';
+import type { DataIndexer }     from '../../types/index.js';
 
 export class IndexerAPI<K, T>
 {

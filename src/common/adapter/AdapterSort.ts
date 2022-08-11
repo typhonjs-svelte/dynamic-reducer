@@ -1,6 +1,6 @@
 import type {
    CompareFn,
-   DataSort }  from '../../types.js';
+   DataSort }  from '../../types/index.js';
 
 export class AdapterSort<T>
 {

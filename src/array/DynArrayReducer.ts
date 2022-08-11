@@ -14,7 +14,7 @@ import type {
    DataFilter,
    DataHost,
    DataSort,
-   FilterFn }                    from '../types.js';
+   FilterFn }                    from '../types/index.js';
 
 import { DerivedArrayReducer }   from './derived/DerivedArrayReducer.js';
 

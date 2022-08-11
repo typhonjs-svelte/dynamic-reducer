@@ -4,9 +4,9 @@ import {
    AdapterSort,
    DerivedAPI,
    DynReducerUtils,
-   IndexerAPI }         from '../../common/index.js';
+   IndexerAPI }      from '../../common/index.js';
 
-import { Indexer }      from '../Indexer.js';
+import { Indexer }   from '../Indexer.js';
 
 import type {
    IDerivedReducer,
@@ -15,8 +15,7 @@ import type {
    DataFilter,
    DataHost,
    DataSort,
-   FilterFn
-} from '../../types.js';
+   FilterFn }        from '../../types/index.js';
 
 /**
  */

@@ -2,7 +2,7 @@ import type { AdapterDerived }  from '../adapter/AdapterDerived.js';
 
 import type {
     IDerivedReducer,
-    OptionsDerivedCreate }      from '../../types.js';
+    OptionsDerivedCreate }      from '../../types/index.js';
 
 export class DerivedAPI<D, K, T>
 {

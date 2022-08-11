@@ -1,15 +1,14 @@
-import { DynReducerUtils } from '../DynReducerUtils.js';
+import { DynReducerUtils }       from '../DynReducerUtils.js';
 
-import type { IndexerAPI } from '../api/IndexerAPI.js';
+import type { IndexerAPI }       from '../api/IndexerAPI.js';
 
 import type {
    CompareFn,
    DataFilter,
    DataHost,
-   DataIndexer
-} from '../../types.js';
+   DataIndexer }                 from '../../types/index.js';
 
-import type { AdapterDerived } from './AdapterDerived.js';
+import type { AdapterDerived }   from './AdapterDerived.js';
 
 /**
  */

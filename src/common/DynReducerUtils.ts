@@ -1,4 +1,4 @@
-import type { IDerivedReducerCtor } from '../types.js';
+import type { IDerivedReducerCtor } from '../types/index.js';
 
 export class DynReducerUtils
 {
@@ -9,7 +9,7 @@ export class DynReducerUtils
     *
     * @param b - Array B
     *
-    * @returns {boolean} Arrays equal
+    * @returns Arrays are equal.
     */
    static arrayEquals(a: any[], b: any[]): boolean
    {
