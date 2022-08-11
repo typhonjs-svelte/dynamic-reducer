@@ -34,7 +34,7 @@ export class IndexerAPI<K, T>
            length: { get: () => adapterIndexer.length }
         });
 
-        Object.seal(this);
+        Object.freeze(this);
     }
 
     /**
@@ -44,16 +44,6 @@ export class IndexerAPI<K, T>
     {
         return this.#indexData.hash;
     }
-
-    /**
-     * @returns Returns length of reduced / indexed elements.
-     */
-//     get length(): number
-//     {
-// console.log(`! IndexerAPI - length - 0 - Array.isArray(this.#indexData.index): `, Array.isArray(this.#indexData.index))
-// console.log(`! IndexerAPI - length - 1 - this.#indexData.index.length: `, this.#indexData.index?.length)
-//         return Array.isArray(this.#indexData.index) ? this.#indexData.index.length : 0
-//     }
 
     /**
      * Provides an iterator over the index array.
