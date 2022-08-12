@@ -8,7 +8,26 @@
 export function run({ Module, chai })
 {
    const { assert } = chai;
-   const { DynMapReducer } = Module;
+
+   /** @type {import('../../../../../types/index.js').DynMapReducer} */
+   const DynMapReducer = Module.DynMapReducer;
+
+   /** @type {import('../../../../../types/index.js').DerivedMapReducer} */
+   const DerivedMapReducer = Module.DerivedMapReducer;
+
+   /**
+    * Provides a way to create DynArrayReducer with the types applied in the instance returned.
+    *
+    * @template K, T
+    *
+    * @param {Map<K, T> | object}  [data] - Initial data.
+    *
+    * @returns {import('../../../../../types/index.js').DynMapReducer<K, T>} New DynMapReducer instance.
+    */
+   function createReducer(data)
+   {
+      return new DynMapReducer(data);
+   }
 
    describe(`(Map) API Test`, () =>
    {
@@ -16,64 +35,92 @@ export function run({ Module, chai })
       {
          it(`iterator no values`, () =>
          {
-            const dynMap = new DynMapReducer(new Map());
-            assert.deepEqual([...dynMap], []);
+            const dar = createReducer(new Map());
+            assert.deepEqual([...dar], []);
          });
 
-         it(`iterator no values (no backing Map)`, () =>
+         it(`iterator no values (no backing array)`, () =>
          {
-            const dynMap = new DynMapReducer();
-            assert.deepEqual([...dynMap], []);
+            const dar = createReducer();
+            assert.deepEqual([...dar], []);
          });
 
-         it(`iterator no values (no backing Map w/ filter)`, () =>
+         it(`iterator no values (no backing array w/ filter)`, () =>
          {
-            const dynMap = new DynMapReducer();
-            dynMap.filters.add(() => true);
-            assert.deepEqual([...dynMap], []);
-            assert.deepEqual([...dynMap.index], []);
+            const dar = createReducer();
+            dar.filters.add(() => true);
+            assert.deepEqual([...dar], []);
+            assert.deepEqual([...dar.index], []);
          });
 
          it(`data (getter)`, () =>
          {
             const map = new Map([[1, 1], [2, 2]]);
-            const dynMap = new DynMapReducer(map);
-            assert.equal(dynMap.data, map, 'data (getter) returns same Map');
+            const dar = createReducer(map);
+            assert.equal(dar.data, map, 'data (getter) returns same map');
+         });
+
+         it(`destroy`, () =>
+         {
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
+            const dr = dar.derived.create('test');
+
+            assert.deepEqual([...dr], [1, 2], 'correct initial data');
+
+            assert.isFalse(dar.destroyed);
+            assert.isFalse(dr.destroyed);
+
+            dar.destroy();
+
+            assert.isTrue(dar.destroyed);
+            assert.isTrue(dr.destroyed);
+
+            assert.deepEqual([...dar], [], 'no data');
+            assert.deepEqual([...dr], [], 'no data');
+
+            // Invoke destroy again for early out coverage.
+            dar.destroy();
          });
 
          it(`length (getter)`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([[1, 1], [2, 2]]));
-            assert.equal(dynMap.length, 2, 'length (getter) returns 2');
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
+            assert.equal(dar.length, 2, 'length (getter) returns 2');
+            assert.equal(dar.index.length, 0, 'index length (getter) returns 0');
+
+            dar.filters.add((entry) => entry > 1);
+
+            assert.equal(dar.length, 1, 'length (getter) returns 1');
+            assert.equal(dar.index.length, 1, 'index length (getter) returns 1');
          });
 
-         it(`length (getter no map)`, () =>
+         it(`length (getter no array)`, () =>
          {
-            const dynMap = new DynMapReducer();
-            assert.equal(dynMap.length, 0, 'length (getter) returns 0');
+            const dar = createReducer();
+            assert.equal(dar.length, 0, 'length (getter) returns 0');
          });
 
          it(`reversed data (no index)`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([[1, 1], [2, 2]]));
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
-            assert.deepEqual([...dynMap], [1, 2]);
+            assert.deepEqual([...dar], [1, 2]);
 
-            dynMap.reversed = true;
+            dar.reversed = true;
 
-            assert.deepEqual([...dynMap], [2, 1]);
+            assert.deepEqual([...dar], [2, 1]);
 
-            dynMap.reversed = false;
+            dar.reversed = false;
 
-            assert.deepEqual([...dynMap], [1, 2]);
+            assert.deepEqual([...dar], [1, 2]);
          });
 
          it(`setData (update external)`, () =>
          {
             const map = new Map([[1, 1], [2, 2]]);
-            const dynMap = new DynMapReducer(map);
-            dynMap.setData(new Map([[1, 3], [2, 4]]));
-            assert.isTrue(dynMap.data === map, [3, 4], 'internal map is the same as initially set');
+            const dar = createReducer(map);
+            dar.setData(new Map([[3, 3], [4, 4]]));
+            assert.isTrue(dar.data === map, 'internal map is the same as initially set');
             assert.deepEqual([...map.values()], [3, 4], 'setData updates external map');
          });
 
@@ -81,96 +128,76 @@ export function run({ Module, chai })
          {
             const map = new Map([[1, 1], [2, 2]]);
             const map2 = new Map([[3, 3], [4, 4], [5, 5]]);
-            const dynMap = new DynMapReducer(map);
-            dynMap.setData(map2, true);
-            assert.isTrue(dynMap.data === map2, 'setData replaces internal map');
+            const dar = createReducer(map);
+            dar.setData(map2, true);
+            assert.isTrue(dar.data === map2, 'setData replaces internal map');
+         });
+
+         it(`setData (replace external w/ null)`, () =>
+         {
+            const map = new Map([[1, 1], [2, 2]]);
+            const dar = createReducer(map);
+            dar.setData(null, true);
+            assert.isTrue(dar.data === null, 'setData replaces internal map w/ null');
          });
 
          it(`setData (replace external & index updates)`, () =>
          {
             const map = new Map([[1, 1], [2, 2]]);
             const map2 = new Map([[3, 3], [4, 4], [5, 5]]);
-            const dynMap = new DynMapReducer(map);
-            dynMap.filters.add(() => true);
+            const dar = createReducer(map);
+            dar.filters.add(() => true);
 
-            assert.equal(dynMap.index.length, 2, 'initial index length is 2');
+            assert.equal(dar.length, 2, 'main length matches index length is 2');
+            assert.equal(dar.index.length, 2, 'initial index length is 2');
 
-            dynMap.setData(map2, true);
+            dar.setData(map2, true);
 
-            assert.isTrue(dynMap.data === map2, 'setData replaces internal map');
+            assert.isTrue(dar.data === map2, 'setData replaces internal map');
 
-            assert.equal(dynMap.index.length, 3, 'initial index length is 3');
-         });
-
-         it(`setData (replace external & index updates)`, () =>
-         {
-            const map = new Map([[1, 1], [2, 2]]);
-            const map2 = new Map([[3, 3], [4, 4], [5, 5]]);
-            const dynMap = new DynMapReducer(map);
-            dynMap.filters.add(() => true);
-
-            assert.equal(dynMap.index.length, 2, 'initial index length is 2');
-
-            dynMap.setData(map2, true);
-
-            assert.isTrue(dynMap.data === map2, 'setData replaces internal map');
-
-            assert.equal(dynMap.index.length, 3, 'initial index length is 3');
-         });
-
-         it(`setData (update internal / remove data / index updates)`, () =>
-         {
-            const dynMap = new DynMapReducer(new Map([[3, 3], [4, 4], [5, 5]]));
-            dynMap.filters.add(() => true);
-
-            assert.equal(dynMap.index.length, 3, 'initial index length is 3');
-
-            dynMap.setData(new Map([[3, 3], [5, 5]]));
-
-            assert.equal(dynMap.index.length, 2, 'new index length is 2');
-            assert.deepEqual([...dynMap], [3, 5], 'internal data is correct');
+            assert.equal(dar.length, 3, 'main length matches index length is 2');
+            assert.equal(dar.index.length, 3, 'initial index length is 3');
          });
 
          it(`setData (null initial backing; set external; setData null w/ no external modification)`, () =>
          {
             const map = new Map([[1, 1], [2, 2]]);
-            const dynMap = new DynMapReducer();
-            assert.isNull(dynMap.data);
-            dynMap.setData(map);
-            assert.isTrue(dynMap.data === map, [1, 2], 'internal map is the same as initially set');
-            dynMap.setData(null);
-            assert.isNull(dynMap.data);
-            assert.deepEqual([...map.values()], [1, 2], 'setData null does not update external map');
-         });
-
-         it(`setData (null initial backing; set external; setData null w/ replace true)`, () =>
-         {
-            const map = new Map([[1, 1], [2, 2]]);
-            const dynMap = new DynMapReducer();
-            assert.isNull(dynMap.data);
-            dynMap.setData(map);
-            assert.isTrue(dynMap.data === map, [1, 2], 'internal map is the same as initially set');
-            dynMap.setData(null, true);
-            assert.isNull(dynMap.data);
+            const dar = createReducer();
+            assert.isNull(dar.data);
+            dar.setData(map);
+            assert.isTrue(dar.data === map, 'internal map is the same as initially set');
+            dar.setData(null);
+            assert.isNull(dar.data);
             assert.deepEqual([...map.values()], [1, 2], 'setData null does not update external map');
          });
 
          it(`set from DynData`, () =>
          {
-            const dynMap = new DynMapReducer({
+            const dar = createReducer({
                data: new Map([[1, 1], [3, 3], [2, 2]]),
                filters: [(val) => val > 1],
                sort: (a, b) => b - a
             });
 
-            assert.deepEqual([...dynMap], [3, 2]);
+            assert.deepEqual([...dar], [3, 2]);
+         });
+
+         it(`set from DynData w/ DataFilter & DataSort`, () =>
+         {
+            const dar = createReducer({
+               data: new Map([[1, 1], [3, 3], [2, 2]]),
+               filters: [{ filter: (val) => val > 1 }],
+               sort: { compare: (a, b) => b - a }
+            });
+
+            assert.deepEqual([...dar], [3, 2]);
          });
 
          it(`subscribe / notify / unsubscribe`, () =>
          {
             const data = new Map([[1, 1], [2, 2]]);
 
-            const dynMap = new DynMapReducer({
+            const dar = new createReducer({
                data,
                filters: [(val) => val > 1],
                sort: (a, b) => b - a
@@ -180,12 +207,12 @@ export function run({ Module, chai })
 
             assert.equal(callbackSub, 0);
 
-            const unsubscribe = dynMap.subscribe(() => callbackSub++);
+            const unsubscribe = dar.subscribe(() => callbackSub++);
 
             assert.equal(callbackSub, 1);
 
             data.set(3, 3);
-            dynMap.index.update();
+            dar.index.update();
 
             assert.equal(callbackSub, 2);
 
@@ -195,44 +222,60 @@ export function run({ Module, chai })
 
       describe(`AdapterFilter (filters)`, () =>
       {
+         it(`add - no arguments / noop`, () =>
+         {
+            const dar = createReducer();
+
+            dar.filters.add();
+
+            assert.equal(dar.filters.length, 0);
+         });
+
          it(`length (getter)`, () =>
          {
-            const dynMap = new DynMapReducer({ filters: [() => null, () => null] });
-            assert.equal(dynMap.filters.length, 2, 'length (getter) returns 2');
+            const dar = createReducer({ data: new Map([[1, 1], [2, 2]]), filters: [() => null, () => null] });
+            assert.equal(dar.filters.length, 2, 'length (getter) returns 2');
          });
 
          it(`iterator (no filters)`, () =>
          {
-            const dynMap = new DynMapReducer();
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
-            assert.deepEqual([...dynMap.filters], [], 'iterator returns no values');
+            assert.deepEqual([...dar.filters], [], 'iterator returns no values');
          });
 
          it(`iterator (2 values)`, () =>
          {
-            const dynMap = new DynMapReducer({
+            const dar = createReducer({
+               data: new Map([[1, 1], [2, 2]]),
                filters: [{ id: 'a', filter: () => null }, { id: 'b', filter: () => null }]
             });
 
-            assert.deepEqual([...dynMap.filters].map((f) => f.id), ['a', 'b'], 'iterator returns values');
+            assert.deepEqual([...dar.filters].map((f) => f.id), ['a', 'b'], 'iterator returns values');
          });
 
          it(`iterator - add with no id (default void 0 assigned)`, () =>
          {
-            const dynMap = new DynMapReducer({
+            const dar = createReducer({
+               data: new Map([[1, 1], [2, 2]]),
                filters: [{ filter: () => null }, { filter: () => null }]
             });
 
-            assert.deepEqual([...dynMap.filters].map((f) => f.id), [void 0, void 0], 'iterator returns values');
+            assert.deepEqual([...dar.filters].map((f) => f.id), [void 0, void 0], 'iterator returns values');
          });
 
          it(`add - multiple w/ weight`, () =>
          {
-            const dynMap = new DynMapReducer({
-               filters: [{ id: 'c', filter: () => null }, { id: 'a', filter: () => null, weight: 0.1 }, { id: 'b', filter: () => null, weight: 0.5 }]
+            const dar = createReducer({
+               data: new Map(),
+               filters: [
+                  { id: 'c', filter: () => null },
+                  { id: 'a', filter: () => null, weight: 0.1 },
+                  { id: 'b', filter: () => null, weight: 0.5 }
+               ]
             });
 
-            assert.deepEqual([...dynMap.filters].map((f) => ({ id: f.id, weight: f.weight })),
+            assert.deepEqual([...dar.filters].map((f) => ({ id: f.id, weight: f.weight })),
              [{ id: 'a', weight: 0.1 }, { id: 'b', weight: 0.5 }, { id: 'c', weight: 1 }], 'add multiple w/ weight');
          });
 
@@ -240,23 +283,23 @@ export function run({ Module, chai })
          {
             const map = new Map([[1, 1], [2, 2]]);
 
-            const dynMap = new DynMapReducer({
+            const dar = createReducer({
                data: map,
                filters: [(value) => value > 1]
             });
 
-            assert.deepEqual([...dynMap], [2], 'filter excludes 1 from index');
+            assert.deepEqual([...dar], [2], 'filter excludes 1 from index');
 
             // This forces the index to be regenerated.
             map.set(3, 3);
-            dynMap.index.update();
+            dar.index.update();
 
-            assert.deepEqual([...dynMap], [2, 3], 'filter excludes 1 from index');
+            assert.deepEqual([...dar], [2, 3], 'filter excludes 1 from index');
          });
 
          it(`clear w/ unsubscribe`, () =>
          {
-            const dar = new DynMapReducer();
+            const dar = createReducer();
 
             let unsubscribeCalled = false;
 
@@ -272,7 +315,7 @@ export function run({ Module, chai })
 
          it(`remove - no filters added`, () =>
          {
-            const dar = new DynMapReducer();
+            const dar = createReducer();
 
             assert.equal(dar.filters.length, 0);
             dar.filters.remove(() => null);
@@ -281,7 +324,7 @@ export function run({ Module, chai })
 
          it(`remove - exact filter added`, () =>
          {
-            const dar = new DynMapReducer();
+            const dar = createReducer();
 
             const filter = () => null;
 
@@ -293,7 +336,7 @@ export function run({ Module, chai })
 
          it(`remove filter w/ unsubscribe`, () =>
          {
-            const dar = new DynMapReducer();
+            const dar = createReducer();
 
             let unsubscribeCalled = false;
 
@@ -312,7 +355,7 @@ export function run({ Module, chai })
 
          it(`remove filterData`, () =>
          {
-            const dar = new DynMapReducer();
+            const dar = createReducer();
 
             const filterData = { filter: () => null };
 
@@ -327,7 +370,7 @@ export function run({ Module, chai })
 
          it(`remove w/ incorrect filterData (no removal)`, () =>
          {
-            const dar = new DynMapReducer();
+            const dar = createReducer();
 
             dar.filters.add(() => null);
 
@@ -340,7 +383,7 @@ export function run({ Module, chai })
 
          it(`removeBy - no filters added`, () =>
          {
-            const dar = new DynMapReducer();
+            const dar = createReducer();
 
             assert.equal(dar.filters.length, 0);
             dar.filters.removeBy(() => null);
@@ -349,7 +392,7 @@ export function run({ Module, chai })
 
          it(`removeBy - filter w/ unsubscribe`, () =>
          {
-            const dar = new DynMapReducer();
+            const dar = createReducer();
 
             let unsubscribeCalled = false;
 
@@ -368,7 +411,7 @@ export function run({ Module, chai })
 
          it(`removeBy - callback receives correct data`, () =>
          {
-            const dar = new DynMapReducer();
+            const dar = createReducer();
 
             dar.filters.add(() => null);
 
@@ -390,7 +433,7 @@ export function run({ Module, chai })
 
          it(`removeById - no filters added`, () =>
          {
-            const dar = new DynMapReducer();
+            const dar = createReducer();
 
             assert.equal(dar.filters.length, 0);
             dar.filters.removeById(void 0);
@@ -399,7 +442,7 @@ export function run({ Module, chai })
 
          it(`removeById - filter w/ subscribe / unsubscribe`, () =>
          {
-            const dar = new DynMapReducer();
+            const dar = createReducer();
 
             let unsubscribeCalled = false;
 
@@ -418,7 +461,7 @@ export function run({ Module, chai })
 
          it(`removeById - FilterData w/ subscribe / unsubscribe`, () =>
          {
-            const dar = new DynMapReducer();
+            const dar = createReducer();
 
             let unsubscribeCalled = false;
 
@@ -439,16 +482,16 @@ export function run({ Module, chai })
       {
          it(`set sort`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([[1, 1], [2, 2]]));
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
-            dynMap.sort.set((a, b) => b - a);
+            dar.sort.set((a, b) => b - a);
 
-            assert.deepEqual([...dynMap], [2, 1], 'reverse sorts numbers');
+            assert.deepEqual([...dar], [2, 1], 'reverse sorts numbers');
          });
 
          it(`set sort w/ subscribe`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([[1, 1], [2, 2]]));
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
             let unsubscribeCalled = false;
 
@@ -459,185 +502,410 @@ export function run({ Module, chai })
                return () => unsubscribeCalled = true;
             };
 
-            dynMap.sort.set(sort);
+            dar.sort.set(sort);
 
-            assert.deepEqual([...dynMap], [2, 1], 'reverse sorts numbers');
+            assert.deepEqual([...dar], [2, 1], 'reverse sorts numbers');
 
-            dynMap.sort.reset();
+            dar.sort.clear();
 
-            assert.deepEqual([...dynMap], [1, 2], 'initial order');
+            assert.deepEqual([...dar], [1, 2], 'initial order');
             assert.isTrue(unsubscribeCalled);
          });
 
          it(`set sort w/ subscribe - no handler callback`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([[1, 1], [2, 2]]));
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
             let unsubscribeCalled = false;
 
             const sort = (a, b) => b - a;
             sort.subscribe = () => () => unsubscribeCalled = true;
 
-            dynMap.sort.set(sort);
+            dar.sort.set(sort);
 
             // Manual update as the subscribe function of `sort` does not follow the subscribe protocol.
-            dynMap.index.update();
+            dar.index.update();
 
-            assert.deepEqual([...dynMap], [2, 1], 'reverse sorts numbers');
+            assert.deepEqual([...dar], [2, 1], 'reverse sorts numbers');
 
-            dynMap.sort.reset();
+            dar.sort.clear();
 
-            assert.deepEqual([...dynMap], [1, 2], 'initial order');
+            assert.deepEqual([...dar], [1, 2], 'initial order');
             assert.isTrue(unsubscribeCalled);
          });
 
          it(`set compare function w/ subscribe / unsubscribe`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([[1, 1], [2, 2]]));
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
             let unsubscribeCalled = false;
 
             const compare = (a, b) => b - a;
             compare.subscribe = (handler) => { handler(); return () => unsubscribeCalled = true; };
 
-            dynMap.sort.set(compare);
+            dar.sort.set(compare);
 
-            assert.deepEqual([...dynMap], [2, 1], 'reverse order');
+            assert.deepEqual([...dar], [2, 1], 'reverse order');
 
-            dynMap.sort.set(null);
+            dar.sort.set(null);
 
-            assert.deepEqual([...dynMap], [1, 2], 'initial order');
+            assert.deepEqual([...dar], [1, 2], 'initial order');
             assert.isTrue(unsubscribeCalled);
          });
 
          it(`set SortData w/ subscribe / unsubscribe`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([[1, 1], [2, 2]]));
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
             let unsubscribeCalled = false;
 
-            dynMap.sort.set({
+            dar.sort.set({
                compare: (a, b) => b - a,
                subscribe: (handler) => { handler(); return () => unsubscribeCalled = true; }
             });
 
-            assert.deepEqual([...dynMap], [2, 1], 'reverse order');
+            assert.deepEqual([...dar], [2, 1], 'reverse order');
 
-            dynMap.sort.set(null);
+            dar.sort.set(null);
 
-            assert.deepEqual([...dynMap], [1, 2], 'initial order');
+            assert.deepEqual([...dar], [1, 2], 'initial order');
             assert.isTrue(unsubscribeCalled);
+         });
+      });
+
+      describe(`DerivedAPI`, () =>
+      {
+         it(`null map data (getter)`, () =>
+         {
+            const dar = createReducer();
+            const dr = dar.derived.create('test');
+
+            assert.equal(dr.data, null, 'data (getter) returns null');
+         });
+
+         it(`null array length (getter)`, () =>
+         {
+            const dar = createReducer();
+            const dr = dar.derived.create('test');
+
+            assert.equal(dar.length, [...dar].length, 'initial length is correct');
+            assert.equal(dr.length, [...dr].length, 'initial length is correct');
+         });
+
+         it(`data (getter)`, () =>
+         {
+            const map = new Map([[1, 1], [2, 2]]);
+            const dar = createReducer(map);
+            const dr = dar.derived.create('test');
+
+            assert.equal(dr.data, map, 'data (getter) returns same map');
+         });
+
+         it(`derived (getter)`, () =>
+         {
+            const dar = createReducer();
+            const dr = dar.derived.create('test');
+
+            assert.isFunction(dr.derived.create);
+            assert.isFunction(dr.derived.delete);
+            assert.isFunction(dr.derived.destroy);
+            assert.isFunction(dr.derived.get);
+         });
+
+         it(`derived (clear)`, () =>
+         {
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
+            const dr = dar.derived.create('test');
+
+            assert.deepEqual([...dr], [1, 2], 'correct initial data');
+
+            assert.isFalse(dr.destroyed);
+
+            dar.derived.clear();
+
+            assert.isTrue(dr.destroyed);
+
+            assert.deepEqual([...dr], [], 'no data');
+
+            // Can create a new derived instance after clearing.
+            const dr2 = dar.derived.create('test');
+            assert.deepEqual([...dr2], [1, 2], 'correct initial data');
+         });
+
+         it(`Extended prototype is valid (create / get / delete)`, () =>
+         {
+            class ExtendedMapReducer extends DerivedMapReducer {}
+
+            const dar = createReducer();
+            const dr = dar.derived.create(ExtendedMapReducer);
+            const dr2 = dar.derived.get('ExtendedMapReducer');
+            const result = dar.derived.delete('ExtendedMapReducer');
+
+            assert.isTrue(result);
+            assert.instanceOf(dr, ExtendedMapReducer, 'is extended reducer');
+            assert.instanceOf(dr2, ExtendedMapReducer, 'is extended reducer');
+         });
+
+         it(`added filter and sort in create method`, () =>
+         {
+            const dar = createReducer(new Map([[1, 1], [2, 2], [3, 3]]));
+            const dr = dar.derived.create({
+               name: 'test',
+               filters: [(entry) => entry >= 2],
+               sort: (a, b) => b - a
+            });
+
+            assert.deepEqual([...dar], [1, 2, 3], 'correct initial data');
+            assert.deepEqual([...dr], [3, 2], 'correct derived filter sorted data');
+
+            dr.sort.clear();
+            dr.filters.clear();
+
+            assert.deepEqual([...dr], [1, 2, 3], 'correct original data');
+         });
+
+         it(`added filter and sort in create method with data`, () =>
+         {
+            const dar = createReducer(new Map([[1, 1], [2, 2], [3, 3]]));
+            const dr = dar.derived.create({
+               name: 'test',
+               filters: [{ id: 'test', filter: (entry) => entry >= 2, weight: 0.5 }],
+               sort: { compare: (a, b) => b - a }
+            });
+
+            assert.deepEqual([...dar], [1, 2, 3], 'correct initial data');
+            assert.deepEqual([...dr], [3, 2], 'correct derived filter sorted data');
+
+            dr.sort.clear();
+            dr.filters.clear();
+
+            assert.deepEqual([...dr], [1, 2, 3], 'correct original data');
+         });
+
+         it(`added filter with parent index updates correctly + reversed`, () =>
+         {
+            const dar = createReducer(new Map([[1, 1], [2, 2], [3, 3]]));
+            const dr = dar.derived.create('test');
+
+            dr.filters.add((entry) => entry >= 2);
+
+            assert.deepEqual([...dar], [1, 2, 3], 'correct initial data');
+            assert.deepEqual([...dr], [2, 3], 'correct derived filter data');
+
+            dar.sort.set((a, b) => b - a);
+
+            assert.deepEqual([...dar], [3, 2, 1], 'correct initial data');
+            assert.deepEqual([...dr], [3, 2], 'correct derived filter data');
+
+            dr.reversed = true;
+
+            assert.deepEqual([...dr], [2, 3], 'correct reversed derived filter data');
+
+            dr.reversed = false;
+
+            assert.deepEqual([...dr], [3, 2], 'correct reversed derived filter data');
+
+            dr.sort.set((a, b) => a - b);
+
+            assert.deepEqual([...dr], [2, 3], 'correct sorted derived filter data');
+
+            dar.sort.clear();
+            dr.sort.clear();
+            dr.filters.clear();
+            dr.reversed = true;
+
+            assert.deepEqual([...dr], [3, 2, 1], 'correct reversed derived original data');
+         });
+
+         it(`added filter with no parent index updates correctly`, () =>
+         {
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
+            const dr = dar.derived.create('test');
+
+            assert.deepEqual([...dr], [1, 2], 'correct derived initial data');
+
+            dr.filters.add((entry) => entry === 1);
+
+            assert.deepEqual([...dar], [1, 2], 'correct initial data');
+            assert.deepEqual([...dr], [1], 'correct derived filter data');
+
+            dar.setData(new Map([[2, 2], [3, 3]]));
+
+            assert.deepEqual([...dr], [], 'correct derived filter data');
+         });
+
+         it(`length with and without index`, () =>
+         {
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
+            const dr = dar.derived.create('test');
+
+            assert.equal(dr.length, [...dr].length, 'initial length is correct / no index');
+
+            dr.filters.add((entry) => entry >= 2);
+
+            assert.equal(dr.length, [...dr].length, 'filtered length is correct w/ index');
+
+            dar.sort.set((a, b) => b - a);
+
+            assert.equal(dr.length, [...dr].length, 'filtered length is correct w/ parent index');
+
+            dr.filters.clear();
+
+            assert.equal(dr.length, [...dr].length, 'initial length is correct w/ parent index');
+
+            dar.filters.clear();
+
+            assert.equal(dr.length, [...dr].length, 'initial length is correct without parent index');
+         });
+
+         it(`subscribe / notify / unsubscribe`, () =>
+         {
+            const data = new Map([[1, 1], [2, 2]]);
+
+            const dar = createReducer(data);
+            const dr = dar.derived.create('test');
+            dr.filters.add((entry) => entry > 1);
+
+            let callbackSub = 0;
+
+            assert.equal(callbackSub, 0);
+
+            const unsubscribe = dr.subscribe((drInstance) =>
+            {
+               callbackSub++;
+               assert.equal(drInstance.length, [...dr].length);
+            });
+
+            assert.equal(callbackSub, 1);
+
+            data.set(3, 3);
+            dar.index.update();    // No forced update as there is a derived index filter.
+
+            assert.equal(callbackSub, 2);
+
+            unsubscribe();
+         });
+
+         it(`subscribe / notify / unsubscribe (forced)`, () =>
+         {
+            const data = new Map([[1, 1], [2, 2]]);
+
+            const dar = createReducer(data);
+            const dr = dar.derived.create('test');
+
+            let callbackSub = 0;
+
+            assert.equal(callbackSub, 0);
+
+            const unsubscribe = dr.subscribe((drInstance) =>
+            {
+               callbackSub++;
+               assert.equal(drInstance.length, [...dr].length);
+            });
+
+            assert.equal(callbackSub, 1);
+
+            data.set(3, 3);
+            dar.index.update(true);    // Requires a forced update as there is no derived index filtering.
+
+            assert.equal(callbackSub, 2);
+
+            unsubscribe();
          });
       });
 
       describe(`Indexer`, () =>
       {
-         it(`iterator no index set; null backing map`, () =>
-         {
-            const dynMap = new DynMapReducer();
-
-            assert.deepEqual([...dynMap.index], [], 'no index');
-         });
-
          it(`iterator no index set`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([[1, 1], [2, 2]]));
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
-            assert.deepEqual([...dynMap.index], [], 'no index');
+            assert.deepEqual([...dar.index], [], 'no index');
          });
 
-         it(`iterator index set`, () =>
+         it(`iterator index set + length`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([[1, 1], [2, 2]]));
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
-            assert.deepEqual([...dynMap.index], [], 'no index');
+            assert.deepEqual([...dar.index], [], 'no index');
 
-            dynMap.sort.set((a, b) => b - a);
+            assert.equal(dar.index.length, 0, 'length is correct');
 
-            assert.deepEqual([...dynMap.index], [2, 1], 'sorted index');
+            dar.sort.set((a, b) => b - a);
 
-            dynMap.sort.reset();
+            assert.deepEqual([...dar.index], [2, 1], 'sorted index');
 
-            assert.deepEqual([...dynMap.index], [], 'no index');
+            assert.equal(dar.index.length, 2, 'length is correct');
+
+            dar.sort.clear();
+
+            assert.equal(dar.index.length, 0, 'length is correct');
+
+            assert.deepEqual([...dar.index], [], 'no index');
          });
 
          it(`iterator index reversed`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([[1, 1], [2, 2]]));
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
-            assert.deepEqual([...dynMap.index], [], 'no index');
+            assert.deepEqual([...dar.index], [], 'no index');
 
-            dynMap.sort.set((a, b) => b - a);
+            dar.sort.set((a, b) => b - a);
 
-            assert.deepEqual([...dynMap.index], [2, 1], 'sorted index');
+            assert.deepEqual([...dar.index], [2, 1], 'sorted index');
 
-            dynMap.reversed = true;
+            dar.reversed = true;
 
-            assert.deepEqual([...dynMap.index], [1, 2], 'reverse sorted index');
+            assert.deepEqual([...dar.index], [1, 2], 'reverse sorted index');
 
-            dynMap.sort.reset();
+            dar.sort.clear();
 
-            assert.deepEqual([...dynMap.index], [], 'no index');
+            assert.deepEqual([...dar.index], [], 'no index');
          });
 
-         it(`sort set / hash is number / reset & hash is null (number keys)`, () =>
+         it(`sort set / hash is number / reset & hash is null`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([[1, 1], [2, 2]]));
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
-            assert.isNull(dynMap.index.hash);
+            assert.isNull(dar.index.hash);
 
-            dynMap.sort.set((a, b) => b - a);
+            dar.sort.set((a, b) => b - a);
 
-            assert.isNumber(dynMap.index.hash);
+            assert.isNumber(dar.index.hash);
 
-            dynMap.sort.reset();
+            dar.sort.clear();
 
-            assert.isNull(dynMap.index.hash);
+            assert.isNull(dar.index.hash);
          });
 
-         it(`sort set / hash is number / reset & hash is null (string keys)`, () =>
+         it(`active is false / sort set & active is true / reset & active is false`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([['1', 1], ['2', 2]]));
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
-            assert.isNull(dynMap.index.hash);
+            assert.isFalse(dar.index.active);
 
-            dynMap.sort.set((a, b) => b - a);
+            dar.sort.set((a, b) => b - a);
 
-            assert.isNumber(dynMap.index.hash);
+            assert.isTrue(dar.index.active);
 
-            dynMap.sort.reset();
+            dar.sort.clear();
 
-            assert.isNull(dynMap.index.hash);
-         });
-
-         it(`isActive is false / sort set & isActive is true / reset & isActive is false`, () =>
-         {
-            const dynMap = new DynMapReducer();
-
-            assert.isFalse(dynMap.index.isActive);
-
-            dynMap.sort.set((a, b) => b - a);
-
-            assert.isTrue(dynMap.index.isActive);
-
-            dynMap.sort.reset();
-
-            assert.isFalse(dynMap.index.isActive);
+            assert.isFalse(dar.index.active);
          });
 
          it(`length when index defined and reset`, () =>
          {
-            const dynMap = new DynMapReducer(new Map([['1', 1], ['2', 2]]));
+            const dar = createReducer(new Map([[1, 1], [2, 2]]));
 
-            assert.equal(dynMap.index.length, 0);
+            assert.equal(dar.index.length, 0);
 
-            dynMap.sort.set((a, b) => b - a);
+            dar.sort.set((a, b) => b - a);
 
-            assert.equal(dynMap.index.length, 2);
+            assert.equal(dar.index.length, 2);
 
-            dynMap.sort.reset();
+            dar.sort.clear();
 
-            assert.equal(dynMap.index.length, 0);
+            assert.equal(dar.index.length, 0);
          });
       });
    });

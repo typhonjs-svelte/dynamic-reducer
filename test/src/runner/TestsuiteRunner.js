@@ -5,10 +5,10 @@ import {
    ArrayAPITests,
    ArrayDerivedTests }  from './tests/array/index.js';
 
-// import {
-//    MapAPIErrors,
-//    MapAPITests,
-// }                       from './tests/map/index.js';
+import {
+   MapAPIErrors,
+   MapAPITests,
+   MapDerivedTests }    from './tests/map/index.js';
 
 export default new TestsuiteRunner(
 {
@@ -16,7 +16,7 @@ export default new TestsuiteRunner(
    ArrayAPITests,
    ArrayDerivedTests,
 
-   // MapAPIErrors,
-   // MapAPITests
-   // MapPerfTest
+   MapAPIErrors,
+   MapAPITests,
+   MapDerivedTests
 });
