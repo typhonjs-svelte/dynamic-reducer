@@ -918,4 +918,4 @@ declare class DerivedMapReducer<K, T> implements IDerivedReducer<Map<K, T>, K, T
     subscribe(handler: (value: DerivedMapReducer<K, T>) => void): () => void;
 }
 
-export { DerivedArrayReducer, DerivedMapReducer, DynArrayReducer, DynMapReducer };
+export { CompareFn, DataDerived, DataDerivedOptions, DataDynArray, DataDynMap, DataFilter, DataSort, DerivedArrayReducer, DerivedMapReducer, DynArrayReducer, DynMapReducer, FilterFn, IDerivedReducer, IDerivedReducerCtor, OptionsDerivedCreate };
