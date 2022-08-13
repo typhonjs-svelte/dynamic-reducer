@@ -67,13 +67,9 @@ interface IDerivedReducer<D, K, T> {
 }
 
 /**
- * The main options object for DynArrayReducer.
+ * Defines the additional options for filters and sort function.
  */
-declare type DataDynArray<T> = {
-    /**
-     * Initial data iterable list.
-     */
-    data?: Iterable<T>;
+declare type DataOptions<T> = {
     /**
      * Iterable list of filters.
      */
@@ -84,6 +80,15 @@ declare type DataDynArray<T> = {
     sort?: CompareFn<T> | DataSort<T>;
 };
 /**
+ * The main options object for DynArrayReducer.
+ */
+declare type DataDynArray<T> = {
+    /**
+     * Initial data iterable list.
+     */
+    data?: Iterable<T>;
+} & DataOptions<T>;
+/**
  * The main options object for DynMapReducer.
  */
 declare type DataDynMap<K, T> = {
@@ -91,15 +96,7 @@ declare type DataDynMap<K, T> = {
      * Optional initial backing Map.
      */
     data?: Map<K, T>;
-    /**
-     * Iterable list of filters.
-     */
-    filters?: Iterable<FilterFn<T> | DataFilter<T>>;
-    /**
-     * Compare function.
-     */
-    sort?: CompareFn<T> | DataSort<T>;
-};
+} & DataOptions<T>;
 /**
  * Defines the data object to configure a filter w/ additional configuration options.
  */
@@ -212,20 +209,7 @@ declare type DataDerived<T> = {
      * - A DerivedReducer constructor function / class.
      */
     ctor?: IDerivedReducerCtor<T>;
-} & DataDerivedOptions<T>;
-/**
- * Defines the additional options for filters and sort function for derived reducers.
- */
-declare type DataDerivedOptions<T> = {
-    /**
-     * Iterable list of filters.
-     */
-    filters?: Iterable<FilterFn<T> | DataFilter<T>>;
-    /**
-     * Compare function.
-     */
-    sort?: CompareFn<T> | DataSort<T>;
-};
+} & DataOptions<T>;
 /**
  * Creates a compound type for all derived reducer 'create' option combinations.
  */
@@ -668,7 +652,7 @@ declare class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T> 
      *
      * @param options - Any filters and sort functions to apply.
      */
-    constructor(array: DataHost<T[]>, parentIndex: IndexerAPI<number, T>, options: DataDerivedOptions<T>);
+    constructor(array: DataHost<T[]>, parentIndex: IndexerAPI<number, T>, options: DataOptions<T>);
     /**
      * Returns the internal data of this instance. Be careful!
      *
@@ -845,7 +829,7 @@ declare class DerivedMapReducer<K, T> implements IDerivedReducer<Map<K, T>, K, T
      *
      * @param options - Any filters and sort functions to apply.
      */
-    constructor(map: DataHost<Map<K, T>>, parentIndex: IndexerAPI<K, T>, options: DataDerivedOptions<T>);
+    constructor(map: DataHost<Map<K, T>>, parentIndex: IndexerAPI<K, T>, options: DataOptions<T>);
     /**
      * Returns the internal data of this instance. Be careful!
      *
@@ -918,4 +902,4 @@ declare class DerivedMapReducer<K, T> implements IDerivedReducer<Map<K, T>, K, T
     subscribe(handler: (value: DerivedMapReducer<K, T>) => void): () => void;
 }
 
-export { CompareFn, DataDerived, DataDerivedOptions, DataDynArray, DataDynMap, DataFilter, DataSort, DerivedArrayReducer, DerivedMapReducer, DynArrayReducer, DynMapReducer, FilterFn, IDerivedReducer, IDerivedReducerCtor, OptionsDerivedCreate };
+export { CompareFn, DataDerived, DataDynArray, DataDynMap, DataFilter, DataOptions, DataSort, DerivedArrayReducer, DerivedMapReducer, DynArrayReducer, DynMapReducer, FilterFn, IDerivedReducer, IDerivedReducerCtor, OptionsDerivedCreate };

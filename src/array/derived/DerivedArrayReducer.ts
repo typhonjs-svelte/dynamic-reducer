@@ -11,7 +11,7 @@ import { Indexer }   from '../Indexer.js';
 import type {
    IDerivedReducer,
    CompareFn,
-   DataDerivedOptions,
+   DataOptions,
    DataFilter,
    DataHost,
    DataSort,
@@ -53,7 +53,7 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
     *
     * @param options - Any filters and sort functions to apply.
     */
-   constructor(array: DataHost<T[]>, parentIndex: IndexerAPI<number, T>, options: DataDerivedOptions<T>)
+   constructor(array: DataHost<T[]>, parentIndex: IndexerAPI<number, T>, options: DataOptions<T>)
    {
       this.#array = array;
 

@@ -2,14 +2,9 @@ import type { IndexerAPI }          from '../common/index.js';
 import type { IDerivedReducerCtor } from './interface.js';
 
 /**
- * The main options object for DynArrayReducer.
+ * Defines the additional options for filters and sort function.
  */
-export type DataDynArray<T> = {
-    /**
-     * Initial data iterable list.
-     */
-    data?: Iterable<T>;
-
+export type DataOptions<T> = {
     /**
      * Iterable list of filters.
      */
@@ -19,7 +14,17 @@ export type DataDynArray<T> = {
      * Compare function.
      */
     sort?: CompareFn<T> | DataSort<T>;
-};
+}
+
+/**
+ * The main options object for DynArrayReducer.
+ */
+export type DataDynArray<T> = {
+    /**
+     * Initial data iterable list.
+     */
+    data?: Iterable<T>;
+} & DataOptions<T>;
 
 /**
  * The main options object for DynMapReducer.
@@ -29,17 +34,7 @@ export type DataDynMap<K, T> = {
      * Optional initial backing Map.
      */
     data?: Map<K, T>;
-
-    /**
-     * Iterable list of filters.
-     */
-    filters?: Iterable<FilterFn<T> | DataFilter<T>>;
-
-    /**
-     * Compare function.
-     */
-    sort?: CompareFn<T> | DataSort<T>;
-};
+} & DataOptions<T>;
 
 /**
  * Defines the data object to configure a filter w/ additional configuration options.
@@ -169,22 +164,7 @@ export type DataDerived<T> = {
      * - A DerivedReducer constructor function / class.
      */
     ctor?: IDerivedReducerCtor<T>;
-} & DataDerivedOptions<T>;
-
-/**
- * Defines the additional options for filters and sort function for derived reducers.
- */
-export type DataDerivedOptions<T> = {
-    /**
-     * Iterable list of filters.
-     */
-    filters?: Iterable<FilterFn<T> | DataFilter<T>>;
-
-    /**
-     * Compare function.
-     */
-    sort?: CompareFn<T> | DataSort<T>;
-}
+} & DataOptions<T>;
 
 /**
  * Creates a compound type for all derived reducer 'create' option combinations.

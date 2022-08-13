@@ -13,5 +13,5 @@ export type {
     CompareFn,
     FilterFn,
     DataDerived,
-    DataDerivedOptions,
+    DataOptions,
     OptionsDerivedCreate }  from './types/data.js';

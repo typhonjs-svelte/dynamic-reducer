@@ -11,7 +11,7 @@ import { Indexer }   from '../Indexer.js';
 import type {
    IDerivedReducer,
    CompareFn,
-   DataDerivedOptions,
+   DataOptions,
    DataFilter,
    DataHost,
    DataSort,
@@ -53,7 +53,7 @@ export class DerivedMapReducer<K, T> implements IDerivedReducer<Map<K, T>, K, T>
     *
     * @param options - Any filters and sort functions to apply.
     */
-   constructor(map: DataHost<Map<K, T>>, parentIndex: IndexerAPI<K, T>, options: DataDerivedOptions<T>)
+   constructor(map: DataHost<Map<K, T>>, parentIndex: IndexerAPI<K, T>, options: DataOptions<T>)
    {
       this.#map = map;
 

@@ -3,7 +3,7 @@ import { DynReducerUtils } from '../DynReducerUtils.js';
 import type {
    IDerivedReducer,
    IDerivedReducerCtor,
-   DataDerivedOptions,
+   DataOptions,
    DataHost,
    OptionsDerivedCreate }  from '../../types/index.js';
 
@@ -55,7 +55,7 @@ export class AdapterDerived<D, K, T>
 
       let name: string;
 
-      let rest: DataDerivedOptions<T> = {};
+      let rest: DataOptions<T> = {};
 
       let ctor: IDerivedReducerCtor<T>;
 
