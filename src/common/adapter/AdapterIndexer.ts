@@ -106,7 +106,7 @@ export abstract class AdapterIndexer<D, K, T>
       {
          for (let cntr: number = newIndex.length; --cntr >= 0;)
          {
-            newHash ^= +newIndex[cntr] + 0x9e3779b9 + (newHash << 6) + (newHash >> 2);
+            newHash ^= DynReducerUtils.hashUnknown(newIndex[cntr]) + 0x9e3779b9 + (newHash << 6) + (newHash >> 2);
          }
       }
 
