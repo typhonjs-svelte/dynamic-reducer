@@ -7,8 +7,24 @@
  */
 export function run({ Module, chai })
 {
-   const { assert, expect } = chai;
-   const { DynArrayReducer } = Module;
+   const { expect } = chai;
+
+   /** @type {import('../../../../../types/index.js').DynArrayReducer} */
+   const DynArrayReducer = Module.DynArrayReducer;
+
+   /**
+    * Provides a way to create DynArrayReducer with the types applied in the instance returned.
+    *
+    * @template T
+    *
+    * @param {T[]}  [data] - Initial data.
+    *
+    * @returns {import('../../../../../types/index.js').DynArrayReducer<T>} New DynArrayReducer instance.
+    */
+   function createReducer(data)
+   {
+      return new DynArrayReducer(data);
+   }
 
    describe(`(Array) API Errors`, () =>
    {
@@ -37,14 +53,14 @@ export function run({ Module, chai })
 
          it(`'filters' attribute is non-iterable`, () =>
          {
-            expect(() => new DynArrayReducer({ data: [], filters: false })).to.throw(TypeError,
+            expect(() => new DynArrayReducer({ filters: false })).to.throw(TypeError,
              `DynArrayReducer error (DataDynArray): 'filters' attribute is not iterable.`);
          });
 
          it(`'sort' attribute is not a function`, () =>
          {
-            expect(() => new DynArrayReducer({ data: [], sort: false })).to.throw(TypeError,
-             `DynArrayReducer error (DataDynArray): 'sort' attribute is not a function.`);
+            expect(() => new DynArrayReducer({ sort: false })).to.throw(TypeError,
+             `DynArrayReducer error (DataDynArray): 'sort' attribute is not a function or object.`);
          });
       });
 
@@ -71,18 +87,9 @@ export function run({ Module, chai })
 
       describe(`AdapterFilters errors`, () =>
       {
-         it(`add - no arguments / noop`, () =>
-         {
-            const dar = new DynArrayReducer([]);
-
-            dar.filters.add();
-
-            assert.equal(dar.filters.length, 0);
-         });
-
          it(`add - wrong argument`, () =>
          {
-            const dar = new DynArrayReducer([]);
+            const dar = createReducer();
 
             expect(() => dar.filters.add(false)).to.throw(TypeError,
              `AdapterFilters error: 'filter' is not a function or object.`);
@@ -90,7 +97,7 @@ export function run({ Module, chai })
 
          it(`add - null`, () =>
          {
-            const dar = new DynArrayReducer([]);
+            const dar = createReducer();
 
             expect(() => dar.filters.add(null)).to.throw(TypeError,
              `AdapterFilters error: 'filter' is not a function or object.`);
@@ -98,7 +105,7 @@ export function run({ Module, chai })
 
          it(`add - object - no data`, () =>
          {
-            const dar = new DynArrayReducer([]);
+            const dar = createReducer();
 
             expect(() => dar.filters.add({})).to.throw(TypeError,
              `AdapterFilters error: 'filter' attribute is not a function.`);
@@ -106,7 +113,7 @@ export function run({ Module, chai })
 
          it(`add - object - no data`, () =>
          {
-            const dar = new DynArrayReducer([]);
+            const dar = createReducer();
 
             expect(() => dar.filters.add({ filter: false })).to.throw(TypeError,
              `AdapterFilters error: 'filter' attribute is not a function.`);
@@ -114,7 +121,7 @@ export function run({ Module, chai })
 
          it(`add - object - weight not a number`, () =>
          {
-            const dar = new DynArrayReducer([]);
+            const dar = createReducer();
 
             expect(() => dar.filters.add({ filter: () => null, weight: false })).to.throw(TypeError,
              `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
@@ -122,7 +129,7 @@ export function run({ Module, chai })
 
          it(`add - object - weight less than 0 (-1)`, () =>
          {
-            const dar = new DynArrayReducer([]);
+            const dar = createReducer();
 
             expect(() => dar.filters.add({ filter: () => null, weight: -1 })).to.throw(TypeError,
              `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
@@ -130,7 +137,7 @@ export function run({ Module, chai })
 
          it(`add - object - weight greater than 1 (2)`, () =>
          {
-            const dar = new DynArrayReducer([]);
+            const dar = createReducer();
 
             expect(() => dar.filters.add({ filter: () => null, weight: 2 })).to.throw(TypeError,
              `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
@@ -138,7 +145,7 @@ export function run({ Module, chai })
 
          it(`add - filter w/ subscribe - no unsubscribe`, () =>
          {
-            const dar = new DynArrayReducer([]);
+            const dar = createReducer();
 
             const filter = () => null;
             filter.subscribe = () => null;
@@ -149,7 +156,7 @@ export function run({ Module, chai })
 
          it(`add - duplicate filter w/ subscribe`, () =>
          {
-            const dar = new DynArrayReducer([]);
+            const dar = createReducer();
 
             const filter = () => null;
             filter.subscribe = () => () => null;
@@ -162,7 +169,7 @@ export function run({ Module, chai })
 
          it(`removeBy - callback not a function`, () =>
          {
-            const dar = new DynArrayReducer([]);
+            const dar = createReducer();
             dar.filters.add(() => null);
 
             expect(() => dar.filters.removeBy()).to.throw(TypeError,
@@ -174,7 +181,7 @@ export function run({ Module, chai })
       {
          it(`set - compareFn w/ subscribe - no unsubscribe`, () =>
          {
-            const dar = new DynArrayReducer([]);
+            const dar = createReducer();
 
             const compareFn = () => null;
             compareFn.subscribe = () => null;
@@ -186,10 +193,90 @@ export function run({ Module, chai })
 
          it(`set SortData w/ compare not as function`, () =>
          {
-            const dar = new DynArrayReducer([]);
+            const dar = createReducer();
 
             expect(() => dar.sort.set({ compare: false })).to.throw(Error,
              `AdapterSort error: 'compare' attribute is not a function.`);
+         });
+      });
+
+      describe(`DerivedAPI errors`, () =>
+      {
+         it(`create - parameter not conforming - wrong type`, () =>
+         {
+            const dar = createReducer();
+
+            expect(() => dar.derived.create(false)).to.throw(Error,
+             `AdapterDerived.create error: 'options' does not conform to allowed parameters.`);
+         });
+
+         it(`create - parameter not conforming - wrong class`, () =>
+         {
+            const dar = createReducer();
+
+            expect(() => dar.derived.create(DynArrayReducer)).to.throw(Error,
+             `AdapterDerived.create error: 'options' does not conform to allowed parameters.`);
+         });
+
+         it(`create - parameter not conforming - incorrect 'name' attribute`, () =>
+         {
+            const dar = createReducer();
+
+            expect(() => dar.derived.create({ name: false })).to.throw(Error,
+             `AdapterDerived.create error: 'name' is not a string.`);
+         });
+
+         it(`create - parameter not conforming - incorrect 'ctor' attribute`, () =>
+         {
+            const dar = createReducer();
+
+            expect(() => dar.derived.create({ ctor: false })).to.throw(Error,
+             `AdapterDerived.create error: 'ctor' is not a 'DerivedArrayReducer'.`);
+         });
+
+         it(`create - parameter not conforming - incorrect 'filters' attribute`, () =>
+         {
+            const dar = createReducer();
+
+            expect(() => dar.derived.create({ filters: false })).to.throw(Error,
+             `DerivedArrayReducer error (DataDerivedOptions): 'filters' attribute is not iterable.`);
+         });
+
+         it(`create - parameter not conforming - incorrect 'sort' attribute`, () =>
+         {
+            const dar = createReducer();
+
+            expect(() => dar.derived.create({ sort: false })).to.throw(Error,
+             `DerivedArrayReducer error (DataDerivedOptions): 'sort' attribute is not a function or object.`);
+         });
+
+         it(`derived - wrong reversed setter`, () =>
+         {
+            const dar = createReducer();
+            const dr = dar.derived.create('test');
+
+            expect(() => dr.reversed = null).to.throw(Error,
+             `DerivedArrayReducer.reversed error: 'reversed' is not a boolean.`);
+         });
+
+         it(`destroy - verify all thrown errors.`, () =>
+         {
+            const dar = createReducer();
+            const dr = dar.derived.create('test');
+
+            dr.destroy();
+
+            expect(() => dr.derived.clear()).to.not.throw(Error);
+            expect(() => dr.derived.destroy()).to.not.throw(Error);
+
+            expect(() => dr.derived.create('dummy')).to.throw(Error,
+             `AdapterDerived.create error: this instance has been destroyed.`);
+
+            expect(() => dr.derived.delete('dummy')).to.throw(Error,
+             `AdapterDerived.delete error: this instance has been destroyed.`);
+
+            expect(() => dr.derived.get('dummy')).to.throw(Error,
+             `AdapterDerived.get error: this instance has been destroyed.`);
          });
       });
    });

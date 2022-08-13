@@ -1,32 +1,18 @@
-import { AdapterIndexer } from '#common';
+import {
+   AdapterIndexer,
+   DynReducerUtils } from '../common/index.js';
 
 /**
- * @template K, T
- *
- * @augments {AdapterIndexer<T[], K, T>}
  */
-export class Indexer extends AdapterIndexer
+export class Indexer<T> extends AdapterIndexer<T[], number, T>
 {
    /**
-    * @returns {(a: K, b: K) => number}
+    * @inheritDoc
     */
-   createSortFn()
+   createSortFn(): (a: number, b: number) => number
    {
-      const c = this.hostData[0][0];
-
-      /** @type {(a: K, b: K) => number} */
-      return (a, b) => this.sortAdapter.compareFn(this.hostData[0][a], this.hostData[0][b]);
+      return (a, b) => this.sortData.compareFn(this.hostData[0][a], this.hostData[0][b]);
    }
-
-   // /**
-   //  * @inheritDoc
-   //  */
-   // initAdapters(filtersAdapter, sortAdapter, derivedAdapter)
-   // {
-   //    super.initAdapters(filtersAdapter, sortAdapter, derivedAdapter);
-   //
-   //    this.sortFn = (a, b) => this.sortAdapter.compareFn(this.hostData[0][a], this.hostData[0][b]);
-   // }
 
    /**
     * Provides the custom filter / reduce step that is ~25-40% faster than implementing with `Array.reduce`.
@@ -34,28 +20,26 @@ export class Indexer extends AdapterIndexer
     * Note: Other loop unrolling techniques like Duff's Device gave a slight faster lower bound on large data sets,
     * but the maintenance factor is not worth the extra complication.
     *
-    * @returns {number[]} New filtered index array.
+    * @returns New filtered index array.
     */
-   reduceImpl()
+   reduceImpl(): number[]
    {
       const data = [];
 
       const array = this.hostData[0];
       if (!array) { return data; }
 
-      const filters = this.filtersAdapter.filters;
+      const filters = this.filtersData.filters;
 
       let include = true;
 
-      const parentIndex = this.indexData.parent?.indexData?.index;
+      const parentIndex = this.indexData.parent;
 
-      if (Array.isArray(parentIndex))
+      // Source index data is coming from an active parent index.
+      if (DynReducerUtils.isIterable(parentIndex) && parentIndex.active)
       {
-         for (let cntr = 0, length = parentIndex.length; cntr < length; cntr++)
+         for (const adjustedIndex of parentIndex)
          {
-            // TODO: range check?
-            const adjustedIndex = parentIndex[cntr];
-
             const value = array[adjustedIndex];
             include = true;
 
@@ -97,33 +81,51 @@ export class Indexer extends AdapterIndexer
     * Update the reducer indexes. If there are changes subscribers are notified. If data order is changed externally
     * pass in true to force an update to subscribers.
     *
-    * @param {boolean}  [force=false] - When true forces an update to subscribers.
+    * @param [force=false] - When true forces an update to subscribers.
     */
-   update(force = false)
+   update(force: boolean = false)
    {
+      if (this.destroyed) { return; }
+
       const oldIndex = this.indexData.index;
       const oldHash = this.indexData.hash;
 
       const array = this.hostData[0];
+      const parentIndex = this.indexData.parent;
 
       // Clear index if there are no filters and no sort function or the index length doesn't match the item length.
-      if ((this.filtersAdapter.filters.length === 0 && !this.sortAdapter.compareFn) ||
+      if ((this.filtersData.filters.length === 0 && !this.sortData.compareFn) ||
        (this.indexData.index && array?.length !== this.indexData.index.length))
       {
          this.indexData.index = null;
       }
 
       // If there are filters build new index.
-      if (this.filtersAdapter.filters.length > 0) { this.indexData.index = this.reduceImpl(); }
+      if (this.filtersData.filters.length > 0)
+      {
+         this.indexData.index = this.reduceImpl();
+      }
 
-      if (this.sortAdapter.compareFn && Array.isArray(array))
+      // If the index isn't built yet and there is an active parent index then create it from the parent.
+      if (!this.indexData.index && parentIndex?.active)
+      {
+         this.indexData.index = [...parentIndex];
+      }
+
+      if (this.sortData.compareFn && Array.isArray(array))
       {
          // If there is no index then create one with keys matching host item length.
-         if (!this.indexData.index) { this.indexData.index = [...Array(array.length).keys()]; }
+         if (!this.indexData.index)
+         {
+            this.indexData.index = [...Array(array.length).keys()];
+         }
 
          this.indexData.index.sort(this.sortFn);
       }
 
       this.calcHashUpdate(oldIndex, oldHash, force);
+
+      // Update all derived reducers.
+      this.derivedAdapter?.update(force);
    }
 }

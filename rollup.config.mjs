@@ -1,12 +1,6 @@
 import alias               from '@rollup/plugin-alias';
-import { generateTSDef }   from '@typhonjs-build-test/esm-d-ts';
-
-// Generate TS Definition.
-await generateTSDef({
-   main: './src/index.js',
-   output: './types/index.d.ts',
-   prependGen: ['./src/typedefs.js']
-});
+import typescript          from '@rollup/plugin-typescript';
+import dts                 from 'rollup-plugin-dts';
 
 // Produce sourcemaps or not.
 const s_SOURCEMAP = true;
@@ -14,7 +8,7 @@ const s_SOURCEMAP = true;
 export default () =>
 {
    return [{   // This bundle is for the Node distribution.
-         input: ['src/index.js'],
+         input: ['src/index.ts'],
          output: [{
             file: `./dist/index.js`,
             format: 'es',
@@ -26,7 +20,26 @@ export default () =>
                entries: [
                   { find: '#common', replacement: './src/common/index.js' }
                ]
-            })
+            }),
+            typescript()
+         ]
+      },
+
+      {   // This bundle is for the Node distribution.
+         input: ['src/index.ts'],
+         output: [{
+            file: `./types/index.d.ts`,
+            format: 'es',
+            sourcemap: false
+         }],
+         plugins: [
+            alias({
+               entries: [
+                  { find: '#common', replacement: './src/common/index.js' }
+               ]
+            }),
+            typescript({ sourceMap: false, inlineSources: false }),
+            dts()
          ]
       }
    ];
