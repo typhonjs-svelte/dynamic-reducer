@@ -908,5 +908,143 @@ export function run({ Module, chai })
             assert.equal(dar.index.length, 0);
          });
       });
+
+      describe(`Indexer (Map key types)`, () =>
+      {
+         it(`boolean`, () =>
+         {
+            // A default sort method creates an index in DynMapReducer.
+            const sort = (a, b) => a - b;
+
+            const dar = createReducer({ data: new Map([[true, 1], [false, 2]]), sort });
+            const dar2 = createReducer({ data: new Map([[true, 1], [false, 2]]), sort });
+            const dar3 = createReducer({ data: new Map([[true, 3], [true, 4]]), sort });
+
+            assert.isNumber(dar.index.hash, 'hash is number');
+            assert.isNumber(dar2.index.hash, 'hash is number');
+            assert.isNumber(dar3.index.hash, 'hash is number');
+
+            // In this case index hashes should be equal as same boolean keys are used.
+            assert.equal(dar.index.hash, dar2.index.hash, 'index hash is equal');
+
+            // In this case index hashes should not be equal as different boolean keys are used.
+            assert.notEqual(dar.index.hash, dar3.index.hash, 'index hash is not equal');
+         });
+
+         it(`bigint`, () =>
+         {
+            // A default sort method creates an index in DynMapReducer.
+            const sort = (a, b) => a - b;
+
+            const dar = createReducer({ data: new Map([[1n, 1], [2n, 2]]), sort });
+            const dar2 = createReducer({ data: new Map([[1n, 1], [2n, 2]]), sort });
+            const dar3 = createReducer({ data: new Map([[3n, 3], [4n, 4]]), sort });
+
+            assert.isNumber(dar.index.hash, 'hash is number');
+            assert.isNumber(dar2.index.hash, 'hash is number');
+            assert.isNumber(dar3.index.hash, 'hash is number');
+
+            // In this case index hashes should be equal as same bigint keys are used.
+            assert.equal(dar.index.hash, dar2.index.hash, 'index hash is equal');
+
+            // In this case index hashes should not be equal as different bigint keys are used.
+            assert.notEqual(dar.index.hash, dar3.index.hash, 'index hash is not equal');
+         });
+
+         it(`function`, () =>
+         {
+            // A default sort method creates an index in DynMapReducer.
+            const sort = (a, b) => a - b;
+
+            /**  */
+            function named() {}
+
+            const dar = createReducer({ data: new Map([[() => null, 1], [() => null, 2]]), sort });
+            const dar2 = createReducer({ data: new Map([[() => null, 1], [() => null, 2]]), sort });
+            const dar3 = createReducer({ data: new Map([[() => null, 3], [named, 4]]), sort });
+
+            assert.isNumber(dar.index.hash, 'hash is number');
+            assert.isNumber(dar2.index.hash, 'hash is number');
+            assert.isNumber(dar3.index.hash, 'hash is number');
+
+            // In this case index hashes should be equal as anonymous arrow keys are used.
+            assert.equal(dar.index.hash, dar2.index.hash, 'index hash is equal');
+
+            // In this case index hashes should not be equal as a named function key is used.
+            assert.notEqual(dar.index.hash, dar3.index.hash, 'index hash is not equal');
+         });
+
+         it(`numbers + Nan`, () =>
+         {
+            // A default sort method creates an index in DynMapReducer.
+            const sort = (a, b) => a - b;
+
+            const dar = createReducer({ data: new Map([[0, 1], [2, 2]]), sort });
+            const dar2 = createReducer({ data: new Map([[Infinity, 1], [2, 2]]), sort });
+            const dar3 = createReducer({ data: new Map([[1, 3], [2, 4]]), sort });
+
+            assert.isNumber(dar.index.hash, 'hash is number');
+            assert.isNumber(dar2.index.hash, 'hash is number');
+            assert.isNumber(dar3.index.hash, 'hash is number');
+
+            // In this case index hashes should be equal as `Math.NaN` is considered '0'.
+            assert.equal(dar.index.hash, dar2.index.hash, 'index hash is equal');
+
+            // In this case index hashes should not be equal.
+            assert.notEqual(dar.index.hash, dar3.index.hash, 'index hash is not equal');
+         });
+
+         it(`object`, () =>
+         {
+            // Note: No object key hashing is done presently.
+
+            // A default sort method creates an index in DynMapReducer.
+            const sort = (a, b) => a - b;
+
+            const dar = createReducer({ data: new Map([[{}, 1], [{}, 2]]), sort });
+            const dar2 = createReducer({ data: new Map([[{ key: false }, 1], [{ key: true }, 2]]), sort });
+
+            assert.isNumber(dar.index.hash, 'hash is number');
+            assert.isNumber(dar2.index.hash, 'hash is number');
+
+            // In this case index hashes should be equal as unique hashes for object keys are currently not generated.
+            assert.equal(dar.index.hash, dar2.index.hash, 'index hash is equal');
+         });
+
+         it(`symbol`, () =>
+         {
+            // A default sort method creates an index in DynMapReducer.
+            const sort = (a, b) => a - b;
+
+            const dar = createReducer({ data: new Map([[Symbol.for('one'), 1], [Symbol.for('two'), 2]]), sort });
+            const dar2 = createReducer({ data: new Map([[Symbol.for('one'), 1], [Symbol.for('two'), 2]]), sort });
+            const dar3 = createReducer({ data: new Map([[Symbol.for('one'), 3], [Symbol.for('three'), 4]]), sort });
+
+            assert.isNumber(dar.index.hash, 'hash is number');
+            assert.isNumber(dar2.index.hash, 'hash is number');
+            assert.isNumber(dar3.index.hash, 'hash is number');
+
+            // In this case index hashes should be equal as same symbol keys are used.
+            assert.equal(dar.index.hash, dar2.index.hash, 'index hash is equal');
+
+            // In this case index hashes should not be equal as symbol keys are different.
+            assert.notEqual(dar.index.hash, dar3.index.hash, 'index hash is not equal');
+         });
+
+         it(`undefined and null`, () =>
+         {
+            // A default sort method creates an index in DynMapReducer.
+            const sort = (a, b) => a - b;
+
+            const dar = createReducer({ data: new Map([[void 0, 1], [void 0, 2]]), sort });
+            const dar2 = createReducer({ data: new Map([[null, 3], [null, 4]]), sort });
+
+            assert.isNumber(dar.index.hash, 'hash is number');
+            assert.isNumber(dar2.index.hash, 'hash is number');
+
+            // In this case index hashes should be equal as undefined and null are treated as '0'.
+            assert.equal(dar.index.hash, dar2.index.hash, 'index hash equal');
+         });
+      });
    });
 }
