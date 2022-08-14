@@ -1,5 +1,9 @@
-import type { IndexerAPI }          from '../common/index.js';
-import type { IDerivedReducerCtor } from './interface.js';
+import type { IndexerAPI }  from '../common/index.js';
+
+import type {
+    IDerivedReducerCtor,
+    IDynArrayReducerCtor,
+    IDynMapReducerCtor }    from './interface.js';
 
 /**
  * Defines the additional options for filters and sort function.
@@ -154,7 +158,7 @@ export type FilterFn<T> = {
 /**
  * Defines object / options for creating a derived reducer.
  */
-export type DataDerived<T> = {
+export type DataDerivedCreate<T> = {
     /**
      * - Name of derived reducer.
      */
@@ -169,4 +173,42 @@ export type DataDerived<T> = {
 /**
  * Creates a compound type for all derived reducer 'create' option combinations.
  */
-export type OptionsDerivedCreate<T> = string | IDerivedReducerCtor<T> | DataDerived<T>;
+export type OptionsDerivedCreate<T> = string | IDerivedReducerCtor<T> | DataDerivedCreate<T>;
+
+// -------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Defines object / options for creating a dynamic array reducer.
+ */
+export type DataDynArrayCreate<T> = {
+    /**
+     * - Name of dynamic array reducer.
+     */
+    name?: string;
+
+    /**
+     * - A DynMapReducer constructor function / class.
+     */
+    ctor?: IDynArrayReducerCtor<T>;
+} & DataOptions<T>;
+
+export type OptionsDynArrayCreate<T> = string | IDynArrayReducerCtor<T> | DataDynArrayCreate<T>
+
+// -------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Defines object / options for creating a dynamic map reducer.
+ */
+export type DataDynMapCreate<K, T> = {
+    /**
+     * - Name of dynamic map reducer.
+     */
+    name?: string;
+
+    /**
+     * - A DynMapReducer constructor function / class.
+     */
+    ctor?: IDynMapReducerCtor<K, T>;
+} & DataOptions<T>;
+
+export type OptionsDynMapCreate<K, T> = string | IDynMapReducerCtor<K, T> | DataDynMapCreate<K, T>

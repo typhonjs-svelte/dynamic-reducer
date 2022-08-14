@@ -2,16 +2,39 @@ import type {
     AdapterFilters,
     AdapterSort,
     DerivedAPI,
-    IndexerAPI }            from '../common/index.js';
+    IndexerAPI }                from '../common/index.js';
 
-import type { DataHost }    from './data.js';
+import type {
+    DataDynArray,
+    DataDynMap,
+    DataHost,
+    DataOptions }               from './data.js';
+
+import type { DynMapReducer }   from '../map/index.js';
+import type { DynArrayReducer } from '../array/index.js';
+
+/**
+ * Defines the shape of dynamic array constructor functions.
+ */
+export interface IDynArrayReducerCtor<T>
+{
+    new (data?: Iterable<T> | DataDynArray<T>): DynArrayReducer<T>;
+}
+
+/**
+ * Defines the shape of dynamic map constructor functions.
+ */
+export interface IDynMapReducerCtor<K, T>
+{
+    new (data?: Map<K, T> | DataDynMap<K, T>): DynMapReducer<K, T>;
+}
 
 /**
  * Defines the shape of derived reducers constructor functions.
  */
 export interface IDerivedReducerCtor<T>
 {
-    new (hostData: DataHost<any>, parentIndex: IndexerAPI<any, T>, options: object): IDerivedReducer<any, any, T>;
+    new (hostData: DataHost<any>, parentIndex: IndexerAPI<any, T>, options: DataOptions<T>): IDerivedReducer<any, any, T>;
 }
 
 /**

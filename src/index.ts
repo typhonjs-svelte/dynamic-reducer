@@ -3,15 +3,21 @@ export *                    from './map/index.js';
 
 export type {
     IDerivedReducerCtor,
-    IDerivedReducer }       from './types/interface.js';
+    IDerivedReducer,
+    IDynArrayReducerCtor,
+    IDynMapReducerCtor }    from './types/interface.js';
 
 export type {
     DataDynArray,
     DataDynMap,
     DataFilter,
+    DataOptions,
     DataSort,
     CompareFn,
     FilterFn,
-    DataDerived,
-    DataOptions,
-    OptionsDerivedCreate }  from './types/data.js';
+    DataDerivedCreate,
+    OptionsDerivedCreate,
+    DataDynArrayCreate,
+    OptionsDynArrayCreate,
+    DataDynMapCreate,
+    OptionsDynMapCreate }  from './types/data.js';
