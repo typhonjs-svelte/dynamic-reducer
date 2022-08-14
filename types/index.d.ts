@@ -1,8 +1,196 @@
 /**
+ * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
+ * Svelte store support.
+ */
+declare class DynMapReducer<K, T> {
+    #private;
+    /**
+     * Initializes DynMapReducer. Any iterable is supported for initial data. Take note that if `data` is an array it
+     * will be used as the host array and not copied. All non-array iterables otherwise create a new array / copy.
+     *
+     * @param [data] - Data iterable to store if array or copy otherwise.
+     */
+    constructor(data?: Map<K, T> | DataDynMap<K, T>);
+    /**
+     * Returns the internal data of this instance. Be careful!
+     *
+     * Note: When a map is set as data then that map is used as the internal data. If any changes are
+     * performed to the data externally do invoke {@link AdapterIndexer.index.update} with `true` to recalculate the
+     * index and notify all subscribers.
+     *
+     * @returns The internal data.
+     */
+    get data(): Map<K, T> | null;
+    /**
+     * @returns Derived public API.
+     */
+    get derived(): DerivedAPI<Map<K, T>, K, T>;
+    /**
+     * @returns The filters adapter.
+     */
+    get filters(): AdapterFilters<T>;
+    /**
+     * @returns Returns the Indexer public API.
+     */
+    get index(): IndexerAPI<K, T>;
+    /**
+     * Returns whether this instance is destroyed.
+     */
+    get destroyed(): boolean;
+    /**
+     * Gets the main data / items length.
+     *
+     * @returns {number} Main data / items length.
+     */
+    get length(): number;
+    /**
+     * Gets current reversed state.
+     *
+     * @returns {boolean} Reversed state.
+     */
+    get reversed(): boolean;
+    /**
+     * @returns The sort adapter.
+     */
+    get sort(): AdapterSort<T>;
+    /**
+     * Sets reversed state and notifies subscribers.
+     *
+     * @param reversed - New reversed state.
+     */
+    set reversed(reversed: boolean);
+    /**
+     * Removes all derived reducers, subscriptions, and cleans up all resources.
+     */
+    destroy(): void;
+    /**
+     * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
+     * `replace` is set to true.
+     *
+     * @param data - New data to set to internal data.
+     *
+     * @param replace=false - New data to set to internal data.
+     */
+    setData(data: Map<K, T> | null, replace?: boolean): void;
+    /**
+     * Add a subscriber to this DynMapReducer instance.
+     *
+     * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
+     *
+     * @returns Unsubscribe function.
+     */
+    subscribe(handler: (value: DynMapReducer<K, T>) => void): () => void;
+    /**
+     * Provides an iterator for data stored in DynMapReducer.
+     *
+     * @returns Generator / iterator of all data.
+     * @yields {T}
+     */
+    [Symbol.iterator](): Generator<T, T, T>;
+}
+
+/**
+ * Provides the base implementation derived reducer for arrays / DynArrayReducer.
+ */
+declare class DerivedMapReducer<K, T> implements IDerivedReducer<Map<K, T>, K, T> {
+    #private;
+    /**
+     * @param map - Data host Map.
+     *
+     * @param parentIndex - Parent indexer.
+     *
+     * @param options - Any filters and sort functions to apply.
+     */
+    constructor(map: DataHost<Map<K, T>>, parentIndex: IndexerAPI<K, T>, options: DataOptions<T>);
+    /**
+     * Returns the internal data of this instance. Be careful!
+     *
+     * Note: The returned map is the same map set by the main reducer. If any changes are performed to the data
+     * externally do invoke {@link IndexerAPI.update} with `true` to recalculate the index and notify all subscribers.
+     *
+     * @returns The internal data.
+     */
+    get data(): Map<K, T> | null;
+    /**
+     * @returns Derived public API.
+     */
+    get derived(): DerivedAPI<Map<K, T>, K, T>;
+    /**
+     * @returns The filters adapter.
+     */
+    get filters(): AdapterFilters<T>;
+    /**
+     * Returns the Indexer public API.
+     *
+     * @returns Indexer API - is also iterable.
+     */
+    get index(): IndexerAPI<K, T>;
+    /**
+     * Returns whether this derived reducer is destroyed.
+     */
+    get destroyed(): boolean;
+    /**
+     * @returns Main data / items length or indexed length.
+     */
+    get length(): number;
+    /**
+     * @returns Gets current reversed state.
+     */
+    get reversed(): boolean;
+    /**
+     * @returns The sort adapter.
+     */
+    get sort(): AdapterSort<T>;
+    /**
+     * Sets reversed state and notifies subscribers.
+     *
+     * @param reversed - New reversed state.
+     */
+    set reversed(reversed: boolean);
+    /**
+     * Removes all derived reducers, subscriptions, and cleans up all resources.
+     */
+    destroy(): void;
+    /**
+     * Provides a callback for custom derived reducers to initialize any data / custom configuration. This allows
+     * child classes to avoid implementing the constructor.
+     *
+     * @protected
+     */
+    initialize(): void;
+    /**
+     * Provides an iterator for data stored in DerivedMapReducer.
+     *
+     * @returns Generator / iterator of all data.
+     */
+    [Symbol.iterator](): Generator<T, T, T>;
+    /**
+     * Subscribe to this DerivedMapReducer.
+     *
+     * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
+     *
+     * @returns Unsubscribe function.
+     */
+    subscribe(handler: (value: DerivedMapReducer<K, T>) => void): () => void;
+}
+
+/**
+ * Defines the shape of dynamic array constructor functions.
+ */
+interface IDynArrayReducerCtor<T> {
+    new (data?: Iterable<T> | DataDynArray<T>): DynArrayReducer<T>;
+}
+/**
+ * Defines the shape of dynamic map constructor functions.
+ */
+interface IDynMapReducerCtor<K, T> {
+    new (data?: Map<K, T> | DataDynMap<K, T>): DynMapReducer<K, T>;
+}
+/**
  * Defines the shape of derived reducers constructor functions.
  */
 interface IDerivedReducerCtor<T> {
-    new (hostData: DataHost<any>, parentIndex: IndexerAPI<any, T>, options: object): IDerivedReducer<any, any, T>;
+    new (hostData: DataHost<any>, parentIndex: IndexerAPI<any, T>, options: DataOptions<T>): IDerivedReducer<any, any, T>;
 }
 /**
  * Defines the interface for all derived reducers.
@@ -200,7 +388,7 @@ declare type FilterFn<T> = {
 /**
  * Defines object / options for creating a derived reducer.
  */
-declare type DataDerived<T> = {
+declare type DataDerivedCreate<T> = {
     /**
      * - Name of derived reducer.
      */
@@ -213,7 +401,35 @@ declare type DataDerived<T> = {
 /**
  * Creates a compound type for all derived reducer 'create' option combinations.
  */
-declare type OptionsDerivedCreate<T> = string | IDerivedReducerCtor<T> | DataDerived<T>;
+declare type OptionsDerivedCreate<T> = string | IDerivedReducerCtor<T> | DataDerivedCreate<T>;
+/**
+ * Defines object / options for creating a dynamic array reducer.
+ */
+declare type DataDynArrayCreate<T> = {
+    /**
+     * - Name of dynamic array reducer.
+     */
+    name?: string;
+    /**
+     * - A DynMapReducer constructor function / class.
+     */
+    ctor?: IDynArrayReducerCtor<T>;
+} & DataOptions<T>;
+declare type OptionsDynArrayCreate<T> = string | IDynArrayReducerCtor<T> | DataDynArrayCreate<T>;
+/**
+ * Defines object / options for creating a dynamic map reducer.
+ */
+declare type DataDynMapCreate<K, T> = {
+    /**
+     * - Name of dynamic map reducer.
+     */
+    name?: string;
+    /**
+     * - A DynMapReducer constructor function / class.
+     */
+    ctor?: IDynMapReducerCtor<K, T>;
+} & DataOptions<T>;
+declare type OptionsDynMapCreate<K, T> = string | IDynMapReducerCtor<K, T> | DataDynMapCreate<K, T>;
 
 /**
  * Provides construction and management of indexed data when there are parent indexes or filter / sort functions
@@ -726,180 +942,4 @@ declare class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T> 
     subscribe(handler: (value: DerivedArrayReducer<T>) => void): () => void;
 }
 
-/**
- * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
- * Svelte store support.
- */
-declare class DynMapReducer<K, T> {
-    #private;
-    /**
-     * Initializes DynMapReducer. Any iterable is supported for initial data. Take note that if `data` is an array it
-     * will be used as the host array and not copied. All non-array iterables otherwise create a new array / copy.
-     *
-     * @param [data] - Data iterable to store if array or copy otherwise.
-     */
-    constructor(data?: Map<K, T> | DataDynMap<K, T>);
-    /**
-     * Returns the internal data of this instance. Be careful!
-     *
-     * Note: When a map is set as data then that map is used as the internal data. If any changes are
-     * performed to the data externally do invoke {@link AdapterIndexer.index.update} with `true` to recalculate the
-     * index and notify all subscribers.
-     *
-     * @returns The internal data.
-     */
-    get data(): Map<K, T> | null;
-    /**
-     * @returns Derived public API.
-     */
-    get derived(): DerivedAPI<Map<K, T>, K, T>;
-    /**
-     * @returns The filters adapter.
-     */
-    get filters(): AdapterFilters<T>;
-    /**
-     * @returns Returns the Indexer public API.
-     */
-    get index(): IndexerAPI<K, T>;
-    /**
-     * Returns whether this instance is destroyed.
-     */
-    get destroyed(): boolean;
-    /**
-     * Gets the main data / items length.
-     *
-     * @returns {number} Main data / items length.
-     */
-    get length(): number;
-    /**
-     * Gets current reversed state.
-     *
-     * @returns {boolean} Reversed state.
-     */
-    get reversed(): boolean;
-    /**
-     * @returns The sort adapter.
-     */
-    get sort(): AdapterSort<T>;
-    /**
-     * Sets reversed state and notifies subscribers.
-     *
-     * @param reversed - New reversed state.
-     */
-    set reversed(reversed: boolean);
-    /**
-     * Removes all derived reducers, subscriptions, and cleans up all resources.
-     */
-    destroy(): void;
-    /**
-     * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
-     * `replace` is set to true.
-     *
-     * @param data - New data to set to internal data.
-     *
-     * @param replace=false - New data to set to internal data.
-     */
-    setData(data: Map<K, T> | null, replace?: boolean): void;
-    /**
-     * Add a subscriber to this DynMapReducer instance.
-     *
-     * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
-     *
-     * @returns Unsubscribe function.
-     */
-    subscribe(handler: (value: DynMapReducer<K, T>) => void): () => void;
-    /**
-     * Provides an iterator for data stored in DynMapReducer.
-     *
-     * @returns Generator / iterator of all data.
-     * @yields {T}
-     */
-    [Symbol.iterator](): Generator<T, T, T>;
-}
-
-/**
- * Provides the base implementation derived reducer for arrays / DynArrayReducer.
- */
-declare class DerivedMapReducer<K, T> implements IDerivedReducer<Map<K, T>, K, T> {
-    #private;
-    /**
-     * @param map - Data host Map.
-     *
-     * @param parentIndex - Parent indexer.
-     *
-     * @param options - Any filters and sort functions to apply.
-     */
-    constructor(map: DataHost<Map<K, T>>, parentIndex: IndexerAPI<K, T>, options: DataOptions<T>);
-    /**
-     * Returns the internal data of this instance. Be careful!
-     *
-     * Note: The returned map is the same map set by the main reducer. If any changes are performed to the data
-     * externally do invoke {@link IndexerAPI.update} with `true` to recalculate the index and notify all subscribers.
-     *
-     * @returns The internal data.
-     */
-    get data(): Map<K, T> | null;
-    /**
-     * @returns Derived public API.
-     */
-    get derived(): DerivedAPI<Map<K, T>, K, T>;
-    /**
-     * @returns The filters adapter.
-     */
-    get filters(): AdapterFilters<T>;
-    /**
-     * Returns the Indexer public API.
-     *
-     * @returns Indexer API - is also iterable.
-     */
-    get index(): IndexerAPI<K, T>;
-    /**
-     * Returns whether this derived reducer is destroyed.
-     */
-    get destroyed(): boolean;
-    /**
-     * @returns Main data / items length or indexed length.
-     */
-    get length(): number;
-    /**
-     * @returns Gets current reversed state.
-     */
-    get reversed(): boolean;
-    /**
-     * @returns The sort adapter.
-     */
-    get sort(): AdapterSort<T>;
-    /**
-     * Sets reversed state and notifies subscribers.
-     *
-     * @param reversed - New reversed state.
-     */
-    set reversed(reversed: boolean);
-    /**
-     * Removes all derived reducers, subscriptions, and cleans up all resources.
-     */
-    destroy(): void;
-    /**
-     * Provides a callback for custom derived reducers to initialize any data / custom configuration. This allows
-     * child classes to avoid implementing the constructor.
-     *
-     * @protected
-     */
-    initialize(): void;
-    /**
-     * Provides an iterator for data stored in DerivedMapReducer.
-     *
-     * @returns Generator / iterator of all data.
-     */
-    [Symbol.iterator](): Generator<T, T, T>;
-    /**
-     * Subscribe to this DerivedMapReducer.
-     *
-     * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
-     *
-     * @returns Unsubscribe function.
-     */
-    subscribe(handler: (value: DerivedMapReducer<K, T>) => void): () => void;
-}
-
-export { CompareFn, DataDerived, DataDynArray, DataDynMap, DataFilter, DataOptions, DataSort, DerivedArrayReducer, DerivedMapReducer, DynArrayReducer, DynMapReducer, FilterFn, IDerivedReducer, IDerivedReducerCtor, OptionsDerivedCreate };
+export { CompareFn, DataDerivedCreate, DataDynArray, DataDynArrayCreate, DataDynMap, DataDynMapCreate, DataFilter, DataOptions, DataSort, DerivedArrayReducer, DerivedMapReducer, DynArrayReducer, DynMapReducer, FilterFn, IDerivedReducer, IDerivedReducerCtor, IDynArrayReducerCtor, IDynMapReducerCtor, OptionsDerivedCreate, OptionsDynArrayCreate, OptionsDynMapCreate };
