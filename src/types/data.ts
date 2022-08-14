@@ -115,8 +115,8 @@ export type DataSort<T> = {
 };
 
 /**
- * A callback function that compares two values. Return > 0 to sort b before a; < 0 to sort a before b; or 0 to keep
- * original order of a & b.
+ * A callback function that compares two values. Return > 0 to sort 'b' before 'a'; < 0 to sort 'a' before 'b'; or 0 to
+ * keep original order of 'a' & 'b'.
  *
  * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a subscribe
  * function is provided automatic updates to the reduced index is performed.
