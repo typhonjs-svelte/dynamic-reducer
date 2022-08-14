@@ -64,6 +64,13 @@ declare class DynMapReducer<K, T> {
      */
     destroy(): void;
     /**
+     * Provides a callback for custom reducers to initialize any data / custom configuration. This allows
+     * child classes to avoid implementing the constructor.
+     *
+     * @protected
+     */
+    initialize(): void;
+    /**
      * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
      * `replace` is set to true.
      *
@@ -349,8 +356,8 @@ declare type DataSort<T> = {
     subscribe?: (handler: (value: any) => void) => () => void;
 };
 /**
- * A callback function that compares two values. Return > 0 to sort b before a; < 0 to sort a before b; or 0 to keep
- * original order of a & b.
+ * A callback function that compares two values. Return > 0 to sort 'b' before 'a'; < 0 to sort 'a' before 'b'; or 0 to
+ * keep original order of 'a' & 'b'.
  *
  * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a subscribe
  * function is provided automatic updates to the reduced index is performed.
@@ -830,6 +837,13 @@ declare class DynArrayReducer<T> {
      * Removes all derived reducers, subscriptions, and cleans up all resources.
      */
     destroy(): void;
+    /**
+     * Provides a callback for custom reducers to initialize any data / custom configuration. This allows
+     * child classes to avoid implementing the constructor.
+     *
+     * @protected
+     */
+    initialize(): void;
     /**
      * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
      * `replace` is set to true.
