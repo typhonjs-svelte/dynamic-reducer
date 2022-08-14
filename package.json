@@ -1,7 +1,7 @@
 {
   "name": "@typhonjs-utils/dynamic-reducer",
   "description": "Provides managed reducing / filtering / sorting capabilities with subscription support / Svelte store support for arrays and Maps.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)",
   "contributors": [
     "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)"
