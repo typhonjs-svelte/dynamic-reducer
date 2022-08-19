@@ -193,6 +193,10 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
    {
       this.#destroyed = true;
 
+      // Remove any external data reference and perform a final update.
+      this.#array = [null];
+      this.#index.update(true);
+
       // Remove all subscriptions.
       this.#subscriptions.length = 0;
 
@@ -200,8 +204,6 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
       this.#index.destroy();
       this.#filters.clear();
       this.#sort.clear();
-
-      this.#array = [null];
    }
 
    /**

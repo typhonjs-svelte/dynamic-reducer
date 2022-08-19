@@ -157,8 +157,7 @@ export class AdapterDerived<D, K, T>
     */
    update(force: boolean = false)
    {
-      /* c8 ignore next */
-      if (this.#destroyed) { throw Error(`AdapterDerived.update error: this instance has been destroyed.`); }
+      if (this.#destroyed) { return; }
 
       for (const reducer of this.#derived.values()) { reducer.index.update(force); }
    }

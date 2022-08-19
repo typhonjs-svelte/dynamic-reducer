@@ -192,6 +192,10 @@ export class DerivedMapReducer<K, T> implements IDerivedReducer<Map<K, T>, K, T>
    {
       this.#destroyed = true;
 
+      // Remove any external data reference and perform a final update.
+      this.#map = [null];
+      this.#index.update(true);
+
       // Remove all subscriptions.
       this.#subscriptions.length = 0;
 
@@ -199,8 +203,6 @@ export class DerivedMapReducer<K, T> implements IDerivedReducer<Map<K, T>, K, T>
       this.#index.destroy();
       this.#filters.clear();
       this.#sort.clear();
-
-      this.#map = [null];
    }
 
    /**

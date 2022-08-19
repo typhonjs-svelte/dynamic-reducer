@@ -221,16 +221,18 @@ export class DynArrayReducer<T>
       if (this.#destroyed) { return; }
 
       this.#destroyed = true;
+      this.#derived.destroy();
+
+      // Set the backing data to null and provide a final update.
+      this.#array = [null];
+      this.index.update(true);
 
       // Remove all subscriptions.
       this.#subscriptions.length = 0;
 
-      this.#derived.destroy();
       this.#index.destroy();
       this.#filters.clear();
       this.#sort.clear();
-
-      this.#array = [null];
    }
 
    /**
