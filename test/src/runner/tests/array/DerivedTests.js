@@ -254,49 +254,49 @@ export function run({ Module, chai })
          it(`Custom`, () =>
          {
             const data = createData();
-            const car = createCustom(data);
+            const customReducer = createCustom(data);
 
-            assert.deepEqual([...car], data, 'matches initial data');
+            assert.deepEqual([...customReducer], data, 'matches initial data');
 
-            assert.deepEqual([...car.class], [
+            assert.deepEqual([...customReducer.class], [
                { type: 'class', name: 'cleric', level: 4 },
                { type: 'class', name: 'sorcerer', level: 1 }
             ], 'matches class data');
 
-            assert.equal(car.class.totalLevel, 5, 'synthesized data is correct');
+            assert.equal(customReducer.class.totalLevel, 5, 'synthesized data is correct');
 
-            assert.deepEqual([...car.spells], [
+            assert.deepEqual([...customReducer.spells], [
                { type: 'spell', name: 'bane', level: 1 },
                { type: 'spell', name: 'shield', level: 1 },
                { type: 'spell', name: 'silence', level: 2 },
                { type: 'spell', name: 'spirit guardians', level: 3 }
             ], 'matches spells data');
 
-            assert.deepEqual([...car.spells.one], [
+            assert.deepEqual([...customReducer.spells.one], [
                { type: 'spell', name: 'bane', level: 1 },
                { type: 'spell', name: 'shield', level: 1 }
             ], 'matches spells level 1 data');
 
-            assert.deepEqual([...car.spells.two], [
+            assert.deepEqual([...customReducer.spells.two], [
                { type: 'spell', name: 'silence', level: 2 }
             ], 'matches spells level 2 data');
 
-            assert.deepEqual([...car.spells.three], [
+            assert.deepEqual([...customReducer.spells.three], [
                { type: 'spell', name: 'spirit guardians', level: 3 }
             ], 'matches spells level 3 data');
 
-            car.spells.destroy();
+            customReducer.spells.destroy();
 
-            assert.deepEqual([...car.spells], [], 'no data');
-            assert.deepEqual([...car.spells.one], [], 'no data');
-            assert.deepEqual([...car.spells.two], [], 'no data');
-            assert.deepEqual([...car.spells.three], [], 'no data');
+            assert.deepEqual([...customReducer.spells], [], 'no data');
+            assert.deepEqual([...customReducer.spells.one], [], 'no data');
+            assert.deepEqual([...customReducer.spells.two], [], 'no data');
+            assert.deepEqual([...customReducer.spells.three], [], 'no data');
 
-            car.destroy();
+            customReducer.destroy();
 
-            assert.deepEqual([...car], [], 'no data');
-            assert.deepEqual([...car.class], [], 'no data');
-            assert.equal(car.class.totalLevel, 0, 'no data');
+            assert.deepEqual([...customReducer], [], 'no data');
+            assert.deepEqual([...customReducer.class], [], 'no data');
+            assert.equal(customReducer.class.totalLevel, 0, 'no data');
          });
       });
    });
