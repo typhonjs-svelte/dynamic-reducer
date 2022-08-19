@@ -9,20 +9,20 @@ export function run({ Module, chai })
 {
    const { assert } = chai;
 
-   /** @type {import('../../../../../types/index.js').DynMapReducer} */
+   /** @type {import('../../../../../types').DynMapReducer} */
    const { DynMapReducer } = Module;
 
-   /** @type {import('../../../../../types/index.js').DerivedMapReducer} */
+   /** @type {import('../../../../../types').DerivedMapReducer} */
    const DerivedMapReducer = Module.DerivedMapReducer;
 
    /**
-    * Provides a way to create DynArrayReducer with the types applied in the instance returned.
+    * Provides a way to create DynMapReducer with the types applied in the instance returned.
     *
     * @template K, T
     *
     * @param {Map<K, T>|object}  [data] - Initial data.
     *
-    * @returns {import('../../../../../types/index.js').DynArrayReducer<T>} New DynArrayReducer instance.
+    * @returns {import('../../../../../types/index.js').DynMapReducer<K, T>} New DynMapReducer instance.
     */
    function createReducer(data)
    {
@@ -159,14 +159,18 @@ export function run({ Module, chai })
       describe(`Custom`, () =>
       {
          /**
-          * Creates a custom DynArrayReducer implementation w/ custom derived reducers.
+          * Creates a custom DynMapReducer implementation w/ custom derived reducers.
           *
           * @param {object[]} data -
           *
-          * @returns {CustomDynArray} -
+          * @returns {CustomDynMap} -
           */
          function createCustom(data)
          {
+            /**
+             * A derived custom reducer that filters by item `class` and provides a subscriber to calculate derived
+             * values (total level) from filtered data.
+             */
             class ClassDerivedReducer extends DerivedMapReducer
             {
                destroy()
@@ -193,6 +197,10 @@ export function run({ Module, chai })
                }
             }
 
+            /**
+             * A derived custom reducer that filters by item type `spell` and provides further derived reducers for
+             * spell levels 1-3.
+             */
             class SpellsDerivedReducer extends DerivedMapReducer
             {
                initialize()
@@ -216,7 +224,10 @@ export function run({ Module, chai })
                get three() { return this._levels.three; }
             }
 
-            class CustomDynArray extends DynMapReducer
+            /**
+             * Provides a custom dynamic map reducer with custom reducer classes defined above.
+             */
+            class CustomDynMap extends DynMapReducer
             {
                constructor(data)
                {
@@ -237,15 +248,15 @@ export function run({ Module, chai })
                get spells() { return this._spells; }
             }
 
-            return new CustomDynArray(data);
+            return new CustomDynMap(data);
          }
 
          it(`Custom`, () =>
          {
             const data = createData();
-            const car = createCustom(data);
+            const customReducer = createCustom(data);
 
-            assert.deepEqual([...car], [
+            assert.deepEqual([...customReducer], [
                 { type: 'equipment', name: 'backpack' },
                 { type: 'consumable', name: 'potion' },
                 { type: 'class', name: 'sorcerer', level: 1 },
@@ -258,45 +269,45 @@ export function run({ Module, chai })
                 { type: 'spell', name: 'spirit guardians', level: 3 }
              ], 'matches initial data');
 
-            assert.deepEqual([...car.class], [
+            assert.deepEqual([...customReducer.class], [
                { type: 'class', name: 'cleric', level: 4 },
                { type: 'class', name: 'sorcerer', level: 1 }
             ], 'matches class data');
 
-            assert.equal(car.class.totalLevel, 5, 'synthesized data is correct');
+            assert.equal(customReducer.class.totalLevel, 5, 'synthesized data is correct');
 
-            assert.deepEqual([...car.spells], [
+            assert.deepEqual([...customReducer.spells], [
                { type: 'spell', name: 'bane', level: 1 },
                { type: 'spell', name: 'shield', level: 1 },
                { type: 'spell', name: 'silence', level: 2 },
                { type: 'spell', name: 'spirit guardians', level: 3 }
             ], 'matches spells data');
 
-            assert.deepEqual([...car.spells.one], [
+            assert.deepEqual([...customReducer.spells.one], [
                { type: 'spell', name: 'bane', level: 1 },
                { type: 'spell', name: 'shield', level: 1 }
             ], 'matches spells level 1 data');
 
-            assert.deepEqual([...car.spells.two], [
+            assert.deepEqual([...customReducer.spells.two], [
                { type: 'spell', name: 'silence', level: 2 }
             ], 'matches spells level 2 data');
 
-            assert.deepEqual([...car.spells.three], [
+            assert.deepEqual([...customReducer.spells.three], [
                { type: 'spell', name: 'spirit guardians', level: 3 }
             ], 'matches spells level 3 data');
 
-            car.spells.destroy();
+            customReducer.spells.destroy();
 
-            assert.deepEqual([...car.spells], [], 'no data');
-            assert.deepEqual([...car.spells.one], [], 'no data');
-            assert.deepEqual([...car.spells.two], [], 'no data');
-            assert.deepEqual([...car.spells.three], [], 'no data');
+            assert.deepEqual([...customReducer.spells], [], 'no data');
+            assert.deepEqual([...customReducer.spells.one], [], 'no data');
+            assert.deepEqual([...customReducer.spells.two], [], 'no data');
+            assert.deepEqual([...customReducer.spells.three], [], 'no data');
 
-            car.destroy();
+            customReducer.destroy();
 
-            assert.deepEqual([...car], [], 'no data');
-            assert.deepEqual([...car.class], [], 'no data');
-            assert.equal(car.class.totalLevel, 0, 'no data');
+            assert.deepEqual([...customReducer], [], 'no data');
+            assert.deepEqual([...customReducer.class], [], 'no data');
+            assert.equal(customReducer.class.totalLevel, 0, 'no data');
          });
       });
    });
@@ -306,7 +317,7 @@ export function run({ Module, chai })
  * Creates hypothetical list of mixed items of a TTRPG game setting that defines the characteristics and equipment of a
  * character.
  *
- * @returns {object[]} Test data.
+ * @returns {Map<string, object>} Test data.
  */
 function createData()
 {
