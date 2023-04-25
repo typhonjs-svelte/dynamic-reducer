@@ -8,7 +8,6 @@
 
 [![Build Status](https://github.com/typhonjs-svelte/dynamic-reducer/workflows/CI/CD/badge.svg)](#)
 [![Coverage](https://img.shields.io/codecov/c/github/typhonjs-svelte/dynamic-reducer.svg)](https://codecov.io/github/typhonjs-svelte/dynamic-reducer)
-[![Dependency Status](https://david-dm.org/typhonjs-svelte/dynamic-reducer.svg)](https://david-dm.org/typhonjs-svelte/dynamic-reducer)
 
 
 Provides managed reducing / filtering / sorting capabilities with subscription support / Svelte store support for 
