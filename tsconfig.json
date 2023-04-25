@@ -5,7 +5,6 @@
     "target": "es2022",
     "baseUrl": ".",
 
-    "importsNotUsedAsValues": "error",
     "sourceMap": true,
     "inlineSources": true,
     "strict": false,
