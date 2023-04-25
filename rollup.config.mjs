@@ -12,7 +12,7 @@ export default () =>
          output: [{
             file: `./dist/index.js`,
             format: 'es',
-            preferConst: true,
+            generatedCode: { constBindings: true },
             sourcemap: s_SOURCEMAP,
          }],
          plugins: [
