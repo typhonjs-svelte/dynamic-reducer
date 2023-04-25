@@ -5,10 +5,10 @@ import type {
     IndexerAPI }                from '../common/index.js';
 
 import type {
-    DataDynArray,
-    DataDynMap,
-    DataHost,
-    DataOptions }               from './data.js';
+    DynArrayData,
+    DynMapData,
+    DynDataHost,
+    DynDataOptions }               from './data.js';
 
 import type { DynMapReducer }   from '../map/index.js';
 import type { DynArrayReducer } from '../array/index.js';
@@ -18,7 +18,7 @@ import type { DynArrayReducer } from '../array/index.js';
  */
 export interface IDynArrayReducerCtor<T>
 {
-    new (data?: Iterable<T> | DataDynArray<T>): DynArrayReducer<T>;
+    new (data?: Iterable<T> | DynArrayData<T>): DynArrayReducer<T>;
 }
 
 /**
@@ -26,21 +26,21 @@ export interface IDynArrayReducerCtor<T>
  */
 export interface IDynMapReducerCtor<K, T>
 {
-    new (data?: Map<K, T> | DataDynMap<K, T>): DynMapReducer<K, T>;
+    new (data?: Map<K, T> | DynMapData<K, T>): DynMapReducer<K, T>;
 }
 
 /**
  * Defines the shape of derived reducers constructor functions.
  */
-export interface IDerivedReducerCtor<T>
+export interface IDerivedDynReducerCtor<T>
 {
-    new (hostData: DataHost<any>, parentIndex: IndexerAPI<any, T>, options: DataOptions<T>): IDerivedReducer<any, any, T>;
+    new (hostData: DynDataHost<any>, parentIndex: IndexerAPI<any, T>, options: DynDataOptions<T>): IDerivedDynReducer<any, any, T>;
 }
 
 /**
  * Defines the interface for all derived reducers.
  */
-export interface IDerivedReducer<D, K, T>
+export interface IDerivedDynReducer<D, K, T>
 {
     /**
      * Returns the internal data of this instance. Be careful!
@@ -107,5 +107,5 @@ export interface IDerivedReducer<D, K, T>
      *
      * @returns Unsubscribe function.
      */
-    subscribe(handler: (value: IDerivedReducer<D, K, T>) => void): () => void;
+    subscribe(handler: (value: IDerivedDynReducer<D, K, T>) => void): () => void;
 }

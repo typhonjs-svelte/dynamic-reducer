@@ -9,14 +9,14 @@ import {
 import { Indexer }               from './Indexer.js';
 
 import type {
-   CompareFn,
-   DataDynArray,
-   DataFilter,
-   DataHost,
-   DataSort,
-   FilterFn }                    from '../types/index.js';
+   DynCompareFn,
+   DynArrayData,
+   DynDataFilter,
+   DynDataHost,
+   DynDataSort,
+   DynFilterFn }                    from '../types/index.js';
 
-import { DerivedArrayReducer }   from './derived/DerivedArrayReducer.js';
+import { DynArrayReducerDerived }   from './derived/DynArrayReducerDerived.js';
 
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -24,7 +24,7 @@ import { DerivedArrayReducer }   from './derived/DerivedArrayReducer.js';
  */
 export class DynArrayReducer<T>
 {
-   #array: DataHost<T[]> = [null];
+   #array: DynDataHost<T[]> = [null];
 
    readonly #derived: AdapterDerived<T[], number, T>;
 
@@ -32,7 +32,7 @@ export class DynArrayReducer<T>
 
    readonly #filters: AdapterFilters<T>;
 
-   readonly #filtersData: { filters: DataFilter<T>[] } = { filters: [] };
+   readonly #filtersData: { filters: DynDataFilter<T>[] } = { filters: [] };
 
    readonly #index: Indexer<T>;
 
@@ -42,7 +42,7 @@ export class DynArrayReducer<T>
 
    readonly #sort: AdapterSort<T>;
 
-   #sortData: { compareFn: CompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
 
    #subscriptions = [];
 
@@ -54,11 +54,11 @@ export class DynArrayReducer<T>
     *
     * @param [data] - Data iterable to store if array or copy otherwise.
     */
-   constructor(data?: Iterable<T>|DataDynArray<T>)
+   constructor(data?: Iterable<T>|DynArrayData<T>)
    {
       let dataIterable = void 0;
-      let filters: Iterable<FilterFn<T> | DataFilter<T>> = void 0;
-      let sort: CompareFn<T> | DataSort<T> = void 0;
+      let filters: Iterable<DynFilterFn<T> | DynDataFilter<T>> = void 0;
+      let sort: DynCompareFn<T> | DynDataSort<T> = void 0;
 
       if (data === null)
       {
@@ -126,7 +126,7 @@ export class DynArrayReducer<T>
 
       this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortData);
 
-      this.#derived = new AdapterDerived(this.#array, this.#indexPublicAPI, DerivedArrayReducer);
+      this.#derived = new AdapterDerived(this.#array, this.#indexPublicAPI, DynArrayReducerDerived);
       this.#derivedPublicAPI = new DerivedAPI<T[], number, T>(this.#derived);
 
       this.#index.initAdapters(this.#filtersData, this.#sortData, this.#derived);
@@ -326,10 +326,9 @@ export class DynArrayReducer<T>
    /**
     * Provides an iterator for data stored in DynArrayReducer.
     *
-    * @returns Generator / iterator of all data.
     * @yields {T}
     */
-   *[Symbol.iterator](): Generator<T, T, T>
+   *[Symbol.iterator](): IterableIterator<T>
    {
       const array = this.#array[0];
 

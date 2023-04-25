@@ -10,7 +10,7 @@ declare class DynMapReducer<K, T> {
      *
      * @param [data] - Data iterable to store if array or copy otherwise.
      */
-    constructor(data?: Map<K, T> | DataDynMap<K, T>);
+    constructor(data?: Map<K, T> | DynMapData<K, T>);
     /**
      * Returns the internal data of this instance. Be careful!
      *
@@ -90,16 +90,15 @@ declare class DynMapReducer<K, T> {
     /**
      * Provides an iterator for data stored in DynMapReducer.
      *
-     * @returns Generator / iterator of all data.
      * @yields {T}
      */
-    [Symbol.iterator](): Generator<T, T, T>;
+    [Symbol.iterator](): IterableIterator<T>;
 }
 
 /**
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
  */
-declare class DerivedMapReducer<K, T> implements IDerivedReducer<Map<K, T>, K, T> {
+declare class DynMapReducerDerived<K, T> implements IDerivedDynReducer<Map<K, T>, K, T> {
     #private;
     /**
      * @param map - Data host Map.
@@ -108,7 +107,7 @@ declare class DerivedMapReducer<K, T> implements IDerivedReducer<Map<K, T>, K, T
      *
      * @param options - Any filters and sort functions to apply.
      */
-    constructor(map: DataHost<Map<K, T>>, parentIndex: IndexerAPI<K, T>, options: DataOptions<T>);
+    constructor(map: DynDataHost<Map<K, T>>, parentIndex: IndexerAPI<K, T>, options: DynDataOptions<T>);
     /**
      * Returns the internal data of this instance. Be careful!
      *
@@ -168,9 +167,9 @@ declare class DerivedMapReducer<K, T> implements IDerivedReducer<Map<K, T>, K, T
     /**
      * Provides an iterator for data stored in DerivedMapReducer.
      *
-     * @returns Generator / iterator of all data.
+     * @yields {T}
      */
-    [Symbol.iterator](): Generator<T, T, T>;
+    [Symbol.iterator](): IterableIterator<T>;
     /**
      * Subscribe to this DerivedMapReducer.
      *
@@ -178,31 +177,19 @@ declare class DerivedMapReducer<K, T> implements IDerivedReducer<Map<K, T>, K, T
      *
      * @returns Unsubscribe function.
      */
-    subscribe(handler: (value: DerivedMapReducer<K, T>) => void): () => void;
+    subscribe(handler: (value: DynMapReducerDerived<K, T>) => void): () => void;
 }
 
 /**
- * Defines the shape of dynamic array constructor functions.
- */
-interface IDynArrayReducerCtor<T> {
-    new (data?: Iterable<T> | DataDynArray<T>): DynArrayReducer<T>;
-}
-/**
- * Defines the shape of dynamic map constructor functions.
- */
-interface IDynMapReducerCtor<K, T> {
-    new (data?: Map<K, T> | DataDynMap<K, T>): DynMapReducer<K, T>;
-}
-/**
  * Defines the shape of derived reducers constructor functions.
  */
-interface IDerivedReducerCtor<T> {
-    new (hostData: DataHost<any>, parentIndex: IndexerAPI<any, T>, options: DataOptions<T>): IDerivedReducer<any, any, T>;
+interface IDerivedDynReducerCtor<T> {
+    new (hostData: DynDataHost<any>, parentIndex: IndexerAPI<any, T>, options: DynDataOptions<T>): IDerivedDynReducer<any, any, T>;
 }
 /**
  * Defines the interface for all derived reducers.
  */
-interface IDerivedReducer<D, K, T> {
+interface IDerivedDynReducer<D, K, T> {
     /**
      * Returns the internal data of this instance. Be careful!
      *
@@ -258,44 +245,44 @@ interface IDerivedReducer<D, K, T> {
      *
      * @returns Unsubscribe function.
      */
-    subscribe(handler: (value: IDerivedReducer<D, K, T>) => void): () => void;
+    subscribe(handler: (value: IDerivedDynReducer<D, K, T>) => void): () => void;
 }
 
 /**
  * Defines the additional options for filters and sort function.
  */
-declare type DataOptions<T> = {
+type DynDataOptions<T> = {
     /**
      * Iterable list of filters.
      */
-    filters?: Iterable<FilterFn<T> | DataFilter<T>>;
+    filters?: Iterable<DynFilterFn<T> | DynDataFilter<T>>;
     /**
      * Compare function.
      */
-    sort?: CompareFn<T> | DataSort<T>;
+    sort?: DynCompareFn<T> | DynDataSort<T>;
 };
 /**
  * The main options object for DynArrayReducer.
  */
-declare type DataDynArray<T> = {
+type DynArrayData<T> = {
     /**
      * Initial data iterable list.
      */
     data?: Iterable<T>;
-} & DataOptions<T>;
+} & DynDataOptions<T>;
 /**
  * The main options object for DynMapReducer.
  */
-declare type DataDynMap<K, T> = {
+type DynMapData<K, T> = {
     /**
      * Optional initial backing Map.
      */
     data?: Map<K, T>;
-} & DataOptions<T>;
+} & DynDataOptions<T>;
 /**
  * Defines the data object to configure a filter w/ additional configuration options.
  */
-declare type DataFilter<T> = {
+type DynDataFilter<T> = {
     /**
      * An optional ID associated with this filter. Can be used to remove the filter.
      */
@@ -303,7 +290,7 @@ declare type DataFilter<T> = {
     /**
      * Filter function that takes a value argument and returns a truthy value to keep it.
      */
-    filter: FilterFn<T>;
+    filter: DynFilterFn<T>;
     /**
      * An optional number between 0 and 1 inclusive to position this filter against others.
      */
@@ -318,11 +305,11 @@ declare type DataFilter<T> = {
 /**
  * Provides a compound type for the backing data structure stored in reducers.
  */
-declare type DataHost<D> = (D | null)[];
+type DynDataHost<D> = (D | null)[];
 /**
  * Defines the data object storing index data in AdapterIndexer.
  */
-declare type DataIndexer<K, T> = {
+type DynDataIndexer<K, T> = {
     /**
      * - The index array.
      */
@@ -343,11 +330,11 @@ declare type DataIndexer<K, T> = {
 /**
  * Defines an object to configure sort functionality.
  */
-declare type DataSort<T> = {
+type DynDataSort<T> = {
     /**
      * - A callback function that compares two values.
      */
-    compare: CompareFn<T>;
+    compare: DynCompareFn<T>;
     /**
      * Optional subscribe function following the Svelte store / subscribe pattern.
      *
@@ -362,7 +349,7 @@ declare type DataSort<T> = {
  * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a subscribe
  * function is provided automatic updates to the reduced index is performed.
  */
-declare type CompareFn<T> = {
+type DynCompareFn<T> = {
     /**
      * @param a - Element 'a' of backing data to sort.
      *
@@ -380,7 +367,7 @@ declare type CompareFn<T> = {
  * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a subscribe
  * function is provided automatic updates to the reduced index is performed.
  */
-declare type FilterFn<T> = {
+type DynFilterFn<T> = {
     /**
      * @param element - Element of backing data structure to filter.
      *
@@ -395,7 +382,7 @@ declare type FilterFn<T> = {
 /**
  * Defines object / options for creating a derived reducer.
  */
-declare type DataDerivedCreate<T> = {
+type DynDataDerivedCreate<T> = {
     /**
      * - Name of derived reducer.
      */
@@ -403,40 +390,12 @@ declare type DataDerivedCreate<T> = {
     /**
      * - A DerivedReducer constructor function / class.
      */
-    ctor?: IDerivedReducerCtor<T>;
-} & DataOptions<T>;
+    ctor?: IDerivedDynReducerCtor<T>;
+} & DynDataOptions<T>;
 /**
  * Creates a compound type for all derived reducer 'create' option combinations.
  */
-declare type OptionsDerivedCreate<T> = string | IDerivedReducerCtor<T> | DataDerivedCreate<T>;
-/**
- * Defines object / options for creating a dynamic array reducer.
- */
-declare type DataDynArrayCreate<T> = {
-    /**
-     * - Name of dynamic array reducer.
-     */
-    name?: string;
-    /**
-     * - A DynMapReducer constructor function / class.
-     */
-    ctor?: IDynArrayReducerCtor<T>;
-} & DataOptions<T>;
-declare type OptionsDynArrayCreate<T> = string | IDynArrayReducerCtor<T> | DataDynArrayCreate<T>;
-/**
- * Defines object / options for creating a dynamic map reducer.
- */
-declare type DataDynMapCreate<K, T> = {
-    /**
-     * - Name of dynamic map reducer.
-     */
-    name?: string;
-    /**
-     * - A DynMapReducer constructor function / class.
-     */
-    ctor?: IDynMapReducerCtor<K, T>;
-} & DataOptions<T>;
-declare type OptionsDynMapCreate<K, T> = string | IDynMapReducerCtor<K, T> | DataDynMapCreate<K, T>;
+type DynOptionsDerivedCreate<T> = string | IDerivedDynReducerCtor<T> | DynDataDerivedCreate<T>;
 
 /**
  * Provides construction and management of indexed data when there are parent indexes or filter / sort functions
@@ -445,13 +404,13 @@ declare type OptionsDynMapCreate<K, T> = string | IDynMapReducerCtor<K, T> | Dat
 declare abstract class AdapterIndexer<D, K, T> {
     derivedAdapter: AdapterDerived<D, K, T>;
     filtersData: {
-        filters: DataFilter<T>[];
+        filters: DynDataFilter<T>[];
     };
-    hostData: DataHost<D>;
+    hostData: DynDataHost<D>;
     hostUpdate: Function;
-    indexData: DataIndexer<K, T>;
+    indexData: DynDataIndexer<K, T>;
     sortData: {
-        compareFn: CompareFn<T>;
+        compareFn: DynCompareFn<T>;
     };
     sortFn: (a: K, b: K) => number;
     destroyed: boolean;
@@ -464,7 +423,7 @@ declare abstract class AdapterIndexer<D, K, T> {
      *
      * @returns Indexer adapter instance.
      */
-    constructor(hostData: DataHost<D>, hostUpdate: Function, parentIndexer?: IndexerAPI<K, T>);
+    constructor(hostData: DynDataHost<D>, hostUpdate: Function, parentIndexer?: IndexerAPI<K, T>);
     /**
      * @returns Returns whether the index is active.
      */
@@ -513,9 +472,9 @@ declare abstract class AdapterIndexer<D, K, T> {
      * @param derivedAdapter - Associated AdapterDerived instance.
      */
     initAdapters(filtersData: {
-        filters: DataFilter<T>[];
+        filters: DynDataFilter<T>[];
     }, sortData: {
-        compareFn: CompareFn<T>;
+        compareFn: DynCompareFn<T>;
     }, derivedAdapter: AdapterDerived<D, K, T>): void;
     /**
      * Handles updating the index in child implementation specific to the backing data structure.
@@ -561,10 +520,9 @@ declare class IndexerAPI<K, T> {
     /**
      * Provides an iterator over the index array.
      *
-     * @returns Iterator / generator
      * @yields {K}
      */
-    [Symbol.iterator](): Generator<K, K, K>;
+    [Symbol.iterator](): IterableIterator<K>;
 }
 
 /**
@@ -579,7 +537,7 @@ declare class AdapterDerived<D, K, T> {
      *
      * @param DerivedReducerCtor - The default derived reducer constructor function.
      */
-    constructor(hostData: DataHost<D>, parentIndex: IndexerAPI<K, T>, DerivedReducerCtor: IDerivedReducerCtor<T>);
+    constructor(hostData: DynDataHost<D>, parentIndex: IndexerAPI<K, T>, DerivedReducerCtor: IDerivedDynReducerCtor<T>);
     /**
      * Creates a new derived reducer.
      *
@@ -587,7 +545,7 @@ declare class AdapterDerived<D, K, T> {
      *
      * @returns Newly created derived reducer.
      */
-    create(options: OptionsDerivedCreate<T>): IDerivedReducer<D, K, T>;
+    create(options: DynOptionsDerivedCreate<T>): IDerivedDynReducer<D, K, T>;
     /**
      * Removes all derived reducers and associated subscriptions.
      */
@@ -607,7 +565,7 @@ declare class AdapterDerived<D, K, T> {
      *
      * @param name - Name of derived reducer.
      */
-    get(name: string): IDerivedReducer<D, K, T>;
+    get(name: string): IDerivedDynReducer<D, K, T>;
     /**
      * Updates all managed derived reducer indexes.
      *
@@ -618,7 +576,7 @@ declare class AdapterDerived<D, K, T> {
 
 /**
  * Provides the storage and sequencing of managed filters. Each filter added may be a bespoke function or a
- * {@link DataFilter} object containing an `id`, `filter`, and `weight` attributes; `filter` is the only required
+ * {@link DynDataFilter} object containing an `id`, `filter`, and `weight` attributes; `filter` is the only required
  * attribute.
  *
  * The `id` attribute can be anything that creates a unique ID for the filter; recommended strings or numbers. This
@@ -649,7 +607,7 @@ declare class AdapterFilters<T> {
      * @param filtersAdapter - Stores the filter function data.
      */
     constructor(indexUpdate: any, filtersAdapter: {
-        filters: DataFilter<T>[];
+        filters: DynDataFilter<T>[];
     });
     /**
      * @returns Returns the length of the filter data.
@@ -658,14 +616,13 @@ declare class AdapterFilters<T> {
     /**
      * Provides an iterator for filters.
      *
-     * @returns Generator / iterator of filters.
      * @yields {DataFilter<T>}
      */
-    [Symbol.iterator](): Generator<DataFilter<T>, DataFilter<T>, DataFilter<T>> | void;
+    [Symbol.iterator](): IterableIterator<DynDataFilter<T>> | void;
     /**
      * @param filters -
      */
-    add(...filters: (FilterFn<T> | DataFilter<T>)[]): void;
+    add(...filters: (DynFilterFn<T> | DynDataFilter<T>)[]): void;
     /**
      * Clears and removes all filters.
      */
@@ -673,14 +630,14 @@ declare class AdapterFilters<T> {
     /**
      * @param filters -
      */
-    remove(...filters: (FilterFn<T> | DataFilter<T>)[]): void;
+    remove(...filters: (DynFilterFn<T> | DynDataFilter<T>)[]): void;
     /**
      * Remove filters by the provided callback. The callback takes 3 parameters: `id`, `filter`, and `weight`.
      * Any truthy value returned will remove that filter.
      *
      * @param callback - Callback function to evaluate each filter entry.
      */
-    removeBy(callback: (id: any, filter: FilterFn<T>, weight: number) => boolean): void;
+    removeBy(callback: (id: any, filter: DynFilterFn<T>, weight: number) => boolean): void;
     /**
      * @param ids - Removes filters by ID.
      */
@@ -689,7 +646,7 @@ declare class AdapterFilters<T> {
 
 /**
  * Provides the storage and sequencing of a managed sort function. The sort function set may be a bespoke function or a
- * {@link DataSort} object containing an `compare`, and `subscribe` attributes; `compare` is the only required
+ * {@link DynDataSort} object containing an `compare`, and `subscribe` attributes; `compare` is the only required
  * attribute.
  *
  * Note: You can set a compare function that also has a subscribe function attached as the `subscribe` attribute.
@@ -711,7 +668,7 @@ declare class AdapterSort<T> {
      * @param sortData - Storage for compare function.
      */
     constructor(indexUpdate: Function, sortData: {
-        compareFn: CompareFn<T>;
+        compareFn: DynCompareFn<T>;
     });
     /**
      * Clears & removes any assigned sort function and triggers an index update.
@@ -725,7 +682,7 @@ declare class AdapterSort<T> {
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#parameters
      */
-    set(data: CompareFn<T> | DataSort<T>): void;
+    set(data: DynCompareFn<T> | DynDataSort<T>): void;
 }
 
 /**
@@ -752,7 +709,7 @@ declare class DerivedAPI<D, K, T> {
      *
      * @returns Newly created derived reducer.
      */
-    create: (options: OptionsDerivedCreate<T>) => IDerivedReducer<D, K, T>;
+    create: (options: DynOptionsDerivedCreate<T>) => IDerivedDynReducer<D, K, T>;
     /**
      * Deletes and destroys a derived reducer.
      *
@@ -768,7 +725,7 @@ declare class DerivedAPI<D, K, T> {
      *
      * @param name - Name of derived reducer.
      */
-    get: (name: string) => IDerivedReducer<D, K, T>;
+    get: (name: string) => IDerivedDynReducer<D, K, T>;
     constructor(adapterDerived: AdapterDerived<D, K, T>);
 }
 
@@ -784,7 +741,7 @@ declare class DynArrayReducer<T> {
      *
      * @param [data] - Data iterable to store if array or copy otherwise.
      */
-    constructor(data?: Iterable<T> | DataDynArray<T>);
+    constructor(data?: Iterable<T> | DynArrayData<T>);
     /**
      * Returns the internal data of this instance. Be careful!
      *
@@ -864,16 +821,15 @@ declare class DynArrayReducer<T> {
     /**
      * Provides an iterator for data stored in DynArrayReducer.
      *
-     * @returns Generator / iterator of all data.
      * @yields {T}
      */
-    [Symbol.iterator](): Generator<T, T, T>;
+    [Symbol.iterator](): IterableIterator<T>;
 }
 
 /**
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
  */
-declare class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T> {
+declare class DynArrayReducerDerived<T> implements IDerivedDynReducer<T[], number, T> {
     #private;
     /**
      * @param array - Data host array.
@@ -882,7 +838,7 @@ declare class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T> 
      *
      * @param options - Any filters and sort functions to apply.
      */
-    constructor(array: DataHost<T[]>, parentIndex: IndexerAPI<number, T>, options: DataOptions<T>);
+    constructor(array: DynDataHost<T[]>, parentIndex: IndexerAPI<number, T>, options: DynDataOptions<T>);
     /**
      * Returns the internal data of this instance. Be careful!
      *
@@ -943,9 +899,9 @@ declare class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T> 
     /**
      * Provides an iterator for data stored in DerivedArrayReducer.
      *
-     * @returns Generator / iterator of all data.
+     * @yields {T}
      */
-    [Symbol.iterator](): Generator<T, T, T>;
+    [Symbol.iterator](): IterableIterator<T>;
     /**
      * Subscribe to this DerivedArrayReducer.
      *
@@ -953,7 +909,7 @@ declare class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T> 
      *
      * @returns Unsubscribe function.
      */
-    subscribe(handler: (value: DerivedArrayReducer<T>) => void): () => void;
+    subscribe(handler: (value: DynArrayReducerDerived<T>) => void): () => void;
 }
 
-export { CompareFn, DataDerivedCreate, DataDynArray, DataDynArrayCreate, DataDynMap, DataDynMapCreate, DataFilter, DataOptions, DataSort, DerivedArrayReducer, DerivedMapReducer, DynArrayReducer, DynMapReducer, FilterFn, IDerivedReducer, IDerivedReducerCtor, IDynArrayReducerCtor, IDynMapReducerCtor, OptionsDerivedCreate, OptionsDynArrayCreate, OptionsDynMapCreate };
+export { DynArrayReducer, DynArrayReducerDerived, DynMapReducer, DynMapReducerDerived };

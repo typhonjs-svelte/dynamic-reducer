@@ -1,8 +1,8 @@
 import type { AdapterDerived }  from '../adapter/AdapterDerived.js';
 
 import type {
-    IDerivedReducer,
-    OptionsDerivedCreate }      from '../../types/index.js';
+    IDerivedDynReducer,
+    DynOptionsDerivedCreate }      from '../../types/index.js';
 
 /**
  * Provides the public API for derived reducers. There are several ways to create a derived reducer from utilizing the
@@ -30,7 +30,7 @@ export class DerivedAPI<D, K, T>
      *
      * @returns Newly created derived reducer.
      */
-    create: (options: OptionsDerivedCreate<T>) => IDerivedReducer<D, K, T>;
+    create: (options: DynOptionsDerivedCreate<T>) => IDerivedDynReducer<D, K, T>;
 
     /**
      * Deletes and destroys a derived reducer.
@@ -49,7 +49,7 @@ export class DerivedAPI<D, K, T>
      *
      * @param name - Name of derived reducer.
      */
-    get: (name: string) => IDerivedReducer<D, K, T>
+    get: (name: string) => IDerivedDynReducer<D, K, T>
 
     constructor(adapterDerived: AdapterDerived<D, K, T>)
     {

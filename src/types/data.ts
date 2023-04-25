@@ -1,49 +1,49 @@
 import type { IndexerAPI }  from '../common/index.js';
 
 import type {
-    IDerivedReducerCtor,
+    IDerivedDynReducerCtor,
     IDynArrayReducerCtor,
     IDynMapReducerCtor }    from './interface.js';
 
 /**
  * Defines the additional options for filters and sort function.
  */
-export type DataOptions<T> = {
+export type DynDataOptions<T> = {
     /**
      * Iterable list of filters.
      */
-    filters?: Iterable<FilterFn<T> | DataFilter<T>>;
+    filters?: Iterable<DynFilterFn<T> | DynDataFilter<T>>;
 
     /**
      * Compare function.
      */
-    sort?: CompareFn<T> | DataSort<T>;
+    sort?: DynCompareFn<T> | DynDataSort<T>;
 }
 
 /**
  * The main options object for DynArrayReducer.
  */
-export type DataDynArray<T> = {
+export type DynArrayData<T> = {
     /**
      * Initial data iterable list.
      */
     data?: Iterable<T>;
-} & DataOptions<T>;
+} & DynDataOptions<T>;
 
 /**
  * The main options object for DynMapReducer.
  */
-export type DataDynMap<K, T> = {
+export type DynMapData<K, T> = {
     /**
      * Optional initial backing Map.
      */
     data?: Map<K, T>;
-} & DataOptions<T>;
+} & DynDataOptions<T>;
 
 /**
  * Defines the data object to configure a filter w/ additional configuration options.
  */
-export type DataFilter<T> = {
+export type DynDataFilter<T> = {
     /**
      * An optional ID associated with this filter. Can be used to remove the filter.
      */
@@ -52,7 +52,7 @@ export type DataFilter<T> = {
     /**
      * Filter function that takes a value argument and returns a truthy value to keep it.
      */
-    filter: FilterFn<T>;
+    filter: DynFilterFn<T>;
 
     /**
      * An optional number between 0 and 1 inclusive to position this filter against others.
@@ -70,12 +70,12 @@ export type DataFilter<T> = {
 /**
  * Provides a compound type for the backing data structure stored in reducers.
  */
-export type DataHost<D> = (D | null)[];
+export type DynDataHost<D> = (D | null)[];
 
 /**
  * Defines the data object storing index data in AdapterIndexer.
  */
-export type DataIndexer<K, T> = {
+export type DynDataIndexer<K, T> = {
     /**
      * - The index array.
      */
@@ -100,11 +100,11 @@ export type DataIndexer<K, T> = {
 /**
  * Defines an object to configure sort functionality.
  */
-export type DataSort<T> = {
+export type DynDataSort<T> = {
     /**
      * - A callback function that compares two values.
      */
-    compare: CompareFn<T>;
+    compare: DynCompareFn<T>;
 
     /**
      * Optional subscribe function following the Svelte store / subscribe pattern.
@@ -121,7 +121,7 @@ export type DataSort<T> = {
  * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a subscribe
  * function is provided automatic updates to the reduced index is performed.
  */
-export type CompareFn<T> = {
+export type DynCompareFn<T> = {
     /**
      * @param a - Element 'a' of backing data to sort.
      *
@@ -141,7 +141,7 @@ export type CompareFn<T> = {
  * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a subscribe
  * function is provided automatic updates to the reduced index is performed.
  */
-export type FilterFn<T> = {
+export type DynFilterFn<T> = {
     /**
      * @param element - Element of backing data structure to filter.
      *
@@ -158,7 +158,7 @@ export type FilterFn<T> = {
 /**
  * Defines object / options for creating a derived reducer.
  */
-export type DataDerivedCreate<T> = {
+export type DynDataDerivedCreate<T> = {
     /**
      * - Name of derived reducer.
      */
@@ -167,20 +167,20 @@ export type DataDerivedCreate<T> = {
     /**
      * - A DerivedReducer constructor function / class.
      */
-    ctor?: IDerivedReducerCtor<T>;
-} & DataOptions<T>;
+    ctor?: IDerivedDynReducerCtor<T>;
+} & DynDataOptions<T>;
 
 /**
  * Creates a compound type for all derived reducer 'create' option combinations.
  */
-export type OptionsDerivedCreate<T> = string | IDerivedReducerCtor<T> | DataDerivedCreate<T>;
+export type DynOptionsDerivedCreate<T> = string | IDerivedDynReducerCtor<T> | DynDataDerivedCreate<T>;
 
 // -------------------------------------------------------------------------------------------------------------------
 
 /**
  * Defines object / options for creating a dynamic array reducer.
  */
-export type DataDynArrayCreate<T> = {
+export type DynDataArrayCreate<T> = {
     /**
      * - Name of dynamic array reducer.
      */
@@ -190,16 +190,16 @@ export type DataDynArrayCreate<T> = {
      * - A DynMapReducer constructor function / class.
      */
     ctor?: IDynArrayReducerCtor<T>;
-} & DataOptions<T>;
+} & DynDataOptions<T>;
 
-export type OptionsDynArrayCreate<T> = string | IDynArrayReducerCtor<T> | DataDynArrayCreate<T>
+export type DynOptionsArrayCreate<T> = string | IDynArrayReducerCtor<T> | DynDataArrayCreate<T>
 
 // -------------------------------------------------------------------------------------------------------------------
 
 /**
  * Defines object / options for creating a dynamic map reducer.
  */
-export type DataDynMapCreate<K, T> = {
+export type DynDataMapCreate<K, T> = {
     /**
      * - Name of dynamic map reducer.
      */
@@ -209,6 +209,6 @@ export type DataDynMapCreate<K, T> = {
      * - A DynMapReducer constructor function / class.
      */
     ctor?: IDynMapReducerCtor<K, T>;
-} & DataOptions<T>;
+} & DynDataOptions<T>;
 
-export type OptionsDynMapCreate<K, T> = string | IDynMapReducerCtor<K, T> | DataDynMapCreate<K, T>
+export type DynOptionsMapCreate<K, T> = string | IDynMapReducerCtor<K, T> | DynDataMapCreate<K, T>

@@ -1,23 +1,25 @@
 export *                    from './array/index.js';
 export *                    from './map/index.js';
 
-export type {
-    IDerivedReducerCtor,
-    IDerivedReducer,
-    IDynArrayReducerCtor,
-    IDynMapReducerCtor }    from './types/interface.js';
+// TODO: Determine if all of the type data needs to be exported.
 
-export type {
-    DataDynArray,
-    DataDynMap,
-    DataFilter,
-    DataOptions,
-    DataSort,
-    CompareFn,
-    FilterFn,
-    DataDerivedCreate,
-    OptionsDerivedCreate,
-    DataDynArrayCreate,
-    OptionsDynArrayCreate,
-    DataDynMapCreate,
-    OptionsDynMapCreate }  from './types/data.js';
+// export type {
+//     IDerivedDynReducerCtor,
+//     IDerivedDynReducer,
+//     IDynArrayReducerCtor,
+//     IDynMapReducerCtor }    from './types/interface.js';
+
+// export type {
+//     DynArrayData,
+//     DynMapData,
+//     DynDataFilter,
+//     DynDataOptions,
+//     DynDataSort,
+//     DynCompareFn,
+//     DynFilterFn,
+//     DynDataDerivedCreate,
+//     DynOptionsDerivedCreate,
+//     DynDataArrayCreate,
+//     DynOptionsArrayCreate,
+//     DynDataMapCreate,
+//     DynOptionsMapCreate }  from './types/data.js';

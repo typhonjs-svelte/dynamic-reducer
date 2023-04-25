@@ -9,14 +9,14 @@ import {
 import { Indexer }            from './Indexer.js';
 
 import type {
-   CompareFn,
-   DataDynMap,
-   DataFilter,
-   DataHost,
-   DataSort,
-   FilterFn }                 from '../types/index.js';
+   DynCompareFn,
+   DynMapData,
+   DynDataFilter,
+   DynDataHost,
+   DynDataSort,
+   DynFilterFn }                 from '../types/index.js';
 
-import { DerivedMapReducer }  from './derived/DerivedMapReducer.js';
+import { DynMapReducerDerived }  from './derived/DynMapReducerDerived.js';
 
 /**
  * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -24,7 +24,7 @@ import { DerivedMapReducer }  from './derived/DerivedMapReducer.js';
  */
 export class DynMapReducer<K, T>
 {
-   #map: DataHost<Map<K, T>> = [null];
+   #map: DynDataHost<Map<K, T>> = [null];
 
    readonly #derived: AdapterDerived<Map<K, T>, K, T>;
 
@@ -32,7 +32,7 @@ export class DynMapReducer<K, T>
 
    readonly #filters: AdapterFilters<T>;
 
-   readonly #filtersData: { filters: DataFilter<T>[] } = { filters: [] };
+   readonly #filtersData: { filters: DynDataFilter<T>[] } = { filters: [] };
 
    readonly #index: Indexer<K, T>;
 
@@ -42,7 +42,7 @@ export class DynMapReducer<K, T>
 
    readonly #sort: AdapterSort<T>;
 
-   #sortData: { compareFn: CompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
 
    #subscriptions = [];
 
@@ -54,11 +54,11 @@ export class DynMapReducer<K, T>
     *
     * @param [data] - Data iterable to store if array or copy otherwise.
     */
-   constructor(data?: Map<K, T> | DataDynMap<K, T>)
+   constructor(data?: Map<K, T> | DynMapData<K, T>)
    {
       let dataMap: Map<K, T> = void 0;
-      let filters: Iterable<FilterFn<T> | DataFilter<T>> = void 0;
-      let sort: CompareFn<T> | DataSort<T> = void 0;
+      let filters: Iterable<DynFilterFn<T> | DynDataFilter<T>> = void 0;
+      let sort: DynCompareFn<T> | DynDataSort<T> = void 0;
 
       if (data === null)
       {
@@ -126,7 +126,7 @@ export class DynMapReducer<K, T>
 
       this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortData);
 
-      this.#derived = new AdapterDerived(this.#map, this.#indexPublicAPI, DerivedMapReducer);
+      this.#derived = new AdapterDerived(this.#map, this.#indexPublicAPI, DynMapReducerDerived);
       this.#derivedPublicAPI = new DerivedAPI<Map<K, T>, K, T>(this.#derived);
 
       this.#index.initAdapters(this.#filtersData, this.#sortData, this.#derived);
@@ -327,10 +327,9 @@ export class DynMapReducer<K, T>
    /**
     * Provides an iterator for data stored in DynMapReducer.
     *
-    * @returns Generator / iterator of all data.
     * @yields {T}
     */
-   *[Symbol.iterator](): Generator<T, T, T>
+   *[Symbol.iterator](): IterableIterator<T>
    {
       const map = this.#map[0];
 

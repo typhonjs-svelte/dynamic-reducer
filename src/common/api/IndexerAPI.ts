@@ -1,5 +1,5 @@
 import type { AdapterIndexer }  from '../../common/adapter/AdapterIndexer.js';
-import type { DataIndexer }     from '../../types/index.js';
+import type { DynDataIndexer }     from '../../types/index.js';
 
 /**
  * Provides the public API for accessing the index API.
@@ -15,7 +15,7 @@ import type { DataIndexer }     from '../../types/index.js';
  */
 export class IndexerAPI<K, T>
 {
-    readonly #indexData: DataIndexer<K, T>
+    readonly #indexData: DynDataIndexer<K, T>
 
     /**
      * Provides a getter to determine if the index is active.
@@ -60,10 +60,9 @@ export class IndexerAPI<K, T>
     /**
      * Provides an iterator over the index array.
      *
-     * @returns Iterator / generator
      * @yields {K}
      */
-    *[Symbol.iterator](): Generator<K, K, K>
+    *[Symbol.iterator](): IterableIterator<K>
     {
         const indexData = this.#indexData;
 

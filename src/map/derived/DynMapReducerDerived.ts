@@ -9,20 +9,20 @@ import {
 import { Indexer }   from '../Indexer.js';
 
 import type {
-   IDerivedReducer,
-   CompareFn,
-   DataOptions,
-   DataFilter,
-   DataHost,
-   DataSort,
-   FilterFn }        from '../../types/index.js';
+   IDerivedDynReducer,
+   DynCompareFn,
+   DynDataOptions,
+   DynDataFilter,
+   DynDataHost,
+   DynDataSort,
+   DynFilterFn }        from '../../types/index.js';
 
 /**
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
  */
-export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
+export class DynMapReducerDerived<K, T> implements IDerivedDynReducer<Map<K, T>, K, T>
 {
-   #array: DataHost<T[]>;
+   #map: DynDataHost<Map<K, T>>;
 
    readonly #derived;
 
@@ -30,47 +30,47 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
 
    readonly #filters: AdapterFilters<T>;
 
-   readonly #filtersData: { filters: DataFilter<T>[] } = { filters: [] };
+   readonly #filtersData: { filters: DynDataFilter<T>[] } = { filters: [] };
 
-   readonly #index: Indexer<T>;
+   readonly #index: Indexer<K, T>;
 
-   readonly #indexPublicAPI: IndexerAPI<number, T>;
+   readonly #indexPublicAPI: IndexerAPI<K, T>;
 
    #reversed: boolean = false;
 
    readonly #sort: AdapterSort<T>;
 
-   #sortData: { compareFn: CompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
 
    #subscriptions = [];
 
    #destroyed = false;
 
    /**
-    * @param array - Data host array.
+    * @param map - Data host Map.
     *
     * @param parentIndex - Parent indexer.
     *
     * @param options - Any filters and sort functions to apply.
     */
-   constructor(array: DataHost<T[]>, parentIndex: IndexerAPI<number, T>, options: DataOptions<T>)
+   constructor(map: DynDataHost<Map<K, T>>, parentIndex: IndexerAPI<K, T>, options: DynDataOptions<T>)
    {
-      this.#array = array;
+      this.#map = map;
 
-      this.#index = new Indexer(this.#array, this.#updateSubscribers.bind(this), parentIndex);
-      this.#indexPublicAPI = new IndexerAPI<number, T>(this.#index);
+      this.#index = new Indexer(this.#map, this.#updateSubscribers.bind(this), parentIndex);
+      this.#indexPublicAPI = new IndexerAPI<K, T>(this.#index);
 
       this.#filters = new AdapterFilters(this.#indexPublicAPI.update, this.#filtersData);
 
       this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortData);
 
-      this.#derived = new AdapterDerived(this.#array, this.#indexPublicAPI, DerivedArrayReducer);
-      this.#derivedPublicAPI = new DerivedAPI<T[], number, T>(this.#derived);
+      this.#derived = new AdapterDerived(this.#map, this.#indexPublicAPI, DynMapReducerDerived);
+      this.#derivedPublicAPI = new DerivedAPI<Map<K, T>, K, T>(this.#derived);
 
       this.#index.initAdapters(this.#filtersData, this.#sortData, this.#derived);
 
-      let filters: Iterable<FilterFn<T>|DataFilter<T>> = void 0;
-      let sort: CompareFn<T> | DataSort<T> = void 0;
+      let filters: Iterable<DynFilterFn<T>|DynDataFilter<T>> = void 0;
+      let sort: DynCompareFn<T> | DynDataSort<T> = void 0;
 
       if (options !== void 0 && ('filters' in options || 'sort' in options))
       {
@@ -83,7 +83,7 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
             else
             {
                throw new TypeError(
-                `DerivedArrayReducer error (DataDerivedOptions): 'filters' attribute is not iterable.`);
+                `DerivedMapReducer error (DataDerivedOptions): 'filters' attribute is not iterable.`);
             }
          }
 
@@ -100,7 +100,7 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
             else
             {
                throw new TypeError(
-                `DerivedArrayReducer error (DataDerivedOptions): 'sort' attribute is not a function or object.`);
+                `DerivedMapReducer error (DataDerivedOptions): 'sort' attribute is not a function or object.`);
             }
          }
       }
@@ -116,18 +116,17 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
    /**
     * Returns the internal data of this instance. Be careful!
     *
-    * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
-    * performed to the data externally do invoke {@link IndexerAPI.update} with `true` to recalculate the index and
-    * notify all subscribers.
+    * Note: The returned map is the same map set by the main reducer. If any changes are performed to the data
+    * externally do invoke {@link IndexerAPI.update} with `true` to recalculate the index and notify all subscribers.
     *
     * @returns The internal data.
     */
-   get data(): T[] | null { return this.#array[0]; }
+   get data(): Map<K, T> | null { return this.#map[0]; }
 
    /**
     * @returns Derived public API.
     */
-   get derived(): DerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
+   get derived(): DerivedAPI<Map<K, T>, K, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.
@@ -139,7 +138,7 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
     *
     * @returns Indexer API - is also iterable.
     */
-   get index(): IndexerAPI<number, T> { return this.#indexPublicAPI; }
+   get index(): IndexerAPI<K, T> { return this.#indexPublicAPI; }
 
    /**
     * Returns whether this derived reducer is destroyed.
@@ -151,10 +150,10 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
     */
    get length(): number
    {
-      const array = this.#array[0];
+      const map = this.#map[0];
 
       return this.#index.active ? this.index.length :
-       array ? array.length : 0;
+       map ? map.size : 0;
    }
 
    /**
@@ -176,7 +175,7 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
    {
       if (typeof reversed !== 'boolean')
       {
-         throw new TypeError(`DerivedArrayReducer.reversed error: 'reversed' is not a boolean.`);
+         throw new TypeError(`DerivedMapReducer.reversed error: 'reversed' is not a boolean.`);
       }
 
       this.#reversed = reversed;
@@ -194,7 +193,7 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
       this.#destroyed = true;
 
       // Remove any external data reference and perform a final update.
-      this.#array = [null];
+      this.#map = [null];
       this.#index.update(true);
 
       // Remove all subscriptions.
@@ -215,29 +214,31 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
    initialize() {}
 
    /**
-    * Provides an iterator for data stored in DerivedArrayReducer.
+    * Provides an iterator for data stored in DerivedMapReducer.
     *
-    * @returns Generator / iterator of all data.
+    * @yields {T}
     */
-   *[Symbol.iterator](): Generator<T, T, T>
+   *[Symbol.iterator](): IterableIterator<T>
    {
-      const array = this.#array[0];
+      const map = this.#map[0];
 
-      if (this.#destroyed || array === null || array?.length === 0) { return; }
+      if (this.#destroyed || map === null || map?.size === 0) { return; }
 
       if (this.#index.active)
       {
-         for (const entry of this.index) { yield array[entry]; }
+         for (const key of this.index) { yield map.get(key); }
       }
       else
       {
          if (this.reversed)
          {
-            for (let cntr = array.length; --cntr >= 0;) { yield array[cntr]; }
+            // TODO: Not efficient due to creating temporary values array.
+            const values = [...map.values()];
+            for (let cntr = values.length; --cntr >= 0;) { yield values[cntr]; }
          }
          else
          {
-            for (let cntr = 0; cntr < array.length; cntr++) { yield array[cntr]; }
+            for (const value of map.values()) { yield value; }
          }
       }
    }
@@ -245,13 +246,13 @@ export class DerivedArrayReducer<T> implements IDerivedReducer<T[], number, T>
 // -------------------------------------------------------------------------------------------------------------------
 
    /**
-    * Subscribe to this DerivedArrayReducer.
+    * Subscribe to this DerivedMapReducer.
     *
     * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
     *
     * @returns Unsubscribe function.
     */
-   subscribe(handler: (value: DerivedArrayReducer<T>) => void): () => void
+   subscribe(handler: (value: DynMapReducerDerived<K, T>) => void): () => void
    {
       this.#subscriptions.push(handler); // add handler to the array of subscribers
 

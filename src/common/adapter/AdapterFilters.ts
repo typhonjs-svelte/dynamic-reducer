@@ -1,10 +1,10 @@
 import type {
-   DataFilter,
-   FilterFn }  from '../../types/index.js';
+   DynDataFilter,
+   DynFilterFn }  from '../../types/index.js';
 
 /**
  * Provides the storage and sequencing of managed filters. Each filter added may be a bespoke function or a
- * {@link DataFilter} object containing an `id`, `filter`, and `weight` attributes; `filter` is the only required
+ * {@link DynDataFilter} object containing an `id`, `filter`, and `weight` attributes; `filter` is the only required
  * attribute.
  *
  * The `id` attribute can be anything that creates a unique ID for the filter; recommended strings or numbers. This
@@ -29,7 +29,7 @@ import type {
  */
 export class AdapterFilters<T>
 {
-   #filtersData: { filters: DataFilter<T>[] };
+   #filtersData: { filters: DynDataFilter<T>[] };
 
    readonly #indexUpdate: Function;
 
@@ -40,7 +40,7 @@ export class AdapterFilters<T>
     *
     * @param filtersAdapter - Stores the filter function data.
     */
-   constructor(indexUpdate, filtersAdapter: { filters: DataFilter<T>[] })
+   constructor(indexUpdate, filtersAdapter: { filters: DynDataFilter<T>[] })
    {
       this.#indexUpdate = indexUpdate;
 
@@ -57,10 +57,9 @@ export class AdapterFilters<T>
    /**
     * Provides an iterator for filters.
     *
-    * @returns Generator / iterator of filters.
     * @yields {DataFilter<T>}
     */
-   *[Symbol.iterator](): Generator<DataFilter<T>, DataFilter<T>, DataFilter<T>> | void
+   *[Symbol.iterator](): IterableIterator<DynDataFilter<T>> | void
    {
       if (this.#filtersData.filters.length === 0) { return; }
 
@@ -73,7 +72,7 @@ export class AdapterFilters<T>
    /**
     * @param filters -
     */
-   add(...filters: (FilterFn<T>|DataFilter<T>)[])
+   add(...filters: (DynFilterFn<T>|DynDataFilter<T>)[])
    {
       /**
        * Tracks the number of filters added that have subscriber functionality.
@@ -197,7 +196,7 @@ export class AdapterFilters<T>
    /**
     * @param filters -
     */
-   remove(...filters: (FilterFn<T>|DataFilter<T>)[])
+   remove(...filters: (DynFilterFn<T>|DynDataFilter<T>)[])
    {
       const length = this.#filtersData.filters.length;
 
@@ -238,7 +237,7 @@ export class AdapterFilters<T>
     *
     * @param callback - Callback function to evaluate each filter entry.
     */
-   removeBy(callback: (id: any, filter: FilterFn<T>, weight: number) => boolean)
+   removeBy(callback: (id: any, filter: DynFilterFn<T>, weight: number) => boolean)
    {
       const length = this.#filtersData.filters.length;
 

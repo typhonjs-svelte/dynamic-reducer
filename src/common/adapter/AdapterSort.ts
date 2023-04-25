@@ -1,10 +1,10 @@
 import type {
-   CompareFn,
-   DataSort }  from '../../types/index.js';
+   DynCompareFn,
+   DynDataSort }  from '../../types/index.js';
 
 /**
  * Provides the storage and sequencing of a managed sort function. The sort function set may be a bespoke function or a
- * {@link DataSort} object containing an `compare`, and `subscribe` attributes; `compare` is the only required
+ * {@link DynDataSort} object containing an `compare`, and `subscribe` attributes; `compare` is the only required
  * attribute.
  *
  * Note: You can set a compare function that also has a subscribe function attached as the `subscribe` attribute.
@@ -20,7 +20,7 @@ import type {
  */
 export class AdapterSort<T>
 {
-   #sortData: { compareFn: CompareFn<T> };
+   #sortData: { compareFn: DynCompareFn<T> };
 
    readonly #indexUpdate: Function;
 
@@ -31,7 +31,7 @@ export class AdapterSort<T>
     *
     * @param sortData - Storage for compare function.
     */
-   constructor(indexUpdate: Function, sortData: { compareFn: CompareFn<T> })
+   constructor(indexUpdate: Function, sortData: { compareFn: DynCompareFn<T> })
    {
       this.#indexUpdate = indexUpdate;
 
@@ -67,7 +67,7 @@ export class AdapterSort<T>
     *
     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#parameters
     */
-   set(data: CompareFn<T>|DataSort<T>)
+   set(data: DynCompareFn<T>|DynDataSort<T>)
    {
       if (typeof this.#unsubscribe === 'function')
       {

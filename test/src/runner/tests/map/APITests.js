@@ -12,8 +12,8 @@ export function run({ Module, chai })
    /** @type {import('../../../../../types/index.js').DynMapReducer} */
    const DynMapReducer = Module.DynMapReducer;
 
-   /** @type {import('../../../../../types/index.js').DerivedMapReducer} */
-   const DerivedMapReducer = Module.DerivedMapReducer;
+   /** @type {import('../../../../../types/index.js').DynMapReducerDerived} */
+   const DynMapReducerDerived = Module.DynMapReducerDerived;
 
    /**
     * Provides a way to create DynArrayReducer with the types applied in the instance returned.
@@ -634,7 +634,7 @@ export function run({ Module, chai })
 
          it(`Extended prototype is valid (create / get / delete)`, () =>
          {
-            class ExtendedMapReducer extends DerivedMapReducer {}
+            class ExtendedMapReducer extends DynMapReducerDerived {}
 
             const dar = createReducer();
             const dr = dar.derived.create(ExtendedMapReducer);

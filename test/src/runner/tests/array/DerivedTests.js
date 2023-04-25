@@ -12,8 +12,8 @@ export function run({ Module, chai })
    /** @type {import('../../../../../types/index.js').DynArrayReducer} */
    const { DynArrayReducer } = Module;
 
-   /** @type {import('../../../../../types/index.js').DerivedArrayReducer} */
-   const DerivedArrayReducer = Module.DerivedArrayReducer;
+   /** @type {import('../../../../../types/index.js').DynArrayReducerDerived} */
+   const DynArrayReducerDerived = Module.DynArrayReducerDerived;
 
    /**
     * Provides a way to create DynArrayReducer with the types applied in the instance returned.
@@ -171,7 +171,7 @@ export function run({ Module, chai })
              * A derived custom reducer that filters by item `class` and provides a subscriber to calculate derived
              * values (total level) from filtered data.
              */
-            class ClassDerivedReducer extends DerivedArrayReducer
+            class ClassDerivedReducer extends DynArrayReducerDerived
             {
                destroy()
                {
@@ -201,7 +201,7 @@ export function run({ Module, chai })
              * A derived custom reducer that filters by item type `spell` and provides further derived reducers for
              * spell levels 1-3.
              */
-            class SpellsDerivedReducer extends DerivedArrayReducer
+            class SpellsDerivedReducer extends DynArrayReducerDerived
             {
                initialize()
                {

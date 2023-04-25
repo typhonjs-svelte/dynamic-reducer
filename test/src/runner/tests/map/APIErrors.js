@@ -231,7 +231,7 @@ export function run({ Module, chai })
             const dar = createReducer();
 
             expect(() => dar.derived.create({ ctor: false })).to.throw(Error,
-             `AdapterDerived.create error: 'ctor' is not a 'DerivedMapReducer'.`);
+             `AdapterDerived.create error: 'ctor' is not a 'DynMapReducerDerived'.`);
          });
 
          it(`create - parameter not conforming - incorrect 'filters' attribute`, () =>

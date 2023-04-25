@@ -3,10 +3,10 @@ import { DynReducerUtils }       from '../DynReducerUtils.js';
 import type { IndexerAPI }       from '../api/IndexerAPI.js';
 
 import type {
-   CompareFn,
-   DataFilter,
-   DataHost,
-   DataIndexer }                 from '../../types/index.js';
+   DynCompareFn,
+   DynDataFilter,
+   DynDataHost,
+   DynDataIndexer }                 from '../../types/index.js';
 
 import type { AdapterDerived }   from './AdapterDerived.js';
 
@@ -18,15 +18,15 @@ export abstract class AdapterIndexer<D, K, T>
 {
    public derivedAdapter: AdapterDerived<D, K, T>
 
-   public filtersData: { filters: DataFilter<T>[] };
+   public filtersData: { filters: DynDataFilter<T>[] };
 
-   public hostData: DataHost<D>;
+   public hostData: DynDataHost<D>;
 
    public hostUpdate: Function;
 
-   public indexData: DataIndexer<K, T>;
+   public indexData: DynDataIndexer<K, T>;
 
-   public sortData: { compareFn: CompareFn<T> };
+   public sortData: { compareFn: DynCompareFn<T> };
 
    public sortFn: (a: K, b: K) => number;
 
@@ -41,7 +41,7 @@ export abstract class AdapterIndexer<D, K, T>
     *
     * @returns Indexer adapter instance.
     */
-   constructor(hostData: DataHost<D>, hostUpdate: Function, parentIndexer?: IndexerAPI<K, T>)
+   constructor(hostData: DynDataHost<D>, hostUpdate: Function, parentIndexer?: IndexerAPI<K, T>)
    {
       this.hostData = hostData;
 
@@ -147,8 +147,8 @@ export abstract class AdapterIndexer<D, K, T>
     *
     * @param derivedAdapter - Associated AdapterDerived instance.
     */
-   initAdapters(filtersData: { filters: DataFilter<T>[] }, sortData: { compareFn: CompareFn<T> },
-    derivedAdapter: AdapterDerived<D, K, T>)
+   initAdapters(filtersData: { filters: DynDataFilter<T>[] }, sortData: { compareFn: DynCompareFn<T> },
+                derivedAdapter: AdapterDerived<D, K, T>)
    {
       this.filtersData = filtersData;
 
