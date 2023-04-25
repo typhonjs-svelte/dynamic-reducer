@@ -1,7 +1,7 @@
 {
   "name": "@typhonjs-svelte/dynamic-reducer",
   "description": "Provides managed reducing / filtering / sorting capabilities with subscription support / Svelte store support for arrays and Maps.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)",
   "contributors": [
     "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)"
@@ -35,7 +35,7 @@
     "/dist",
     "/types"
   ],
-  "homepage": "https://github.com/typhonjs-node-utils/dynamic-reducer#readme",
+  "homepage": "https://github.com/typhonjs-svelte/dynamic-reducer#readme",
   "keywords": [
     "typhonjs",
     "utils",
@@ -46,8 +46,8 @@
     "svelte"
   ],
   "license": "MPL-2.0",
-  "bugs": "https://github.com/typhonjs-node-utils/dynamic-reducer/issues",
-  "repository": "github:typhonjs-node-utils/dynamic-reducer",
+  "bugs": "https://github.com/typhonjs-svelte/dynamic-reducer/issues",
+  "repository": "github:typhonjs-svelte/dynamic-reducer",
   "scripts": {
     "build": "rollup -c",
     "eslint": "eslint .",
