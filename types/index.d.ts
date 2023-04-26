@@ -181,6 +181,18 @@ declare class DynMapReducerDerived<K, T> implements IDerivedDynReducer<Map<K, T>
 }
 
 /**
+ * Defines the shape of dynamic array constructor functions.
+ */
+interface IDynArrayReducerCtor<T> {
+    new (data?: Iterable<T> | DynArrayData<T>): DynArrayReducer<T>;
+}
+/**
+ * Defines the shape of dynamic map constructor functions.
+ */
+interface IDynMapReducerCtor<K, T> {
+    new (data?: Map<K, T> | DynMapData<K, T>): DynMapReducer<K, T>;
+}
+/**
  * Defines the shape of derived reducers constructor functions.
  */
 interface IDerivedDynReducerCtor<T> {
@@ -396,6 +408,34 @@ type DynDataDerivedCreate<T> = {
  * Creates a compound type for all derived reducer 'create' option combinations.
  */
 type DynOptionsDerivedCreate<T> = string | IDerivedDynReducerCtor<T> | DynDataDerivedCreate<T>;
+/**
+ * Defines object / options for creating a dynamic array reducer.
+ */
+type DynDataArrayCreate<T> = {
+    /**
+     * - Name of dynamic array reducer.
+     */
+    name?: string;
+    /**
+     * - A DynMapReducer constructor function / class.
+     */
+    ctor?: IDynArrayReducerCtor<T>;
+} & DynDataOptions<T>;
+type DynOptionsArrayCreate<T> = string | IDynArrayReducerCtor<T> | DynDataArrayCreate<T>;
+/**
+ * Defines object / options for creating a dynamic map reducer.
+ */
+type DynDataMapCreate<K, T> = {
+    /**
+     * - Name of dynamic map reducer.
+     */
+    name?: string;
+    /**
+     * - A DynMapReducer constructor function / class.
+     */
+    ctor?: IDynMapReducerCtor<K, T>;
+} & DynDataOptions<T>;
+type DynOptionsMapCreate<K, T> = string | IDynMapReducerCtor<K, T> | DynDataMapCreate<K, T>;
 
 /**
  * Provides construction and management of indexed data when there are parent indexes or filter / sort functions
@@ -912,4 +952,4 @@ declare class DynArrayReducerDerived<T> implements IDerivedDynReducer<T[], numbe
     subscribe(handler: (value: DynArrayReducerDerived<T>) => void): () => void;
 }
 
-export { DynArrayReducer, DynArrayReducerDerived, DynMapReducer, DynMapReducerDerived };
+export { DynArrayData, DynArrayReducer, DynArrayReducerDerived, DynCompareFn, DynDataArrayCreate, DynDataDerivedCreate, DynDataFilter, DynDataMapCreate, DynDataOptions, DynDataSort, DynFilterFn, DynMapData, DynMapReducer, DynMapReducerDerived, DynOptionsArrayCreate, DynOptionsDerivedCreate, DynOptionsMapCreate, IDerivedDynReducer, IDerivedDynReducerCtor, IDynArrayReducerCtor, IDynMapReducerCtor };
