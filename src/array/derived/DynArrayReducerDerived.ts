@@ -9,7 +9,7 @@ import {
 import { Indexer }   from '../Indexer.js';
 
 import type {
-   IDerivedDynReducer,
+   IDynDerivedReducer,
    DynCompareFn,
    DynDataOptions,
    DynDataFilter,
@@ -20,7 +20,7 @@ import type {
 /**
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
  */
-export class DynArrayReducerDerived<T> implements IDerivedDynReducer<T[], number, T>
+export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number, T>
 {
    #array: DynDataHost<T[]>;
 

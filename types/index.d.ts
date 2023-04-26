@@ -98,7 +98,7 @@ declare class DynMapReducer<K, T> {
 /**
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
  */
-declare class DynMapReducerDerived<K, T> implements IDerivedDynReducer<Map<K, T>, K, T> {
+declare class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>, K, T> {
     #private;
     /**
      * @param map - Data host Map.
@@ -195,13 +195,13 @@ interface IDynMapReducerCtor<K, T> {
 /**
  * Defines the shape of derived reducers constructor functions.
  */
-interface IDerivedDynReducerCtor<T> {
-    new (hostData: DynDataHost<any>, parentIndex: IndexerAPI<any, T>, options: DynDataOptions<T>): IDerivedDynReducer<any, any, T>;
+interface IDynDerivedReducerCtor<T> {
+    new (hostData: DynDataHost<any>, parentIndex: IndexerAPI<any, T>, options: DynDataOptions<T>): IDynDerivedReducer<any, any, T>;
 }
 /**
  * Defines the interface for all derived reducers.
  */
-interface IDerivedDynReducer<D, K, T> {
+interface IDynDerivedReducer<D, K, T> {
     /**
      * Returns the internal data of this instance. Be careful!
      *
@@ -257,7 +257,7 @@ interface IDerivedDynReducer<D, K, T> {
      *
      * @returns Unsubscribe function.
      */
-    subscribe(handler: (value: IDerivedDynReducer<D, K, T>) => void): () => void;
+    subscribe(handler: (value: IDynDerivedReducer<D, K, T>) => void): () => void;
 }
 
 /**
@@ -402,12 +402,12 @@ type DynDataDerivedCreate<T> = {
     /**
      * - A DerivedReducer constructor function / class.
      */
-    ctor?: IDerivedDynReducerCtor<T>;
+    ctor?: IDynDerivedReducerCtor<T>;
 } & DynDataOptions<T>;
 /**
  * Creates a compound type for all derived reducer 'create' option combinations.
  */
-type DynOptionsDerivedCreate<T> = string | IDerivedDynReducerCtor<T> | DynDataDerivedCreate<T>;
+type DynOptionsDerivedCreate<T> = string | IDynDerivedReducerCtor<T> | DynDataDerivedCreate<T>;
 /**
  * Defines object / options for creating a dynamic array reducer.
  */
@@ -577,7 +577,7 @@ declare class AdapterDerived<D, K, T> {
      *
      * @param DerivedReducerCtor - The default derived reducer constructor function.
      */
-    constructor(hostData: DynDataHost<D>, parentIndex: IndexerAPI<K, T>, DerivedReducerCtor: IDerivedDynReducerCtor<T>);
+    constructor(hostData: DynDataHost<D>, parentIndex: IndexerAPI<K, T>, DerivedReducerCtor: IDynDerivedReducerCtor<T>);
     /**
      * Creates a new derived reducer.
      *
@@ -585,7 +585,7 @@ declare class AdapterDerived<D, K, T> {
      *
      * @returns Newly created derived reducer.
      */
-    create(options: DynOptionsDerivedCreate<T>): IDerivedDynReducer<D, K, T>;
+    create(options: DynOptionsDerivedCreate<T>): IDynDerivedReducer<D, K, T>;
     /**
      * Removes all derived reducers and associated subscriptions.
      */
@@ -605,7 +605,7 @@ declare class AdapterDerived<D, K, T> {
      *
      * @param name - Name of derived reducer.
      */
-    get(name: string): IDerivedDynReducer<D, K, T>;
+    get(name: string): IDynDerivedReducer<D, K, T>;
     /**
      * Updates all managed derived reducer indexes.
      *
@@ -749,7 +749,7 @@ declare class DerivedAPI<D, K, T> {
      *
      * @returns Newly created derived reducer.
      */
-    create: (options: DynOptionsDerivedCreate<T>) => IDerivedDynReducer<D, K, T>;
+    create: (options: DynOptionsDerivedCreate<T>) => IDynDerivedReducer<D, K, T>;
     /**
      * Deletes and destroys a derived reducer.
      *
@@ -765,7 +765,7 @@ declare class DerivedAPI<D, K, T> {
      *
      * @param name - Name of derived reducer.
      */
-    get: (name: string) => IDerivedDynReducer<D, K, T>;
+    get: (name: string) => IDynDerivedReducer<D, K, T>;
     constructor(adapterDerived: AdapterDerived<D, K, T>);
 }
 
@@ -869,7 +869,7 @@ declare class DynArrayReducer<T> {
 /**
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
  */
-declare class DynArrayReducerDerived<T> implements IDerivedDynReducer<T[], number, T> {
+declare class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number, T> {
     #private;
     /**
      * @param array - Data host array.
@@ -952,4 +952,4 @@ declare class DynArrayReducerDerived<T> implements IDerivedDynReducer<T[], numbe
     subscribe(handler: (value: DynArrayReducerDerived<T>) => void): () => void;
 }
 
-export { DynArrayData, DynArrayReducer, DynArrayReducerDerived, DynCompareFn, DynDataArrayCreate, DynDataDerivedCreate, DynDataFilter, DynDataMapCreate, DynDataOptions, DynDataSort, DynFilterFn, DynMapData, DynMapReducer, DynMapReducerDerived, DynOptionsArrayCreate, DynOptionsDerivedCreate, DynOptionsMapCreate, IDerivedDynReducer, IDerivedDynReducerCtor, IDynArrayReducerCtor, IDynMapReducerCtor };
+export { DynArrayData, DynArrayReducer, DynArrayReducerDerived, DynCompareFn, DynDataArrayCreate, DynDataDerivedCreate, DynDataFilter, DynDataMapCreate, DynDataOptions, DynDataSort, DynFilterFn, DynMapData, DynMapReducer, DynMapReducerDerived, DynOptionsArrayCreate, DynOptionsDerivedCreate, DynOptionsMapCreate, IDynArrayReducerCtor, IDynDerivedReducer, IDynDerivedReducerCtor, IDynMapReducerCtor };

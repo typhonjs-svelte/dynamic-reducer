@@ -1,7 +1,7 @@
 import type { IndexerAPI }  from '../common/index.js';
 
 import type {
-    IDerivedDynReducerCtor,
+    IDynDerivedReducerCtor,
     IDynArrayReducerCtor,
     IDynMapReducerCtor }    from './interface.js';
 
@@ -167,13 +167,13 @@ export type DynDataDerivedCreate<T> = {
     /**
      * - A DerivedReducer constructor function / class.
      */
-    ctor?: IDerivedDynReducerCtor<T>;
+    ctor?: IDynDerivedReducerCtor<T>;
 } & DynDataOptions<T>;
 
 /**
  * Creates a compound type for all derived reducer 'create' option combinations.
  */
-export type DynOptionsDerivedCreate<T> = string | IDerivedDynReducerCtor<T> | DynDataDerivedCreate<T>;
+export type DynOptionsDerivedCreate<T> = string | IDynDerivedReducerCtor<T> | DynDataDerivedCreate<T>;
 
 // -------------------------------------------------------------------------------------------------------------------
 

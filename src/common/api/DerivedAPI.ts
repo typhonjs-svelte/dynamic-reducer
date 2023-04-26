@@ -1,7 +1,7 @@
 import type { AdapterDerived }  from '../adapter/AdapterDerived.js';
 
 import type {
-    IDerivedDynReducer,
+    IDynDerivedReducer,
     DynOptionsDerivedCreate }      from '../../types/index.js';
 
 /**
@@ -30,7 +30,7 @@ export class DerivedAPI<D, K, T>
      *
      * @returns Newly created derived reducer.
      */
-    create: (options: DynOptionsDerivedCreate<T>) => IDerivedDynReducer<D, K, T>;
+    create: (options: DynOptionsDerivedCreate<T>) => IDynDerivedReducer<D, K, T>;
 
     /**
      * Deletes and destroys a derived reducer.
@@ -49,7 +49,7 @@ export class DerivedAPI<D, K, T>
      *
      * @param name - Name of derived reducer.
      */
-    get: (name: string) => IDerivedDynReducer<D, K, T>
+    get: (name: string) => IDynDerivedReducer<D, K, T>
 
     constructor(adapterDerived: AdapterDerived<D, K, T>)
     {

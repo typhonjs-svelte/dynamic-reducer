@@ -2,8 +2,8 @@ export *                    from './array/index.js';
 export *                    from './map/index.js';
 
 export type {
-    IDerivedDynReducerCtor,
-    IDerivedDynReducer,
+    IDynDerivedReducerCtor,
+    IDynDerivedReducer,
     IDynArrayReducerCtor,
     IDynMapReducerCtor }    from './types/interface.js';
 

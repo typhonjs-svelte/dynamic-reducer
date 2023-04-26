@@ -32,15 +32,15 @@ export interface IDynMapReducerCtor<K, T>
 /**
  * Defines the shape of derived reducers constructor functions.
  */
-export interface IDerivedDynReducerCtor<T>
+export interface IDynDerivedReducerCtor<T>
 {
-    new (hostData: DynDataHost<any>, parentIndex: IndexerAPI<any, T>, options: DynDataOptions<T>): IDerivedDynReducer<any, any, T>;
+    new (hostData: DynDataHost<any>, parentIndex: IndexerAPI<any, T>, options: DynDataOptions<T>): IDynDerivedReducer<any, any, T>;
 }
 
 /**
  * Defines the interface for all derived reducers.
  */
-export interface IDerivedDynReducer<D, K, T>
+export interface IDynDerivedReducer<D, K, T>
 {
     /**
      * Returns the internal data of this instance. Be careful!
@@ -107,5 +107,5 @@ export interface IDerivedDynReducer<D, K, T>
      *
      * @returns Unsubscribe function.
      */
-    subscribe(handler: (value: IDerivedDynReducer<D, K, T>) => void): () => void;
+    subscribe(handler: (value: IDynDerivedReducer<D, K, T>) => void): () => void;
 }

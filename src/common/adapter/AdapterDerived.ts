@@ -1,8 +1,8 @@
 import { DynReducerUtils } from '../DynReducerUtils.js';
 
 import type {
-   IDerivedDynReducer,
-   IDerivedDynReducerCtor,
+   IDynDerivedReducer,
+   IDynDerivedReducerCtor,
    DynDataOptions,
    DynDataHost,
    DynOptionsDerivedCreate }  from '../../types/index.js';
@@ -16,11 +16,11 @@ export class AdapterDerived<D, K, T>
 {
    #hostData: DynDataHost<D>;
 
-   readonly #DerivedReducerCtor: IDerivedDynReducerCtor<T>;
+   readonly #DerivedReducerCtor: IDynDerivedReducerCtor<T>;
 
    #parentIndex: IndexerAPI<K, T>;
 
-   #derived: Map<string, IDerivedDynReducer<D, K, T>> = new Map();
+   #derived: Map<string, IDynDerivedReducer<D, K, T>> = new Map();
 
    #destroyed = false;
 
@@ -31,7 +31,7 @@ export class AdapterDerived<D, K, T>
     *
     * @param DerivedReducerCtor - The default derived reducer constructor function.
     */
-   constructor(hostData: DynDataHost<D>, parentIndex: IndexerAPI<K, T>, DerivedReducerCtor: IDerivedDynReducerCtor<T>)
+   constructor(hostData: DynDataHost<D>, parentIndex: IndexerAPI<K, T>, DerivedReducerCtor: IDynDerivedReducerCtor<T>)
    {
       this.#hostData = hostData;
 
@@ -49,7 +49,7 @@ export class AdapterDerived<D, K, T>
     *
     * @returns Newly created derived reducer.
     */
-   create(options: DynOptionsDerivedCreate<T>): IDerivedDynReducer<D, K, T>
+   create(options: DynOptionsDerivedCreate<T>): IDynDerivedReducer<D, K, T>
    {
       if (this.#destroyed) { throw Error(`AdapterDerived.create error: this instance has been destroyed.`); }
 
@@ -57,9 +57,9 @@ export class AdapterDerived<D, K, T>
 
       let rest: DynDataOptions<T> = {};
 
-      let ctor: IDerivedDynReducerCtor<T>;
+      let ctor: IDynDerivedReducerCtor<T>;
 
-      const DerivedReducerCtor: IDerivedDynReducerCtor<T> = this.#DerivedReducerCtor;
+      const DerivedReducerCtor: IDynDerivedReducerCtor<T> = this.#DerivedReducerCtor;
 
       if (typeof options === 'string')
       {
@@ -143,7 +143,7 @@ export class AdapterDerived<D, K, T>
     *
     * @param name - Name of derived reducer.
     */
-   get(name: string): IDerivedDynReducer<D, K, T>
+   get(name: string): IDynDerivedReducer<D, K, T>
    {
       if (this.#destroyed) { throw Error(`AdapterDerived.get error: this instance has been destroyed.`); }
 

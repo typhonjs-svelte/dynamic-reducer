@@ -1,4 +1,4 @@
-import type { IDerivedDynReducerCtor } from '../types/index.js';
+import type { IDynDerivedReducerCtor } from '../types/index.js';
 
 export class DynReducerUtils
 {
@@ -111,7 +111,7 @@ export class DynReducerUtils
     *
     * @returns target constructor function has Prototype.
     */
-   static hasPrototype(target: any, Prototype: IDerivedDynReducerCtor<any>): boolean
+   static hasPrototype(target: any, Prototype: IDynDerivedReducerCtor<any>): boolean
    {
       /* c8 ignore next */
       if (typeof target !== 'function') { return false; }
