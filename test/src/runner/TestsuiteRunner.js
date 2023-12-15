@@ -1,4 +1,4 @@
-import TestsuiteRunner  from '@typhonjs-build-test/testsuite-runner';
+import { TestsuiteRunner }  from '@typhonjs-build-test/testsuite-runner';
 
 import {
    ArrayAPIErrors,
