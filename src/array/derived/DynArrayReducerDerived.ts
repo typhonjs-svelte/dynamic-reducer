@@ -11,8 +11,9 @@ import { Indexer }   from '../Indexer.js';
 import type {
    IDynAdapterFilters,
    IDynAdapterSort,
-
+   IDynDerivedAPI,
    IDynDerivedReducer,
+
    DynCompareFn,
    DynDataOptions,
    DynDataFilter,
@@ -132,7 +133,7 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
    /**
     * @returns Derived public API.
     */
-   get derived(): DerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
+   get derived(): IDynDerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.

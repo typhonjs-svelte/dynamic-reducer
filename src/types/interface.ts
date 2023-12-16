@@ -1,10 +1,10 @@
 import type {
-    DerivedAPI,
     IndexerAPI }                from '../common';
 
 import type {
     IDynAdapterFilters,
     IDynAdapterSort,
+    IDynDerivedAPI,
 
     DynArrayData,
     DynMapData,
@@ -57,7 +57,7 @@ export interface IDynDerivedReducer<D, K, T>
     /**
      * @returns Derived public API.
      */
-    get derived(): DerivedAPI<D, K, T>
+    get derived(): IDynDerivedAPI<D, K, T>
 
     /**
      * @returns The filters adapter.

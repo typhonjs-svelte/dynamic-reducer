@@ -4,13 +4,14 @@ import {
    AdapterSort,
    DerivedAPI,
    DynReducerUtils,
-   IndexerAPI }                  from '../common';
+   IndexerAPI }                     from '../common';
 
-import { Indexer }               from './Indexer.js';
+import { Indexer }                  from './Indexer.js';
 
-import type {
+import {
    IDynAdapterFilters,
    IDynAdapterSort,
+   IDynDerivedAPI,
 
    DynCompareFn,
    DynArrayData,
@@ -158,7 +159,7 @@ export class DynArrayReducer<T>
    /**
     * @returns Derived public API.
     */
-   get derived(): DerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
+   get derived(): IDynDerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.

@@ -1,24 +1,11 @@
 import type { AdapterDerived }  from '../adapter/AdapterDerived.js';
 
 import type {
+    IDynDerivedAPI,
     IDynDerivedReducer,
-    DynOptionsDerivedCreate }      from '../../types/index.js';
+    DynOptionsDerivedCreate }   from '../../types';
 
-/**
- * Provides the public API for derived reducers. There are several ways to create a derived reducer from utilizing the
- * default implementation or passing in a constructor function / class for a custom derived reducer.
- *
- * This class forms the public API which is accessible from the `.derived` getter in the main reducer implementation.
- * ```
- * const dynArray = new DynArrayReducer([...]);
- * dynArray.derived.clear();
- * dynArray.derived.create(...);
- * dynArray.derived.delete(...);
- * dynArray.derived.destroy();
- * dynArray.derived.get(...);
- * ```
- */
-export class DerivedAPI<D, K, T>
+export class DerivedAPI<D, K, T> implements IDynDerivedAPI<D, K, T>
 {
     /**
      * Removes all derived reducers and associated subscriptions.

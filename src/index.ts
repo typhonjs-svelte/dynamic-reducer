@@ -18,6 +18,7 @@ export type {
 
     IDynAdapterFilters,
     IDynAdapterSort,
+    IDynDerivedAPI,
     IDynDerivedReducerCtor,
     IDynDerivedReducer,
     IDynArrayReducerCtor,

@@ -11,6 +11,7 @@ import { Indexer }            from './Indexer.js';
 import type {
    IDynAdapterFilters,
    IDynAdapterSort,
+   IDynDerivedAPI,
 
    DynCompareFn,
    DynMapData,
@@ -158,7 +159,7 @@ export class DynMapReducer<K, T>
    /**
     * @returns Derived public API.
     */
-   get derived(): DerivedAPI<Map<K, T>, K, T> { return this.#derivedPublicAPI; }
+   get derived(): IDynDerivedAPI<Map<K, T>, K, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.
