@@ -4,18 +4,20 @@ import {
    AdapterSort,
    DerivedAPI,
    DynReducerUtils,
-   IndexerAPI }      from '../../common/index.js';
+   IndexerAPI }      from '../../common';
 
 import { Indexer }   from '../Indexer.js';
 
 import type {
+   IDynAdapterFilters,
    IDynDerivedReducer,
+
    DynCompareFn,
    DynDataOptions,
    DynDataFilter,
    DynDataHost,
    DynDataSort,
-   DynFilterFn }        from '../../types/index.js';
+   DynFilterFn }        from '../../types';
 
 /**
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
@@ -131,7 +133,7 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
    /**
     * @returns The filters adapter.
     */
-   get filters(): AdapterFilters<T> { return this.#filters; }
+   get filters(): IDynAdapterFilters<T> { return this.#filters; }
 
    /**
     * Returns the Indexer public API.

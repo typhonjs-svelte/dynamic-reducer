@@ -2,16 +2,18 @@ import type {
     AdapterFilters,
     AdapterSort,
     DerivedAPI,
-    IndexerAPI }                from '../common/index.js';
+    IndexerAPI }                from '../common';
 
 import type {
+    IDynAdapterFilters,
+
     DynArrayData,
     DynMapData,
     DynDataHost,
-    DynDataOptions }               from './data.js';
+    DynDataOptions }            from './';
 
-import type { DynMapReducer }   from '../map/index.js';
-import type { DynArrayReducer } from '../array/index.js';
+import type { DynMapReducer }   from '../map';
+import type { DynArrayReducer } from '../array';
 
 /**
  * Defines the shape of dynamic array constructor functions.
@@ -61,7 +63,7 @@ export interface IDynDerivedReducer<D, K, T>
     /**
      * @returns The filters adapter.
      */
-    get filters(): AdapterFilters<T>;
+    get filters(): IDynAdapterFilters<T>;
 
     /**
      * @returns Returns the Indexer public API.

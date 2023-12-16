@@ -4,17 +4,19 @@ import {
    AdapterSort,
    DerivedAPI,
    DynReducerUtils,
-   IndexerAPI }               from '../common/index.js';
+   IndexerAPI }               from '../common';
 
 import { Indexer }            from './Indexer.js';
 
 import type {
+   IDynAdapterFilters,
+
    DynCompareFn,
    DynMapData,
    DynDataFilter,
    DynDataHost,
    DynDataSort,
-   DynFilterFn }                 from '../types/index.js';
+   DynFilterFn }                 from '../types';
 
 import { DynMapReducerDerived }  from './derived/DynMapReducerDerived.js';
 
@@ -158,7 +160,7 @@ export class DynMapReducer<K, T>
    /**
     * @returns The filters adapter.
     */
-   get filters(): AdapterFilters<T> { return this.#filters; }
+   get filters(): IDynAdapterFilters<T> { return this.#filters; }
 
    /**
     * @returns Returns the Indexer public API.

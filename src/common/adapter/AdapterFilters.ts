@@ -1,33 +1,9 @@
 import type {
    DynDataFilter,
-   DynFilterFn }  from '../../types/index.js';
+   DynFilterFn,
+   IDynAdapterFilters }  from '../../types';
 
-/**
- * Provides the storage and sequencing of managed filters. Each filter added may be a bespoke function or a
- * {@link DynDataFilter} object containing an `id`, `filter`, and `weight` attributes; `filter` is the only required
- * attribute.
- *
- * The `id` attribute can be anything that creates a unique ID for the filter; recommended strings or numbers. This
- * allows filters to be removed by ID easily.
- *
- * The `weight` attribute is a number between 0 and 1 inclusive that allows filters to be added in a
- * predictable order which is especially handy if they are manipulated at runtime. A lower weighted filter always runs
- * before a higher weighted filter. For speed and efficiency always set the heavier / more inclusive filter with a
- * lower weight; an example of this is a keyword / name that will filter out many entries making any further filtering
- * faster. If no weight is specified the default of '1' is assigned and it is appended to the end of the filters list.
- *
- * This class forms the public API which is accessible from the `.filters` getter in the main reducer implementation.
- * ```
- * const dynArray = new DynArrayReducer([...]);
- * dynArray.filters.add(...);
- * dynArray.filters.clear();
- * dynArray.filters.length;
- * dynArray.filters.remove(...);
- * dynArray.filters.removeBy(...);
- * dynArray.filters.removeById(...);
- * ```
- */
-export class AdapterFilters<T>
+export class AdapterFilters<T> implements IDynAdapterFilters<T>
 {
    #filtersData: { filters: DynDataFilter<T>[] };
 
@@ -35,12 +11,7 @@ export class AdapterFilters<T>
 
    #mapUnsubscribe: Map<Function, Function> = new Map();
 
-   /**
-    * @param indexUpdate - update function for the indexer.
-    *
-    * @param filtersAdapter - Stores the filter function data.
-    */
-   constructor(indexUpdate, filtersAdapter: { filters: DynDataFilter<T>[] })
+   constructor(indexUpdate: Function, filtersAdapter: { filters: DynDataFilter<T>[] })
    {
       this.#indexUpdate = indexUpdate;
 
@@ -49,16 +20,8 @@ export class AdapterFilters<T>
       Object.freeze(this);
    }
 
-   /**
-    * @returns Returns the length of the filter data.
-    */
    get length(): number { return this.#filtersData.filters.length; }
 
-   /**
-    * Provides an iterator for filters.
-    *
-    * @yields {DataFilter<T>}
-    */
    *[Symbol.iterator](): IterableIterator<DynDataFilter<T>> | void
    {
       if (this.#filtersData.filters.length === 0) { return; }
@@ -69,9 +32,6 @@ export class AdapterFilters<T>
       }
    }
 
-   /**
-    * @param filters -
-    */
    add(...filters: (DynFilterFn<T>|DynDataFilter<T>)[])
    {
       /**
@@ -175,9 +135,6 @@ export class AdapterFilters<T>
       if (subscribeCount < filters.length) { this.#indexUpdate(); }
    }
 
-   /**
-    * Clears and removes all filters.
-    */
    clear()
    {
       this.#filtersData.filters.length = 0;
@@ -193,9 +150,6 @@ export class AdapterFilters<T>
       this.#indexUpdate();
    }
 
-   /**
-    * @param filters -
-    */
    remove(...filters: (DynFilterFn<T>|DynDataFilter<T>)[])
    {
       const length = this.#filtersData.filters.length;
@@ -231,12 +185,6 @@ export class AdapterFilters<T>
       if (length !== this.#filtersData.filters.length) { this.#indexUpdate(); }
    }
 
-   /**
-    * Remove filters by the provided callback. The callback takes 3 parameters: `id`, `filter`, and `weight`.
-    * Any truthy value returned will remove that filter.
-    *
-    * @param callback - Callback function to evaluate each filter entry.
-    */
    removeBy(callback: (id: any, filter: DynFilterFn<T>, weight: number) => boolean)
    {
       const length = this.#filtersData.filters.length;
@@ -254,7 +202,7 @@ export class AdapterFilters<T>
 
          if (remove)
          {
-            let unsubscribe;
+            let unsubscribe: Function;
             if (typeof (unsubscribe = this.#mapUnsubscribe.get(data.filter)) === 'function')
             {
                unsubscribe();
@@ -269,9 +217,6 @@ export class AdapterFilters<T>
       if (length !== this.#filtersData.filters.length) { this.#indexUpdate(); }
    }
 
-   /**
-    * @param ids - Removes filters by ID.
-    */
    removeById(...ids: any[])
    {
       const length = this.#filtersData.filters.length;
@@ -287,7 +232,7 @@ export class AdapterFilters<T>
          // If not keeping invoke any unsubscribe function for given filter then remove from tracking.
          if (!!remove)
          {
-            let unsubscribe;
+            let unsubscribe: Function;
             if (typeof (unsubscribe = this.#mapUnsubscribe.get(data.filter)) === 'function')
             {
                unsubscribe();
