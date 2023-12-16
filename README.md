@@ -1,4 +1,4 @@
-![@typhonjs-svelte/dynamic-reducer](https://i.imgur.com/Yh7xn6H.jpg)
+![@typhonjs-svelte/dynamic-reducer](https://i.imgur.com/3NJ7ej8.jpg)
 
 [![NPM](https://img.shields.io/npm/v/@typhonjs-svelte/dynamic-reducer.svg?label=npm)](https://www.npmjs.com/package/@typhonjs-svelte/dynamic-reducer)
 [![Code Style](https://img.shields.io/badge/code%20style-allman-yellowgreen.svg?style=flat)](https://en.wikipedia.org/wiki/Indent_style#Allman_style)
