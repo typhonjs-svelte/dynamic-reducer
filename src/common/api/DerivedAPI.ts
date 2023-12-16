@@ -5,6 +5,9 @@ import type {
     IDynDerivedReducer,
     DynOptionsDerivedCreate }   from '../../types';
 
+/**
+ * Provides a public API for managing derived reducers.
+ */
 export class DerivedAPI<D, K, T> implements IDynDerivedAPI<D, K, T>
 {
     clear: () => void;

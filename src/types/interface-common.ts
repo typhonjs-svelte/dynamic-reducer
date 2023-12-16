@@ -135,33 +135,33 @@ export interface IDynDerivedAPI<D, K, T>
    /**
     * Removes all derived reducers and associated subscriptions.
     */
-   clear: () => void;
+   clear(): void;
 
    /**
     * @param options - Options for creating a reducer.
     *
     * @returns Newly created derived reducer.
     */
-   create: (options: DynOptionsDerivedCreate<T>) => IDynDerivedReducer<D, K, T>;
+   create(options: DynOptionsDerivedCreate<T>): IDynDerivedReducer<D, K, T>;
 
    /**
     * Deletes and destroys a derived reducer.
     *
     * @param name - Name of the derived reducer
     */
-   delete: (name: string) => boolean;
+   delete(name: string): boolean;
 
    /**
     * Removes all derived reducers, associated subscriptions, and cleans up all resources.
     */
-   destroy: () => void;
+   destroy(): void;
 
    /**
     * Returns an existing derived reducer.
     *
     * @param name - Name of derived reducer.
     */
-   get: (name: string) => IDynDerivedReducer<D, K, T>
+   get(name: string): IDynDerivedReducer<D, K, T>
 }
 
 /**
@@ -180,22 +180,26 @@ export interface IDynDerivedAPI<D, K, T>
  */
 export interface IDynIndexerAPI<K, T>
 {
-   /**
-    * Provides a getter to determine if the index is active.
-    */
-   readonly active: boolean;
+   // /**
+   //  * Provides a getter to determine if the index is active.
+   //  */
+   // readonly active: boolean;
+   //
+   // /**
+   //  * Provides length of reduced / indexed elements.
+   //  */
+   // readonly length: number;
 
-   /**
-    * Provides length of reduced / indexed elements.
-    */
-   readonly length: number;
+   get active(): boolean;
+
+   get length() : number;
 
    /**
     * Manually invoke an update of the index.
     *
     * @param force - Force update to any subscribers.
     */
-   readonly update: (force?: boolean) => void;
+   update(force?: boolean): void;
 
    /**
     * - Current hash value of the index.
