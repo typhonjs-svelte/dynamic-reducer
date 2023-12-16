@@ -14,6 +14,8 @@ export class DynReducerUtils
    static arrayEquals(a: any[], b: any[]): boolean
    {
       if (a === b) { return true; }
+
+      /* c8 ignore next */
       if (a === null || b === null) { return false; }
 
       /* c8 ignore next */
