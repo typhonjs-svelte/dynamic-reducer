@@ -10,6 +10,7 @@ import { Indexer }            from './Indexer.js';
 
 import type {
    IDynAdapterFilters,
+   IDynAdapterSort,
 
    DynCompareFn,
    DynMapData,
@@ -23,6 +24,8 @@ import { DynMapReducerDerived }  from './derived/DynMapReducerDerived.js';
 /**
  * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
  * Svelte store support.
+ *
+ * @template K, T
  */
 export class DynMapReducer<K, T>
 {
@@ -177,7 +180,7 @@ export class DynMapReducer<K, T>
     *
     * @returns {number} Main data / items length.
     */
-   get length()
+   get length(): number
    {
       const map = this.#map[0];
       return this.#index.active ? this.#indexPublicAPI.length :
@@ -189,12 +192,12 @@ export class DynMapReducer<K, T>
     *
     * @returns {boolean} Reversed state.
     */
-   get reversed() { return this.#reversed; }
+   get reversed(): boolean { return this.#reversed; }
 
    /**
     * @returns The sort adapter.
     */
-   get sort(): AdapterSort<T> { return this.#sort; }
+   get sort(): IDynAdapterSort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.
@@ -329,6 +332,7 @@ export class DynMapReducer<K, T>
    /**
     * Provides an iterator for data stored in DynMapReducer.
     *
+    * @returns {IterableIterator<T>}
     * @yields {T}
     */
    *[Symbol.iterator](): IterableIterator<T>

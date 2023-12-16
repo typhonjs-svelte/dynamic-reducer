@@ -1,11 +1,10 @@
 import type {
-    AdapterFilters,
-    AdapterSort,
     DerivedAPI,
     IndexerAPI }                from '../common';
 
 import type {
     IDynAdapterFilters,
+    IDynAdapterSort,
 
     DynArrayData,
     DynMapData,
@@ -88,7 +87,7 @@ export interface IDynDerivedReducer<D, K, T>
     /**
      * @returns The sort adapter.
      */
-    get sort(): AdapterSort<T>;
+    get sort(): IDynAdapterSort<T>;
 
     /**
      * Sets reversed state and notifies subscribers.
@@ -100,7 +99,7 @@ export interface IDynDerivedReducer<D, K, T>
     /**
      * Removes all derived reducers, subscriptions, and cleans up all resources.
      */
-    destroy();
+    destroy(): void;
 
     /**
      * Subscribe to this IDerivedReducer.

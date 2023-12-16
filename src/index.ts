@@ -17,6 +17,7 @@ export type {
     DynOptionsMapCreate,
 
     IDynAdapterFilters,
+    IDynAdapterSort,
     IDynDerivedReducerCtor,
     IDynDerivedReducer,
     IDynArrayReducerCtor,

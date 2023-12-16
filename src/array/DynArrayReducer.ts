@@ -10,6 +10,7 @@ import { Indexer }               from './Indexer.js';
 
 import type {
    IDynAdapterFilters,
+   IDynAdapterSort,
 
    DynCompareFn,
    DynArrayData,
@@ -23,6 +24,8 @@ import { DynArrayReducerDerived }   from './derived/DynArrayReducerDerived.js';
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
  * Svelte store support.
+ *
+ * @template T
  */
 export class DynArrayReducer<T>
 {
@@ -177,7 +180,7 @@ export class DynArrayReducer<T>
     *
     * @returns {number} Main data / items length.
     */
-   get length()
+   get length(): number
    {
       const array = this.#array[0];
       return this.#index.active ? this.#indexPublicAPI.length :
@@ -189,12 +192,12 @@ export class DynArrayReducer<T>
     *
     * @returns {boolean} Reversed state.
     */
-   get reversed() { return this.#reversed; }
+   get reversed(): boolean { return this.#reversed; }
 
    /**
     * @returns The sort adapter.
     */
-   get sort(): AdapterSort<T> { return this.#sort; }
+   get sort(): IDynAdapterSort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.

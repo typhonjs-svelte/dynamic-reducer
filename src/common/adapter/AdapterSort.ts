@@ -1,24 +1,10 @@
 import type {
-   DynCompareFn,
-   DynDataSort }  from '../../types/index.js';
+   IDynAdapterSort,
 
-/**
- * Provides the storage and sequencing of a managed sort function. The sort function set may be a bespoke function or a
- * {@link DynDataSort} object containing an `compare`, and `subscribe` attributes; `compare` is the only required
- * attribute.
- *
- * Note: You can set a compare function that also has a subscribe function attached as the `subscribe` attribute.
- * If a subscribe function is provided the sort function can notify any updates that may change sort order and this
- * triggers an index update.
- *
- * This class forms the public API which is accessible from the `.sort` getter in the main reducer implementation.
- * ```
- * const dynArray = new DynArrayReducer([...]);
- * dynArray.sort.clear();
- * dynArray.sort.set(...);
- * ```
- */
-export class AdapterSort<T>
+   DynCompareFn,
+   DynDataSort }  from '../../types';
+
+export class AdapterSort<T> implements IDynAdapterSort<T>
 {
    #sortData: { compareFn: DynCompareFn<T> };
 
@@ -26,11 +12,6 @@ export class AdapterSort<T>
 
    #unsubscribe: Function;
 
-   /**
-    * @param indexUpdate - Function to update indexer.
-    *
-    * @param sortData - Storage for compare function.
-    */
    constructor(indexUpdate: Function, sortData: { compareFn: DynCompareFn<T> })
    {
       this.#indexUpdate = indexUpdate;
@@ -40,9 +21,6 @@ export class AdapterSort<T>
       Object.freeze(this);
    }
 
-   /**
-    * Clears & removes any assigned sort function and triggers an index update.
-    */
    clear()
    {
       const oldCompareFn = this.#sortData.compareFn;
@@ -59,14 +37,6 @@ export class AdapterSort<T>
       if (typeof oldCompareFn === 'function') { this.#indexUpdate(); }
    }
 
-   /**
-    * @param data - A callback function that compares two values. Return > 0 to sort b before a;
-    * < 0 to sort a before b; or 0 to keep original order of a & b.
-    *
-    * Note: You can set a compare function that also has a subscribe function attached as the `subscribe` attribute.
-    *
-    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#parameters
-    */
    set(data: DynCompareFn<T>|DynDataSort<T>)
    {
       if (typeof this.#unsubscribe === 'function')

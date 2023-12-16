@@ -10,6 +10,7 @@ import { Indexer }   from '../Indexer.js';
 
 import type {
    IDynAdapterFilters,
+   IDynAdapterSort,
 
    IDynDerivedReducer,
    DynCompareFn,
@@ -21,6 +22,8 @@ import type {
 
 /**
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
+ *
+ * @template T
  */
 export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number, T>
 {
@@ -167,7 +170,7 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
    /**
     * @returns The sort adapter.
     */
-   get sort(): AdapterSort<T> { return this.#sort; }
+   get sort(): IDynAdapterSort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.
@@ -219,6 +222,7 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
    /**
     * Provides an iterator for data stored in DerivedArrayReducer.
     *
+    * @returns {IterableIterator<T>}
     * @yields {T}
     */
    *[Symbol.iterator](): IterableIterator<T>
