@@ -35,7 +35,7 @@ export class AdapterSort<T> implements IDynAdapterSort<T>
       }
 
       // Only update index if an old compare function is set.
-      if (typeof oldCompareFn === 'function') { this.#indexUpdate(); }
+      if (typeof oldCompareFn === 'function') { this.#indexUpdate(true); }
    }
 
    set(sort: DynCompareFn<T>|DynDataSort<T>)
@@ -99,7 +99,7 @@ export class AdapterSort<T> implements IDynAdapterSort<T>
       {
          // A sort function with subscriber functionality are assumed to immediately invoke the `subscribe` callback.
          // Only manually update the index if there is no subscriber functionality.
-         this.#indexUpdate();
+         this.#indexUpdate(true);
       }
    }
 }

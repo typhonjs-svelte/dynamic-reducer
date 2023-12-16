@@ -134,7 +134,7 @@ export class AdapterFilters<T> implements IDynAdapterFilters<T>
 
       // Filters with subscriber functionality are assumed to immediately invoke the `subscribe` callback. If the
       // subscriber count is less than the amount of filters added then automatically trigger an index update manually.
-      if (subscribeCount < filters.length) { this.#indexUpdate(); }
+      if (subscribeCount < filters.length) { this.#indexUpdate(true); }
    }
 
    clear()
@@ -184,7 +184,7 @@ export class AdapterFilters<T> implements IDynAdapterFilters<T>
       }
 
       // Update the index a filter was removed.
-      if (length !== this.#filtersData.filters.length) { this.#indexUpdate(); }
+      if (length !== this.#filtersData.filters.length) { this.#indexUpdate(true); }
    }
 
    removeBy(callback: (id: any, filter: DynFilterFn<T>, weight: number) => boolean)
@@ -216,7 +216,7 @@ export class AdapterFilters<T> implements IDynAdapterFilters<T>
          return !remove;
       });
 
-      if (length !== this.#filtersData.filters.length) { this.#indexUpdate(); }
+      if (length !== this.#filtersData.filters.length) { this.#indexUpdate(true); }
    }
 
    removeById(...ids: any[])
@@ -245,6 +245,6 @@ export class AdapterFilters<T> implements IDynAdapterFilters<T>
          return !remove; // Swap here to actually remove the item via array filter method.
       });
 
-      if (length !== this.#filtersData.filters.length) { this.#indexUpdate(); }
+      if (length !== this.#filtersData.filters.length) { this.#indexUpdate(true); }
    }
 }
