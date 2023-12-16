@@ -730,7 +730,7 @@ export function run({ Module, chai })
             assert.deepEqual([...dr], [3, 2, 1], 'correct reversed derived original data');
          });
 
-         it(`added filter with no parent index updates correctly`, () =>
+         it(`added filter with no parent index updates correctly (number data)`, () =>
          {
             const dar = createReducer([1, 2]);
             const dr = dar.derived.create('test');
@@ -743,6 +743,29 @@ export function run({ Module, chai })
             assert.deepEqual([...dr], [1], 'correct derived filter data');
 
             dar.setData([2, 3]);
+
+            assert.deepEqual([...dr], [], 'correct derived filter data');
+         });
+
+         it(`added filter with no parent index updates correctly (object data)`, () =>
+         {
+            const obj1 = { type: 'A' };
+            const obj2 = { type: 'B' };
+            const obj3 = { type: 'C' };
+
+            const data = [obj1, obj2];
+
+            const dar = createReducer(data);
+            const dr = dar.derived.create('test');
+
+            assert.deepEqual([...dr], data, 'correct derived initial data');
+
+            dr.filters.add((entry) => entry.type === 'A');
+
+            assert.deepEqual([...dar], data, 'correct initial data');
+            assert.deepEqual([...dr], [obj1], 'correct derived filter data');
+
+            dar.setData([obj2, obj3]);
 
             assert.deepEqual([...dr], [], 'correct derived filter data');
          });
