@@ -13,7 +13,7 @@ import type { DynMapReducer }   from '../map';
 import type { DynArrayReducer } from '../array';
 
 /**
- * Defines the shape of dynamic array constructor functions.
+ * Defines the shape of a dynamic array constructor function.
  */
 export interface IDynArrayReducerCtor<T>
 {
@@ -21,7 +21,7 @@ export interface IDynArrayReducerCtor<T>
 }
 
 /**
- * Defines the shape of dynamic map constructor functions.
+ * Defines the shape of a dynamic map constructor function.
  */
 export interface IDynMapReducerCtor<K, T>
 {
@@ -29,7 +29,7 @@ export interface IDynMapReducerCtor<K, T>
 }
 
 /**
- * Defines the shape of derived reducers constructor functions.
+ * Defines the shape of a derived reducer constructor function.
  */
 export interface IDynDerivedReducerCtor<T>
 {
@@ -37,7 +37,7 @@ export interface IDynDerivedReducerCtor<T>
 }
 
 /**
- * Defines the interface for all derived reducers.
+ * Defines the interface for a derived reducer.
  */
 export interface IDynDerivedReducer<D, K, T>
 {

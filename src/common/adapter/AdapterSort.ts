@@ -2,17 +2,18 @@ import type {
    IDynAdapterSort,
 
    DynCompareFn,
-   DynDataSort }  from '../../types';
+   DynDataSort,
+   DynIndexerUpdateFn } from '../../types';
 
 export class AdapterSort<T> implements IDynAdapterSort<T>
 {
    #sortData: { compareFn: DynCompareFn<T> };
 
-   readonly #indexUpdate: Function;
+   readonly #indexUpdate: DynIndexerUpdateFn;
 
    #unsubscribe: Function;
 
-   constructor(indexUpdate: Function, sortData: { compareFn: DynCompareFn<T> })
+   constructor(indexUpdate: DynIndexerUpdateFn, sortData: { compareFn: DynCompareFn<T> })
    {
       this.#indexUpdate = indexUpdate;
 
@@ -37,7 +38,7 @@ export class AdapterSort<T> implements IDynAdapterSort<T>
       if (typeof oldCompareFn === 'function') { this.#indexUpdate(); }
    }
 
-   set(data: DynCompareFn<T>|DynDataSort<T>)
+   set(sort: DynCompareFn<T>|DynDataSort<T>)
    {
       if (typeof this.#unsubscribe === 'function')
       {
@@ -45,27 +46,27 @@ export class AdapterSort<T> implements IDynAdapterSort<T>
          this.#unsubscribe = void 0;
       }
 
-      let compareFn = void 0;
-      let subscribeFn = void 0;
+      let compareFn: DynCompareFn<T> = void 0;
+      let subscribeFn: (indexUpdate: DynIndexerUpdateFn) => () => void = void 0;
 
-      switch (typeof data)
+      switch (typeof sort)
       {
          case 'function':
-            compareFn = data;
-            subscribeFn = data.subscribe;
+            compareFn = sort;
+            subscribeFn = sort.subscribe;
             break;
 
          case 'object':
-            // Early out if data is null / noop.
-            if (data === null) { break; }
+            // Early out if sort is null / noop.
+            if (sort === null) { break; }
 
-            if (typeof data.compare !== 'function')
+            if (typeof sort.compare !== 'function')
             {
                throw new TypeError(`AdapterSort error: 'compare' attribute is not a function.`);
             }
 
-            compareFn = data.compare;
-            subscribeFn = data.compare.subscribe ?? data.subscribe;
+            compareFn = sort.compare;
+            subscribeFn = sort.compare.subscribe ?? sort.subscribe;
             break;
       }
 

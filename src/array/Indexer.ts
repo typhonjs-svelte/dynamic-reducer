@@ -1,6 +1,6 @@
 import {
    AdapterIndexer,
-   DynReducerUtils } from '../common/index.js';
+   DynReducerUtils } from '../common';
 
 /**
  */

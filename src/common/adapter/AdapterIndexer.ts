@@ -1,18 +1,20 @@
 import { DynReducerUtils }       from '../DynReducerUtils.js';
 
-import type { IndexerAPI }       from '../api/IndexerAPI.js';
-
 import type {
+   IDynIndexerAPI,
+
    DynCompareFn,
    DynDataFilter,
    DynDataHost,
-   DynDataIndexer }                 from '../../types/index.js';
+   DynDataIndexer }              from '../../types';
 
 import type { AdapterDerived }   from './AdapterDerived.js';
 
 /**
  * Provides construction and management of indexed data when there are parent indexes or filter / sort functions
  * applied.
+ *
+ * @template D, K, T
  */
 export abstract class AdapterIndexer<D, K, T>
 {
@@ -33,15 +35,15 @@ export abstract class AdapterIndexer<D, K, T>
    public destroyed = false;
 
    /**
-    * @param hostData - Hosted data structure.
+    * @param {DynDataHost<D>}       hostData - Hosted data structure.
     *
-    * @param hostUpdate - Host update function invoked on index updates.
+    * @param {Function}             hostUpdate - Host update function invoked on index updates.
     *
-    * @param [parentIndexer] - Any associated parent index API.
+    * @param {IDynIndexerAPI<K, T>} [parentIndexer] - Any associated parent index API.
     *
     * @returns Indexer adapter instance.
     */
-   constructor(hostData: DynDataHost<D>, hostUpdate: Function, parentIndexer?: IndexerAPI<K, T>)
+   constructor(hostData: DynDataHost<D>, hostUpdate: Function, parentIndexer?: IDynIndexerAPI<K, T>)
    {
       this.hostData = hostData;
 
@@ -148,7 +150,7 @@ export abstract class AdapterIndexer<D, K, T>
     * @param derivedAdapter - Associated AdapterDerived instance.
     */
    initAdapters(filtersData: { filters: DynDataFilter<T>[] }, sortData: { compareFn: DynCompareFn<T> },
-                derivedAdapter: AdapterDerived<D, K, T>)
+    derivedAdapter: AdapterDerived<D, K, T>)
    {
       this.filtersData = filtersData;
 

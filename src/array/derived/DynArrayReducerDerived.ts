@@ -25,6 +25,9 @@ import type {
 /**
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
  *
+ * Note: That you should never directly create an instance of a derived reducer, but instead use the
+ * {@link DynArrayReducerDerived.initialize} callback to set up any initial state in a custom derived reducer.
+ *
  * @template T
  */
 export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number, T>
@@ -54,13 +57,13 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
    #destroyed = false;
 
    /**
-    * @param array - Data host array.
+    * @param {DynDataHost<T[]>}           array - Data host array.
     *
-    * @param parentIndex - Parent indexer.
+    * @param {IDynIndexerAPI<number, T>}  parentIndex - Parent indexer.
     *
-    * @param options - Any filters and sort functions to apply.
+    * @param {DynDataOptions<T>}          options - Any filters and sort functions to apply.
     */
-   constructor(array: DynDataHost<T[]>, parentIndex: IndexerAPI<number, T>, options: DynDataOptions<T>)
+   constructor(array: DynDataHost<T[]>, parentIndex: IDynIndexerAPI<number, T>, options: DynDataOptions<T>)
    {
       this.#array = array;
 

@@ -1,9 +1,8 @@
-import type { IndexerAPI }  from '../common/index.js';
-
 import type {
+    IDynIndexerAPI,
     IDynDerivedReducerCtor,
     IDynArrayReducerCtor,
-    IDynMapReducerCtor }    from './interface.js';
+    IDynMapReducerCtor }    from './';
 
 /**
  * Defines the additional options for filters and sort function.
@@ -64,7 +63,7 @@ export type DynDataFilter<T> = {
      *
      * @param handler - Callback function that is invoked on update / changes.
      */
-    subscribe?: (handler: (value: any) => void) => () => void;
+    subscribe?: (indexUpdate: DynIndexerUpdateFn) => () => void;
 };
 
 /**
@@ -94,8 +93,15 @@ export type DynDataIndexer<K, T> = {
     /**
      * - Any associated parent index data.
      */
-    parent?: IndexerAPI<K, T>;
+    parent?: IDynIndexerAPI<K, T>;
 };
+
+/**
+ * Updates associated dynamic reducer indexer.
+ *
+ * @param [force] - Force an update the index regardless of hash calculations.
+ */
+export type DynIndexerUpdateFn = (force?: boolean) => void;
 
 /**
  * Defines an object to configure sort functionality.
@@ -111,7 +117,7 @@ export type DynDataSort<T> = {
      *
      * @param handler - Callback function that is invoked on update / changes.
      */
-    subscribe?: (handler: (value: any) => void) => () => void;
+    subscribe?: (indexUpdate: DynIndexerUpdateFn) => () => void;
 };
 
 /**
@@ -130,9 +136,11 @@ export type DynCompareFn<T> = {
     (a: T, b: T): number;
 
     /**
-     * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
+     * Optional subscribe function following the Svelte store / subscribe pattern.
+     *
+     * @param handler - Callback function that is invoked on update / changes. Receives `index update` function.
      */
-    subscribe?: (handler: (value: any) => void) => () => void;
+    subscribe?: (indexUpdate: DynIndexerUpdateFn) => () => void;
 };
 
 /**
@@ -150,9 +158,11 @@ export type DynFilterFn<T> = {
     (element: T): boolean;
 
     /**
-     * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
+     * Optional subscribe function following the Svelte store / subscribe pattern.
+     *
+     * @param indexUpdate - Callback function that is invoked on update / changes. Receives `this` reference.
      */
-    subscribe?: (handler: (value: any) => void) => () => void;
+    subscribe?: (indexUpdate: DynIndexerUpdateFn) => () => void;
 };
 
 /**

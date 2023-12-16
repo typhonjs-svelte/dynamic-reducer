@@ -149,9 +149,9 @@ export class DynMapReducer<K, T>
    /**
     * Returns the internal data of this instance. Be careful!
     *
-    * Note: When a map is set as data then that map is used as the internal data. If any changes are
-    * performed to the data externally do invoke {@link AdapterIndexer.index.update} with `true` to recalculate the
-    * index and notify all subscribers.
+    * Note: When a map is set as data then that map is used as the internal data. If any changes are performed to the
+    * data externally do invoke `update` via {@link DynMapReducer.index} with `true` to recalculate the  index and
+    * notify all subscribers.
     *
     * @returns The internal data.
     */

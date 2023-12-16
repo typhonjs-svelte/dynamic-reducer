@@ -23,7 +23,10 @@ import type {
    DynFilterFn }        from '../../types';
 
 /**
- * Provides the base implementation derived reducer for arrays / DynArrayReducer.
+ * Provides the base implementation derived reducer for Maps / DynMapReducer.
+ *
+ * Note: That you should never directly create an instance of a derived reducer, but instead use the
+ * {@link DynMapReducerDerived.initialize} callback to set up any initial state in a custom derived reducer.
  *
  * @template K, T
  */
@@ -54,13 +57,13 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
    #destroyed = false;
 
    /**
-    * @param map - Data host Map.
+    * @param {DynDataHost<Map<K, T>>}  map - Data host Map.
     *
-    * @param parentIndex - Parent indexer.
+    * @param {IDynIndexerAPI<K, T>}    parentIndex - Parent indexer.
     *
-    * @param options - Any filters and sort functions to apply.
+    * @param {DynDataOptions<T>}       options - Any filters and sort functions to apply.
     */
-   constructor(map: DynDataHost<Map<K, T>>, parentIndex: IndexerAPI<K, T>, options: DynDataOptions<T>)
+   constructor(map: DynDataHost<Map<K, T>>, parentIndex: IDynIndexerAPI<K, T>, options: DynDataOptions<T>)
    {
       this.#map = map;
 
@@ -116,7 +119,7 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
       if (filters) { this.filters.add(...filters); }
       if (sort) { this.sort.set(sort); }
 
-      // Invoke an custom initialization for child classes.
+      // Invoke custom initialization for child classes.
       this.initialize();
    }
 

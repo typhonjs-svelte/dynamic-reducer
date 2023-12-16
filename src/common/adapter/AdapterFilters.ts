@@ -1,17 +1,19 @@
 import type {
+   IDynAdapterFilters,
+
    DynDataFilter,
    DynFilterFn,
-   IDynAdapterFilters }  from '../../types';
+   DynIndexerUpdateFn } from '../../types';
 
 export class AdapterFilters<T> implements IDynAdapterFilters<T>
 {
    #filtersData: { filters: DynDataFilter<T>[] };
 
-   readonly #indexUpdate: Function;
+   readonly #indexUpdate: DynIndexerUpdateFn;
 
    #mapUnsubscribe: Map<Function, Function> = new Map();
 
-   constructor(indexUpdate: Function, filtersAdapter: { filters: DynDataFilter<T>[] })
+   constructor(indexUpdate: DynIndexerUpdateFn, filtersAdapter: { filters: DynDataFilter<T>[] })
    {
       this.#indexUpdate = indexUpdate;
 
@@ -49,7 +51,7 @@ export class AdapterFilters<T> implements IDynAdapterFilters<T>
          }
 
          let data = void 0;
-         let subscribeFn = void 0;
+         let subscribeFn: (indexUpdate: DynIndexerUpdateFn) => () => void = void 0;
 
          if (filterType === 'function')
          {

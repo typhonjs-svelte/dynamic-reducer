@@ -142,7 +142,7 @@ export class DynArrayReducer<T>
       if (filters) { this.filters.add(...filters); }
       if (sort) { this.sort.set(sort); }
 
-      // Invoke an custom initialization for child classes.
+      // Invoke custom initialization for child classes.
       this.initialize();
    }
 
@@ -150,8 +150,8 @@ export class DynArrayReducer<T>
     * Returns the internal data of this instance. Be careful!
     *
     * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
-    * performed to the data externally do invoke {@link AdapterIndexer.index.update} with `true` to recalculate the
-    * index and notify all subscribers.
+    * performed to the data externally do invoke `update` via {@link DynArrayReducer.index} with `true` to recalculate
+    * the index and notify all subscribers.
     *
     * @returns The internal data.
     */
