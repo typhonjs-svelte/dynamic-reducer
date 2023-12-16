@@ -1,4 +1,4 @@
-import type { IDynDerivedReducerCtor } from '../types/index.js';
+import type { IDynDerivedReducerCtor } from '../types';
 
 export class DynReducerUtils
 {

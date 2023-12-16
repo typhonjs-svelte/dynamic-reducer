@@ -1,7 +1,3 @@
-/*
-    IndexerAPI
- */
-
 import type {
    IDynDerivedReducer,
 

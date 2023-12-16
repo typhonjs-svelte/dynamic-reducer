@@ -5,7 +5,7 @@ import type {
    IDynDerivedReducerCtor,
    DynDataOptions,
    DynDataHost,
-   DynOptionsDerivedCreate }  from '../../types/index.js';
+   DynOptionsDerivedCreate }  from '../../types';
 
 import type { IndexerAPI } from '../api/IndexerAPI.js';
 
