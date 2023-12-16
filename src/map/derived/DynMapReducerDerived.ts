@@ -13,6 +13,7 @@ import type {
    IDynAdapterSort,
    IDynDerivedAPI,
    IDynDerivedReducer,
+   IDynIndexerAPI,
 
    DynCompareFn,
    DynDataOptions,
@@ -144,7 +145,7 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
     *
     * @returns Indexer API - is also iterable.
     */
-   get index(): IndexerAPI<K, T> { return this.#indexPublicAPI; }
+   get index(): IDynIndexerAPI<K, T> { return this.#indexPublicAPI; }
 
    /**
     * Returns whether this derived reducer is destroyed.

@@ -1,19 +1,10 @@
-import type { AdapterIndexer }  from '../../common/adapter/AdapterIndexer.js';
-import type { DynDataIndexer }     from '../../types/index.js';
+import type { AdapterIndexer }  from '../adapter/AdapterIndexer';
 
-/**
- * Provides the public API for accessing the index API.
- *
- * This class forms the public API which is accessible from the `.index` getter in the main reducer implementation.
- * ```
- * const dynArray = new DynArrayReducer([...]);
- * dynArray.index.active;
- * dynArray.index.hash;
- * dynArray.index.length;
- * dynArray.index.update(...);
- * ```
- */
-export class IndexerAPI<K, T>
+import type {
+    IDynIndexerAPI,
+    DynDataIndexer }            from '../../types';
+
+export class IndexerAPI<K, T> implements IDynIndexerAPI<K, T>
 {
     readonly #indexData: DynDataIndexer<K, T>
 
@@ -49,19 +40,11 @@ export class IndexerAPI<K, T>
         Object.freeze(this);
     }
 
-    /**
-     * - Current hash value of the index.
-     */
     get hash(): number | null
     {
         return this.#indexData.hash;
     }
 
-    /**
-     * Provides an iterator over the index array.
-     *
-     * @yields {K}
-     */
     *[Symbol.iterator](): IterableIterator<K>
     {
         const indexData = this.#indexData;

@@ -1,10 +1,8 @@
 import type {
-    IndexerAPI }                from '../common';
-
-import type {
     IDynAdapterFilters,
     IDynAdapterSort,
     IDynDerivedAPI,
+    IDynIndexerAPI,
 
     DynArrayData,
     DynMapData,
@@ -35,7 +33,7 @@ export interface IDynMapReducerCtor<K, T>
  */
 export interface IDynDerivedReducerCtor<T>
 {
-    new (hostData: DynDataHost<any>, parentIndex: IndexerAPI<any, T>, options: DynDataOptions<T>): IDynDerivedReducer<any, any, T>;
+    new (hostData: DynDataHost<any>, parentIndex: IDynIndexerAPI<any, T>, options: DynDataOptions<T>): IDynDerivedReducer<any, any, T>;
 }
 
 /**
@@ -67,7 +65,7 @@ export interface IDynDerivedReducer<D, K, T>
     /**
      * @returns Returns the Indexer public API.
      */
-    get index(): IndexerAPI<K, T>;
+    get index(): IDynIndexerAPI<K, T>;
 
     /**
      * Returns whether this derived reducer is destroyed.

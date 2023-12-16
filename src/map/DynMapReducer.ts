@@ -12,6 +12,7 @@ import type {
    IDynAdapterFilters,
    IDynAdapterSort,
    IDynDerivedAPI,
+   IDynIndexerAPI,
 
    DynCompareFn,
    DynMapData,
@@ -169,7 +170,7 @@ export class DynMapReducer<K, T>
    /**
     * @returns Returns the Indexer public API.
     */
-   get index(): IndexerAPI<K, T> { return this.#indexPublicAPI; }
+   get index(): IDynIndexerAPI<K, T> { return this.#indexPublicAPI; }
 
    /**
     * Returns whether this instance is destroyed.

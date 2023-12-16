@@ -12,6 +12,7 @@ import {
    IDynAdapterFilters,
    IDynAdapterSort,
    IDynDerivedAPI,
+   IDynIndexerAPI,
 
    DynCompareFn,
    DynArrayData,
@@ -169,7 +170,7 @@ export class DynArrayReducer<T>
    /**
     * @returns Returns the Indexer public API.
     */
-   get index(): IndexerAPI<number, T> { return this.#indexPublicAPI; }
+   get index(): IDynIndexerAPI<number, T> { return this.#indexPublicAPI; }
 
    /**
     * Returns whether this instance is destroyed.
