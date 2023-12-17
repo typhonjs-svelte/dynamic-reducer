@@ -1,18 +1,18 @@
 /**
- * @param {object}                        opts - Test options
+ * @param {object}                           opts - Test options
  *
- * @param {import('../../../../../types/index.js')}   opts.Module - Module to test
+ * @param {import('../../../../../types')}   opts.Module - Module to test
  *
- * @param {object}                        opts.chai - Chai
+ * @param {import('chai')}                   opts.chai - Chai
  */
 export function run({ Module, chai })
 {
    const { assert } = chai;
 
-   /** @type {import('../../../../../types/index.js').DynArrayReducer} */
+   /** @type {import('../../../../../types').DynArrayReducer} */
    const { DynArrayReducer } = Module;
 
-   /** @type {import('../../../../../types/index.js').DynArrayReducerDerived} */
+   /** @type {import('../../../../../types').DynArrayReducerDerived} */
    const DynArrayReducerDerived = Module.DynArrayReducerDerived;
 
    /**
@@ -22,7 +22,7 @@ export function run({ Module, chai })
     *
     * @param {T[]|object}  [data] - Initial data.
     *
-    * @returns {import('../../../../../types/index.js').DynArrayReducer<T>} New DynArrayReducer instance.
+    * @returns {import('../../../../../types').DynArrayReducer<T>} New DynArrayReducer instance.
     */
    function createReducer(data)
    {

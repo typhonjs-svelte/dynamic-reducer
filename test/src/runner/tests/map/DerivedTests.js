@@ -1,9 +1,9 @@
 /**
- * @param {object}                        opts - Test options
+ * @param {object}                           opts - Test options
  *
- * @param {import('../../../../../types/index.js')}   opts.Module - Module to test
+ * @param {import('../../../../../types')}   opts.Module - Module to test
  *
- * @param {object}                        opts.chai - Chai
+ * @param {import('chai')}                   opts.chai - Chai
  */
 export function run({ Module, chai })
 {
@@ -22,7 +22,7 @@ export function run({ Module, chai })
     *
     * @param {Map<K, T>|object}  [data] - Initial data.
     *
-    * @returns {import('../../../../../types/index.js').DynMapReducer<K, T>} New DynMapReducer instance.
+    * @returns {import('../../../../../types').DynMapReducer<K, T>} New DynMapReducer instance.
     */
    function createReducer(data)
    {
