@@ -180,16 +180,6 @@ export interface IDynDerivedAPI<D, K, T>
  */
 export interface IDynIndexerAPI<K, T>
 {
-   // /**
-   //  * Provides a getter to determine if the index is active.
-   //  */
-   // readonly active: boolean;
-   //
-   // /**
-   //  * Provides length of reduced / indexed elements.
-   //  */
-   // readonly length: number;
-
    get active(): boolean;
 
    get length() : number;
