@@ -101,7 +101,7 @@ export abstract class AdapterIndexer<D, K, T>
       // Use force if a boolean otherwise default to false.
       const actualForce = typeof force === 'boolean' ? force : /* c8 ignore next */ false;
 
-      let newHash = null;
+      let newHash: number | null = null;
       const newIndex = this.indexData.index;
 
       if (newIndex)

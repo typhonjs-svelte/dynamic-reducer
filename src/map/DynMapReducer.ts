@@ -51,7 +51,7 @@ export class DynMapReducer<K, T>
 
    #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
 
-   #subscriptions = [];
+   #subscriptions: Function[] = [];
 
    #destroyed = false;
 

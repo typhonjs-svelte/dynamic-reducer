@@ -51,7 +51,7 @@ export class DynArrayReducer<T>
 
    #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
 
-   #subscriptions = [];
+   #subscriptions: Function[] = [];
 
    #destroyed = false;
 
@@ -63,7 +63,7 @@ export class DynArrayReducer<T>
     */
    constructor(data?: Iterable<T>|DynArrayData<T>)
    {
-      let dataIterable = void 0;
+      let dataIterable: Iterable<T> = void 0;
       let filters: Iterable<DynFilterFn<T> | DynDataFilter<T>> = void 0;
       let sort: DynCompareFn<T> | DynDataSort<T> = void 0;
 
@@ -79,7 +79,7 @@ export class DynArrayReducer<T>
 
       if (data !== void 0 && Symbol.iterator in (data as Iterable<T>))
       {
-         dataIterable = data;
+         dataIterable = data as Iterable<T>;
       }
       else if (data !== void 0 && ('data' in data || 'filters' in data || 'sort' in data))
       {

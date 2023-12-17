@@ -52,7 +52,7 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
 
    #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
 
-   #subscriptions = [];
+   #subscriptions: Function[] = [];
 
    #destroyed = false;
 

@@ -50,14 +50,14 @@ export class AdapterFilters<T> implements IDynAdapterFilters<T>
             throw new TypeError(`AdapterFilters error: 'filter' is not a function or object.`);
          }
 
-         let data = void 0;
+         let data: DynDataFilter<T> = void 0;
          let subscribeFn: (indexUpdate: DynIndexerUpdateFn) => () => void = void 0;
 
          if (filterType === 'function')
          {
             data = {
                id: void 0,
-               filter,
+               filter: filter as DynFilterFn<T>,
                weight: 1
             };
 
@@ -173,7 +173,7 @@ export class AdapterFilters<T> implements IDynAdapterFilters<T>
                this.#filtersData.filters.splice(cntr, 1);
 
                // Invoke any unsubscribe function for given filter then remove from tracking.
-               let unsubscribe = void 0;
+               let unsubscribe: Function = void 0;
                if (typeof (unsubscribe = this.#mapUnsubscribe.get(actualFilter)) === 'function')
                {
                   unsubscribe();

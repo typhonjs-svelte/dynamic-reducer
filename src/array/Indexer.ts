@@ -24,7 +24,7 @@ export class Indexer<T> extends AdapterIndexer<T[], number, T>
     */
    reduceImpl(): number[]
    {
-      const data = [];
+      const data: number[] = [];
 
       const array = this.hostData[0];
       if (!array) { return data; }

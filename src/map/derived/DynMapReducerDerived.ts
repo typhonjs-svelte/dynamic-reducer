@@ -52,7 +52,7 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
 
    #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
 
-   #subscriptions = [];
+   #subscriptions: Function[] = [];
 
    #destroyed = false;
 

@@ -24,7 +24,7 @@ export class Indexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
     */
    reduceImpl(): K[]
    {
-      const data = [];
+      const data: K[] = [];
 
       const map = this.hostData[0];
       if (!map) { return data; }
