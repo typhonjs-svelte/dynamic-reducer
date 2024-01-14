@@ -1,35 +1,32 @@
 {
   "name": "@typhonjs-svelte/dynamic-reducer",
-  "description": "Provides managed reducing / filtering / sorting capabilities with subscription support / Svelte store support for arrays and Maps.",
-  "version": "0.0.8",
+  "description": "Provides managed reducing / filtering / sorting capabilities with subscription / Svelte store support for arrays and Maps.",
+  "version": "0.1.0",
   "author": "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)",
   "contributors": [
     "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)"
   ],
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
+      "typedoc": "./src/index.ts",
       "import": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
-  "types": "./types/index.d.ts",
-  "dependencies": {
-  },
   "devDependencies": {
-    "@rollup/plugin-alias": "^5.0.0",
-    "@rollup/plugin-typescript": "^11.1.0",
-    "@typhonjs-build-test/node": "^0.0.4",
-    "rollup": "^3",
-    "rollup-plugin-dts": "^5.3.0",
-    "tslib": "^2.5.0",
-    "typescript": "^5.0.4"
+    "@rollup/plugin-alias": "^5.1.0",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@typhonjs-build-test/node": "^0.0.11",
+    "@typhonjs-typedoc/typedoc-pkg": "^0.0.2",
+    "rollup": "^4.9.5",
+    "rollup-plugin-dts": "^6.1.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=16"
   },
   "files": [
     "/dist",
@@ -48,8 +45,17 @@
   "license": "MPL-2.0",
   "bugs": "https://github.com/typhonjs-svelte/dynamic-reducer/issues",
   "repository": "github:typhonjs-svelte/dynamic-reducer",
+  "typedocOptions": {
+    "dmtLinksService": {
+      "Discord": "https://typhonjs.io/discord/",
+      "GitHub": "https://github.com/typhonjs-svelte/dynamic-reducer",
+      "NPM": "https://www.npmjs.com/package/@typhonjs-svelte/dynamic-reducer"
+    }
+  },
+  "apidocs": "https://typhonjs-svelte.github.io/dynamic-reducer/",
   "scripts": {
     "build": "rollup -c",
+    "docs": "typedoc-pkg --api-link esm --export typedoc",
     "eslint": "eslint .",
     "posttest": "npm run eslint",
     "prepublishOnly": "npm run test",
