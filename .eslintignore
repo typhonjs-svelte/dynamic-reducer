@@ -1,5 +1,6 @@
 /.dts/
 /dist/
 /docs/
+/docs-ts/
 /test/fixtures
 /types/
