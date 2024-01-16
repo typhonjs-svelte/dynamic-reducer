@@ -67,7 +67,7 @@ type DynIndexerUpdateFn = (force?: boolean) => void;
  */
 type DynDataSort<T> = {
     /**
-     * - A callback function that compares two values.
+     * A callback function that compares two values.
      */
     compare: DynCompareFn<T>;
     /**
@@ -123,11 +123,11 @@ type DynFilterFn<T> = {
  */
 type DynDataDerivedCreate<T> = {
     /**
-     * - Name of derived reducer.
+     * Name of derived reducer.
      */
     name?: string;
     /**
-     * - A DerivedReducer constructor function / class.
+     * A DerivedReducer constructor function / class.
      */
     ctor?: IDynDerivedReducerCtor<T>;
 } & DynDataOptions<T>;
@@ -140,11 +140,11 @@ type DynOptionsDerivedCreate<T> = string | IDynDerivedReducerCtor<T> | DynDataDe
  */
 type DynDataArrayCreate<T> = {
     /**
-     * - Name of dynamic array reducer.
+     * Name of dynamic array reducer.
      */
     name?: string;
     /**
-     * - A DynMapReducer constructor function / class.
+     * A DynMapReducer constructor function / class.
      */
     ctor?: IDynArrayReducerCtor<T>;
 } & DynDataOptions<T>;
@@ -154,11 +154,11 @@ type DynOptionsArrayCreate<T> = string | IDynArrayReducerCtor<T> | DynDataArrayC
  */
 type DynDataMapCreate<K, T> = {
     /**
-     * - Name of dynamic map reducer.
+     * Name of dynamic map reducer.
      */
     name?: string;
     /**
-     * - A DynMapReducer constructor function / class.
+     * A DynMapReducer constructor function / class.
      */
     ctor?: IDynMapReducerCtor<K, T>;
 } & DynDataOptions<T>;
@@ -176,7 +176,7 @@ declare class DynMapReducer<K, T> {
      * Initializes DynMapReducer. Any iterable is supported for initial data. Take note that if `data` is an array it
      * will be used as the host array and not copied. All non-array iterables otherwise create a new array / copy.
      *
-     * @param [data] - Data iterable to store if array or copy otherwise.
+     * @param {Map<K, T> | DynMapData<K, T>} [data] - Data iterable to store if array or copy otherwise.
      */
     constructor(data?: Map<K, T> | DynMapData<K, T>);
     /**
@@ -186,23 +186,23 @@ declare class DynMapReducer<K, T> {
      * data externally do invoke `update` via {@link DynMapReducer.index} with `true` to recalculate the  index and
      * notify all subscribers.
      *
-     * @returns The internal data.
+     * @returns {Map<K, T> | null} The internal data.
      */
     get data(): Map<K, T> | null;
     /**
-     * @returns Derived public API.
+     * @returns {IDynDerivedAPI<Map<K, T>, K, T>} Derived public API.
      */
     get derived(): IDynDerivedAPI<Map<K, T>, K, T>;
     /**
-     * @returns The filters adapter.
+     * @returns {IDynAdapterFilters<T>} The filters adapter.
      */
     get filters(): IDynAdapterFilters<T>;
     /**
-     * @returns Returns the Indexer public API.
+     * @returns {IDynIndexerAPI<K, T>} Returns the Indexer public API.
      */
     get index(): IDynIndexerAPI<K, T>;
     /**
-     * Returns whether this instance is destroyed.
+     * @returns {boolean} Returns whether this instance is destroyed.
      */
     get destroyed(): boolean;
     /**
@@ -218,13 +218,13 @@ declare class DynMapReducer<K, T> {
      */
     get reversed(): boolean;
     /**
-     * @returns The sort adapter.
+     * @returns {IDynAdapterSort<T>} The sort adapter.
      */
     get sort(): IDynAdapterSort<T>;
     /**
      * Sets reversed state and notifies subscribers.
      *
-     * @param reversed - New reversed state.
+     * @param {boolean} reversed - New reversed state.
      */
     set reversed(reversed: boolean);
     /**
@@ -242,17 +242,18 @@ declare class DynMapReducer<K, T> {
      * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
      * `replace` is set to true.
      *
-     * @param data - New data to set to internal data.
+     * @param {Map<K, T> | null}  data - New data to set to internal data.
      *
-     * @param replace=false - New data to set to internal data.
+     * @param {boolean} [replace=false] - New data to set to internal data.
      */
     setData(data: Map<K, T> | null, replace?: boolean): void;
     /**
      * Add a subscriber to this DynMapReducer instance.
      *
-     * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
+     * @param {(value: DynMapReducer<K, T>) => void} handler - Callback function that is invoked on update / changes.
+     *        Receives `this` reference.
      *
-     * @returns Unsubscribe function.
+     * @returns {() => void} Unsubscribe function.
      */
     subscribe(handler: (value: DynMapReducer<K, T>) => void): () => void;
     /**
@@ -286,7 +287,8 @@ declare class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>
      * Returns the internal data of this instance. Be careful!
      *
      * Note: The returned map is the same map set by the main reducer. If any changes are performed to the data
-     * externally do invoke {@link IndexerAPI.update} with `true` to recalculate the index and notify all subscribers.
+     * externally do invoke {@link IDynIndexerAPI.update} with `true` to recalculate the index and notify all
+     * subscribers.
      *
      * @returns The internal data.
      */
@@ -381,8 +383,8 @@ interface IDynDerivedReducer<D, K, T> {
      * Returns the internal data of this instance. Be careful!
      *
      * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
-     * performed to the data externally do invoke {@link index.update} with `true` to recalculate the index and notify
-     * all subscribers.
+     * performed to the data externally do invoke `update` via {@link IDynDerivedReducer.index} with `true` to
+     * recalculate the index and notify all subscribers.
      *
      * @returns The internal data.
      */
@@ -464,7 +466,7 @@ interface IDynDerivedReducer<D, K, T> {
  */
 interface IDynAdapterFilters<T> {
     /**
-     * @returns Returns the length of the filter data.
+     * @returns {number} Returns the length of the filter data.
      */
     get length(): number;
     /**
@@ -475,7 +477,7 @@ interface IDynAdapterFilters<T> {
      */
     [Symbol.iterator](): IterableIterator<DynDataFilter<T>> | void;
     /**
-     * @param filters -
+     * @param {(DynFilterFn<T>|DynDataFilter<T>)[]} filters - One or more filter functions / DynDataFilter to add.
      */
     add(...filters: (DynFilterFn<T> | DynDataFilter<T>)[]): void;
     /**
@@ -483,18 +485,19 @@ interface IDynAdapterFilters<T> {
      */
     clear(): void;
     /**
-     * @param filters -
+     * @param {(DynFilterFn<T>|DynDataFilter<T>)[]} filters - One or more filter functions / DynDataFilter to remove.
      */
     remove(...filters: (DynFilterFn<T> | DynDataFilter<T>)[]): void;
     /**
      * Remove filters by the provided callback. The callback takes 3 parameters: `id`, `filter`, and `weight`.
      * Any truthy value returned will remove that filter.
      *
-     * @param callback - Callback function to evaluate each filter entry.
+     * @param {(id: any, filter: DynFilterFn<T>, weight: number) => boolean} callback - Callback function to evaluate
+     *        each filter entry.
      */
     removeBy(callback: (id: any, filter: DynFilterFn<T>, weight: number) => boolean): void;
     /**
-     * @param ids - Removes filters by ID.
+     * @param {any[]} ids - Removes filters by ID.
      */
     removeById(...ids: any[]): void;
 }
@@ -553,15 +556,17 @@ interface IDynDerivedAPI<D, K, T> {
      */
     clear(): void;
     /**
-     * @param options - Options for creating a reducer.
+     * @param {DynOptionsDerivedCreate<T>} options - Options for creating a reducer.
      *
-     * @returns Newly created derived reducer.
+     * @returns {IDynDerivedReducer<D, K, T>} Newly created derived reducer.
      */
     create(options: DynOptionsDerivedCreate<T>): IDynDerivedReducer<D, K, T>;
     /**
      * Deletes and destroys a derived reducer.
      *
-     * @param name - Name of the derived reducer
+     * @param {string} name - Name of the derived reducer
+     *
+     * @returns {boolean} Whether the derived reducer was deleted.
      */
     delete(name: string): boolean;
     /**
@@ -571,7 +576,9 @@ interface IDynDerivedAPI<D, K, T> {
     /**
      * Returns an existing derived reducer.
      *
-     * @param name - Name of derived reducer.
+     * @param {string}   name - Name of derived reducer.
+     *
+     * @returns {IDynDerivedReducer<D, K, T>} Any associated derived reducer.
      */
     get(name: string): IDynDerivedReducer<D, K, T>;
 }
@@ -590,22 +597,28 @@ interface IDynDerivedAPI<D, K, T> {
  * @template K, T
  */
 interface IDynIndexerAPI<K, T> {
+    /**
+     * @returns {boolean} Returns whether the index is active.
+     */
     get active(): boolean;
+    /**
+     * @returns {number} Returns length of reduced index.
+     */
     get length(): number;
     /**
      * Manually invoke an update of the index.
      *
-     * @param force - Force update to any subscribers.
+     * @param {boolean}  [force] - Force update to any subscribers.
      */
     update(force?: boolean): void;
     /**
-     * - Current hash value of the index.
+     * @returns {number | null} Current hash value of the index.
      */
     get hash(): number | null;
     /**
      * Provides an iterator over the index array.
      *
-     * @returns {IterableIterator<K>}
+     * @returns {IterableIterator<K>} An iterator for the index array.
      * @yields {K}
      */
     [Symbol.iterator](): IterableIterator<K>;
@@ -633,11 +646,11 @@ declare class DynArrayReducer<T> {
      * performed to the data externally do invoke `update` via {@link DynArrayReducer.index} with `true` to recalculate
      * the index and notify all subscribers.
      *
-     * @returns The internal data.
+     * @returns {T[]|null} The internal data.
      */
     get data(): T[] | null;
     /**
-     * @returns Derived public API.
+     * @returns {IDynDerivedAPI<T[], number, T>} Derived public API.
      */
     get derived(): IDynDerivedAPI<T[], number, T>;
     /**
@@ -645,11 +658,11 @@ declare class DynArrayReducer<T> {
      */
     get filters(): IDynAdapterFilters<T>;
     /**
-     * @returns Returns the Indexer public API.
+     * @returns {IDynIndexerAPI<number, T>} Returns the Indexer public API.
      */
     get index(): IDynIndexerAPI<number, T>;
     /**
-     * Returns whether this instance is destroyed.
+     * @returns {boolean} Returns whether this instance is destroyed.
      */
     get destroyed(): boolean;
     /**
@@ -665,13 +678,13 @@ declare class DynArrayReducer<T> {
      */
     get reversed(): boolean;
     /**
-     * @returns The sort adapter.
+     * @returns {IDynAdapterSort<T>} The sort adapter.
      */
     get sort(): IDynAdapterSort<T>;
     /**
      * Sets reversed state and notifies subscribers.
      *
-     * @param reversed - New reversed state.
+     * @param {boolean}  reversed - New reversed state.
      */
     set reversed(reversed: boolean);
     /**
@@ -689,23 +702,25 @@ declare class DynArrayReducer<T> {
      * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
      * `replace` is set to true.
      *
-     * @param data - New data to set to internal data.
+     * @param {T[] | Iterable<T> | null}   data - New data to set to internal data.
      *
-     * @param replace=false - New data to set to internal data.
+     * @param {boolean} [replace=false] - New data to set to internal data.
      */
     setData(data: T[] | Iterable<T> | null, replace?: boolean): void;
     /**
      * Add a subscriber to this DynArrayReducer instance.
      *
-     * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
+     * @param {(value: DynArrayReducer<T>) => void} handler - Callback function that is invoked on update / changes.
+     *        Receives `this` reference.
      *
-     * @returns Unsubscribe function.
+     * @returns {() => void} Unsubscribe function.
      */
     subscribe(handler: (value: DynArrayReducer<T>) => void): () => void;
     /**
      * Provides an iterator for data stored in DynArrayReducer.
      *
      * @yields {T}
+     * @returns {IterableIterator<T>} Iterator for data stored in DynArrayReducer.
      */
     [Symbol.iterator](): IterableIterator<T>;
 }
@@ -732,7 +747,7 @@ declare class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], numbe
      * Returns the internal data of this instance. Be careful!
      *
      * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
-     * performed to the data externally do invoke {@link IndexerAPI.update} with `true` to recalculate the index and
+     * performed to the data externally do invoke {@link IDynIndexerAPI.update} with `true` to recalculate the index and
      * notify all subscribers.
      *
      * @returns The internal data.
