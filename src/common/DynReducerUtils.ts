@@ -45,7 +45,7 @@ export class DynReducerUtils
    {
       let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
 
-      for (let ch, i = 0; i < str.length; i++)
+      for (let ch: number, i = 0; i < str.length; i++)
       {
          ch = str.charCodeAt(i);
          h1 = Math.imul(h1 ^ ch, 2654435761);

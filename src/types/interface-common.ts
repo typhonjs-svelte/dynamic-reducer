@@ -37,7 +37,7 @@ import type {
 export interface IDynAdapterFilters<T>
 {
    /**
-    * @returns Returns the length of the filter data.
+    * @returns {number} Returns the length of the filter data.
     */
    get length(): number;
 
@@ -50,7 +50,7 @@ export interface IDynAdapterFilters<T>
    [Symbol.iterator](): IterableIterator<DynDataFilter<T>> | void;
 
    /**
-    * @param filters -
+    * @param {(DynFilterFn<T>|DynDataFilter<T>)[]} filters - One or more filter functions / DynDataFilter to add.
     */
    add(...filters: (DynFilterFn<T>|DynDataFilter<T>)[]): void;
 
@@ -60,7 +60,7 @@ export interface IDynAdapterFilters<T>
    clear(): void;
 
    /**
-    * @param filters -
+    * @param {(DynFilterFn<T>|DynDataFilter<T>)[]} filters - One or more filter functions / DynDataFilter to remove.
     */
    remove(...filters: (DynFilterFn<T>|DynDataFilter<T>)[]): void;
 
@@ -68,12 +68,13 @@ export interface IDynAdapterFilters<T>
     * Remove filters by the provided callback. The callback takes 3 parameters: `id`, `filter`, and `weight`.
     * Any truthy value returned will remove that filter.
     *
-    * @param callback - Callback function to evaluate each filter entry.
+    * @param {(id: any, filter: DynFilterFn<T>, weight: number) => boolean} callback - Callback function to evaluate
+    *        each filter entry.
     */
    removeBy(callback: (id: any, filter: DynFilterFn<T>, weight: number) => boolean): void;
 
    /**
-    * @param ids - Removes filters by ID.
+    * @param {any[]} ids - Removes filters by ID.
     */
    removeById(...ids: any[]): void;
 }
@@ -138,16 +139,18 @@ export interface IDynDerivedAPI<D, K, T>
    clear(): void;
 
    /**
-    * @param options - Options for creating a reducer.
+    * @param {DynOptionsDerivedCreate<T>} options - Options for creating a reducer.
     *
-    * @returns Newly created derived reducer.
+    * @returns {IDynDerivedReducer<D, K, T>} Newly created derived reducer.
     */
    create(options: DynOptionsDerivedCreate<T>): IDynDerivedReducer<D, K, T>;
 
    /**
     * Deletes and destroys a derived reducer.
     *
-    * @param name - Name of the derived reducer
+    * @param {string} name - Name of the derived reducer
+    *
+    * @returns {boolean} Whether the derived reducer was deleted.
     */
    delete(name: string): boolean;
 
@@ -159,7 +162,9 @@ export interface IDynDerivedAPI<D, K, T>
    /**
     * Returns an existing derived reducer.
     *
-    * @param name - Name of derived reducer.
+    * @param {string}   name - Name of derived reducer.
+    *
+    * @returns {IDynDerivedReducer<D, K, T>} Any associated derived reducer.
     */
    get(name: string): IDynDerivedReducer<D, K, T>
 }
@@ -180,26 +185,32 @@ export interface IDynDerivedAPI<D, K, T>
  */
 export interface IDynIndexerAPI<K, T>
 {
+   /**
+    * @returns {boolean} Returns whether the index is active.
+    */
    get active(): boolean;
 
+   /**
+    * @returns {number} Returns length of reduced index.
+    */
    get length() : number;
 
    /**
     * Manually invoke an update of the index.
     *
-    * @param force - Force update to any subscribers.
+    * @param {boolean}  [force] - Force update to any subscribers.
     */
    update(force?: boolean): void;
 
    /**
-    * - Current hash value of the index.
+    * @returns {number | null} Current hash value of the index.
     */
    get hash(): number | null;
 
    /**
     * Provides an iterator over the index array.
     *
-    * @returns {IterableIterator<K>}
+    * @returns {IterableIterator<K>} An iterator for the index array.
     * @yields {K}
     */
    [Symbol.iterator](): IterableIterator<K>;

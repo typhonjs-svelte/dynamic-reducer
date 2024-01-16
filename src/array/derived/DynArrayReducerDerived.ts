@@ -34,9 +34,9 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
 {
    #array: DynDataHost<T[]>;
 
-   readonly #derived;
+   readonly #derived: AdapterDerived<T[], number, T>;
 
-   readonly #derivedPublicAPI;
+   readonly #derivedPublicAPI: IDynDerivedAPI<T[], number, T>;
 
    readonly #filters: AdapterFilters<T>;
 
@@ -74,7 +74,7 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
 
       this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortData);
 
-      this.#derived = new AdapterDerived(this.#array, this.#indexPublicAPI, DynArrayReducerDerived);
+      this.#derived = new AdapterDerived<T[], number, T>(this.#array, this.#indexPublicAPI, DynArrayReducerDerived);
       this.#derivedPublicAPI = new DerivedAPI<T[], number, T>(this.#derived);
 
       this.#index.initAdapters(this.#filtersData, this.#sortData, this.#derived);
@@ -119,7 +119,7 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
       if (filters) { this.filters.add(...filters); }
       if (sort) { this.sort.set(sort); }
 
-      // Invoke an custom initialization for child classes.
+      // Invoke a custom initialization for child classes.
       this.initialize();
    }
 

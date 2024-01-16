@@ -34,9 +34,9 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
 {
    #map: DynDataHost<Map<K, T>>;
 
-   readonly #derived;
+   readonly #derived: AdapterDerived<Map<K, T>, K, T>;
 
-   readonly #derivedPublicAPI;
+   readonly #derivedPublicAPI: IDynDerivedAPI<Map<K, T>, K, T>;
 
    readonly #filters: AdapterFilters<T>;
 

@@ -11,6 +11,8 @@ import type { IndexerAPI } from '../api/IndexerAPI.js';
 
 /**
  * Provides the `derived` API for all dynamic reducers.
+ *
+ * @template D, K, T
  */
 export class AdapterDerived<D, K, T>
 {
@@ -25,11 +27,11 @@ export class AdapterDerived<D, K, T>
    #destroyed = false;
 
    /**
-    * @param hostData - Hosted data structure.
+    * @param {DynDataHost<D>} hostData - Hosted data structure.
     *
-    * @param parentIndex - Any associated parent index API.
+    * @param {IndexerAPI<K, T>}  parentIndex - Any associated parent index API.
     *
-    * @param DerivedReducerCtor - The default derived reducer constructor function.
+    * @param {IDynDerivedReducerCtor<T>} DerivedReducerCtor - The default derived reducer constructor function.
     */
    constructor(hostData: DynDataHost<D>, parentIndex: IndexerAPI<K, T>, DerivedReducerCtor: IDynDerivedReducerCtor<T>)
    {
@@ -45,9 +47,9 @@ export class AdapterDerived<D, K, T>
    /**
     * Creates a new derived reducer.
     *
-    * @param options - Options defining the new derived reducer.
+    * @param {DynOptionsDerivedCreate<T>} options - Options defining the new derived reducer.
     *
-    * @returns Newly created derived reducer.
+    * @returns {IDynDerivedReducer<D, K, T>} Newly created derived reducer.
     */
    create(options: DynOptionsDerivedCreate<T>): IDynDerivedReducer<D, K, T>
    {
@@ -110,7 +112,10 @@ export class AdapterDerived<D, K, T>
    /**
     * Deletes and destroys a derived reducer by name.
     *
-    * @param name - Name of the derived reducer.
+    * @param {string}   name - Name of the derived reducer.
+    *
+    * @returns {boolean} true if an element in the Map existed and has been removed, or false if the element does not
+    *          exist.
     */
    delete(name: string): boolean
    {
@@ -141,7 +146,9 @@ export class AdapterDerived<D, K, T>
    /**
     * Returns an existing derived reducer.
     *
-    * @param name - Name of derived reducer.
+    * @param {string}   name - Name of derived reducer.
+    *
+    * @returns {IDynDerivedReducer<D, K, T>} Any associated derived reducer.
     */
    get(name: string): IDynDerivedReducer<D, K, T>
    {
@@ -153,7 +160,7 @@ export class AdapterDerived<D, K, T>
    /**
     * Updates all managed derived reducer indexes.
     *
-    * @param [force] - Force an update to subscribers.
+    * @param {boolean}  [force=false] - Force an update to subscribers.
     */
    update(force: boolean = false)
    {

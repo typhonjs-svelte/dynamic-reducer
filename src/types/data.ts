@@ -76,22 +76,22 @@ export type DynDataHost<D> = (D | null)[];
  */
 export type DynDataIndexer<K, T> = {
     /**
-     * - The index array.
+     * The index array.
      */
     index: K[] | null;
 
     /**
-     * - Hashcode for current index content.
+     * Hashcode for current index content.
      */
     hash: number | null;
 
     /**
-     * - Is iteration reversed?
+     * Is iteration reversed?
      */
     reversed: boolean;
 
     /**
-     * - Any associated parent index data.
+     * Any associated parent index data.
      */
     parent?: IDynIndexerAPI<K, T>;
 };
@@ -108,7 +108,7 @@ export type DynIndexerUpdateFn = (force?: boolean) => void;
  */
 export type DynDataSort<T> = {
     /**
-     * - A callback function that compares two values.
+     * A callback function that compares two values.
      */
     compare: DynCompareFn<T>;
 
@@ -170,12 +170,12 @@ export type DynFilterFn<T> = {
  */
 export type DynDataDerivedCreate<T> = {
     /**
-     * - Name of derived reducer.
+     * Name of derived reducer.
      */
     name?: string;
 
     /**
-     * - A DerivedReducer constructor function / class.
+     * A DerivedReducer constructor function / class.
      */
     ctor?: IDynDerivedReducerCtor<T>;
 } & DynDataOptions<T>;
@@ -192,12 +192,12 @@ export type DynOptionsDerivedCreate<T> = string | IDynDerivedReducerCtor<T> | Dy
  */
 export type DynDataArrayCreate<T> = {
     /**
-     * - Name of dynamic array reducer.
+     * Name of dynamic array reducer.
      */
     name?: string;
 
     /**
-     * - A DynMapReducer constructor function / class.
+     * A DynMapReducer constructor function / class.
      */
     ctor?: IDynArrayReducerCtor<T>;
 } & DynDataOptions<T>;
@@ -211,12 +211,12 @@ export type DynOptionsArrayCreate<T> = string | IDynArrayReducerCtor<T> | DynDat
  */
 export type DynDataMapCreate<K, T> = {
     /**
-     * - Name of dynamic map reducer.
+     * Name of dynamic map reducer.
      */
     name?: string;
 
     /**
-     * - A DynMapReducer constructor function / class.
+     * A DynMapReducer constructor function / class.
      */
     ctor?: IDynMapReducerCtor<K, T>;
 } & DynDataOptions<T>;

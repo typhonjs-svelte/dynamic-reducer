@@ -153,12 +153,12 @@ export class DynArrayReducer<T>
     * performed to the data externally do invoke `update` via {@link DynArrayReducer.index} with `true` to recalculate
     * the index and notify all subscribers.
     *
-    * @returns The internal data.
+    * @returns {T[]|null} The internal data.
     */
    get data(): T[]|null { return this.#array[0]; }
 
    /**
-    * @returns Derived public API.
+    * @returns {IDynDerivedAPI<T[], number, T>} Derived public API.
     */
    get derived(): IDynDerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
 
@@ -168,12 +168,12 @@ export class DynArrayReducer<T>
    get filters(): IDynAdapterFilters<T> { return this.#filters; }
 
    /**
-    * @returns Returns the Indexer public API.
+    * @returns {IDynIndexerAPI<number, T>} Returns the Indexer public API.
     */
    get index(): IDynIndexerAPI<number, T> { return this.#indexPublicAPI; }
 
    /**
-    * Returns whether this instance is destroyed.
+    * @returns {boolean} Returns whether this instance is destroyed.
     */
    get destroyed(): boolean { return this.#destroyed; }
 
@@ -197,14 +197,14 @@ export class DynArrayReducer<T>
    get reversed(): boolean { return this.#reversed; }
 
    /**
-    * @returns The sort adapter.
+    * @returns {IDynAdapterSort<T>} The sort adapter.
     */
    get sort(): IDynAdapterSort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.
     *
-    * @param reversed - New reversed state.
+    * @param {boolean}  reversed - New reversed state.
     */
    set reversed(reversed: boolean)
    {
@@ -254,9 +254,9 @@ export class DynArrayReducer<T>
     * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
     * `replace` is set to true.
     *
-    * @param data - New data to set to internal data.
+    * @param {T[] | Iterable<T> | null}   data - New data to set to internal data.
     *
-    * @param replace=false - New data to set to internal data.
+    * @param {boolean} [replace=false] - New data to set to internal data.
     */
    setData(data: T[] | Iterable<T> | null, replace: boolean = false)
    {
@@ -304,9 +304,10 @@ export class DynArrayReducer<T>
    /**
     * Add a subscriber to this DynArrayReducer instance.
     *
-    * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
+    * @param {(value: DynArrayReducer<T>) => void} handler - Callback function that is invoked on update / changes.
+    *        Receives `this` reference.
     *
-    * @returns Unsubscribe function.
+    * @returns {() => void} Unsubscribe function.
     */
    subscribe(handler: (value: DynArrayReducer<T>) => void): () => void
    {
@@ -334,6 +335,7 @@ export class DynArrayReducer<T>
     * Provides an iterator for data stored in DynArrayReducer.
     *
     * @yields {T}
+    * @returns {IterableIterator<T>} Iterator for data stored in DynArrayReducer.
     */
    *[Symbol.iterator](): IterableIterator<T>
    {
