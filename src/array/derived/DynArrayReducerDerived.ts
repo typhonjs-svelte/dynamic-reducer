@@ -127,7 +127,7 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
     * Returns the internal data of this instance. Be careful!
     *
     * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
-    * performed to the data externally do invoke {@link IndexerAPI.update} with `true` to recalculate the index and
+    * performed to the data externally do invoke {@link IDynIndexerAPI.update} with `true` to recalculate the index and
     * notify all subscribers.
     *
     * @returns The internal data.

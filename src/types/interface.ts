@@ -45,8 +45,8 @@ export interface IDynDerivedReducer<D, K, T>
      * Returns the internal data of this instance. Be careful!
      *
      * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
-     * performed to the data externally do invoke {@link index.update} with `true` to recalculate the index and notify
-     * all subscribers.
+     * performed to the data externally do invoke `update` via {@link IDynDerivedReducer.index} with `true` to
+     * recalculate the index and notify all subscribers.
      *
      * @returns The internal data.
      */

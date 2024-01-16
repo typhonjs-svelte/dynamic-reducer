@@ -127,7 +127,8 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
     * Returns the internal data of this instance. Be careful!
     *
     * Note: The returned map is the same map set by the main reducer. If any changes are performed to the data
-    * externally do invoke {@link IndexerAPI.update} with `true` to recalculate the index and notify all subscribers.
+    * externally do invoke {@link IDynIndexerAPI.update} with `true` to recalculate the index and notify all
+    * subscribers.
     *
     * @returns The internal data.
     */
