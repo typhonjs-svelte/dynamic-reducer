@@ -6,7 +6,7 @@ import {
    DynReducerUtils,
    IndexerAPI }                     from '../common';
 
-import { Indexer }                  from './Indexer.js';
+import { ArrayIndexer }             from './ArrayIndexer';
 
 import {
    IDynAdapterFilters,
@@ -41,7 +41,7 @@ export class DynArrayReducer<T>
 
    readonly #filtersData: { filters: DynDataFilter<T>[] } = { filters: [] };
 
-   readonly #index: Indexer<T>;
+   readonly #index: ArrayIndexer<T>;
 
    readonly #indexPublicAPI: IndexerAPI<number, T>;
 
@@ -126,7 +126,7 @@ export class DynArrayReducer<T>
          this.#array[0] = Array.isArray(dataIterable) ? dataIterable : [...dataIterable];
       }
 
-      this.#index = new Indexer(this.#array, this.#updateSubscribers.bind(this));
+      this.#index = new ArrayIndexer(this.#array, this.#updateSubscribers.bind(this));
       this.#indexPublicAPI = new IndexerAPI<number, T>(this.#index);
 
       this.#filters = new AdapterFilters(this.#indexPublicAPI.update, this.#filtersData);

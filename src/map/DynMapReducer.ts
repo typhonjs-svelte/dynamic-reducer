@@ -6,7 +6,7 @@ import {
    DynReducerUtils,
    IndexerAPI }               from '../common';
 
-import { Indexer }            from './Indexer.js';
+import { MapIndexer }            from './MapIndexer';
 
 import type {
    IDynAdapterFilters,
@@ -41,7 +41,7 @@ export class DynMapReducer<K, T>
 
    readonly #filtersData: { filters: DynDataFilter<T>[] } = { filters: [] };
 
-   readonly #index: Indexer<K, T>;
+   readonly #index: MapIndexer<K, T>;
 
    readonly #indexPublicAPI: IndexerAPI<K, T>;
 
@@ -126,7 +126,7 @@ export class DynMapReducer<K, T>
          this.#map[0] = dataMap;
       }
 
-      this.#index = new Indexer(this.#map, this.#updateSubscribers.bind(this));
+      this.#index = new MapIndexer(this.#map, this.#updateSubscribers.bind(this));
       this.#indexPublicAPI = new IndexerAPI<K, T>(this.#index);
 
       this.#filters = new AdapterFilters(this.#indexPublicAPI.update, this.#filtersData);
