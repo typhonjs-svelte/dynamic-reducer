@@ -7,23 +7,26 @@
     "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)"
   ],
   "type": "module",
+  "imports": {
+    "#common": "./src/common/index.ts"
+  },
   "exports": {
     ".": {
-      "types": "./types/index.d.ts",
+      "types": "./dist/index.d.ts",
       "typedoc": "./src/index.ts",
       "import": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
   "devDependencies": {
-    "@rollup/plugin-alias": "^5.1.0",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@typhonjs-build-test/esm-d-ts" : "^0.3.0-next.2",
+    "@typhonjs-build-test/rollup-plugin-pkg-imports": "^0.3.0",
     "@typhonjs-build-test/node": "^0.0.11",
-    "@typhonjs-typedoc/typedoc-pkg": "^0.0.2",
-    "rollup": "^4.9.5",
-    "rollup-plugin-dts": "^6.1.0",
+    "@typhonjs-typedoc/typedoc-pkg": "^0.0.5",
+    "rollup": "^4.13.0",
     "tslib": "^2.6.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.3"
   },
   "engines": {
     "node": ">=16"
@@ -55,7 +58,7 @@
   "apidocs": "https://typhonjs-svelte.github.io/dynamic-reducer/",
   "scripts": {
     "build": "rollup -c",
-    "docs": "typedoc-pkg --api-link esm --export typedoc",
+    "docs": "typedoc-pkg --api-link es --export typedoc",
     "eslint": "eslint .",
     "posttest": "npm run eslint",
     "prepublishOnly": "npm run test",
