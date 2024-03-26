@@ -21,7 +21,6 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
     "@typhonjs-build-test/esm-d-ts" : "^0.3.0-next.2",
-    "@typhonjs-build-test/rollup-plugin-pkg-imports": "^0.3.0",
     "@typhonjs-build-test/node": "^0.0.11",
     "@typhonjs-typedoc/typedoc-pkg": "^0.0.5",
     "rollup": "^4.13.0",
