@@ -9,10 +9,10 @@ import {
 import { ArrayIndexer }             from './ArrayIndexer';
 
 import {
-   IDynAdapterFilters,
-   IDynAdapterSort,
-   IDynDerivedAPI,
-   IDynIndexerAPI,
+   DynAdapterFilters,
+   DynAdapterSort,
+   DynDerivedAPI,
+   DynIndexerAPI,
 
    DynCompareFn,
    DynArrayData,
@@ -158,19 +158,19 @@ export class DynArrayReducer<T>
    get data(): T[]|null { return this.#array[0]; }
 
    /**
-    * @returns {IDynDerivedAPI<T[], number, T>} Derived public API.
+    * @returns {DynDerivedAPI<T[], number, T>} Derived public API.
     */
-   get derived(): IDynDerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
+   get derived(): DynDerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.
     */
-   get filters(): IDynAdapterFilters<T> { return this.#filters; }
+   get filters(): DynAdapterFilters<T> { return this.#filters; }
 
    /**
-    * @returns {IDynIndexerAPI<number, T>} Returns the Indexer public API.
+    * @returns {DynIndexerAPI<number, T>} Returns the Indexer public API.
     */
-   get index(): IDynIndexerAPI<number, T> { return this.#indexPublicAPI; }
+   get index(): DynIndexerAPI<number, T> { return this.#indexPublicAPI; }
 
    /**
     * @returns {boolean} Returns whether this instance is destroyed.
@@ -197,9 +197,9 @@ export class DynArrayReducer<T>
    get reversed(): boolean { return this.#reversed; }
 
    /**
-    * @returns {IDynAdapterSort<T>} The sort adapter.
+    * @returns {DynAdapterSort<T>} The sort adapter.
     */
-   get sort(): IDynAdapterSort<T> { return this.#sort; }
+   get sort(): DynAdapterSort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.

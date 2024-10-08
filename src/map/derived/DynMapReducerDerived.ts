@@ -9,11 +9,11 @@ import {
 import { MapIndexer }   from '../MapIndexer';
 
 import type {
-   IDynAdapterFilters,
-   IDynAdapterSort,
-   IDynDerivedAPI,
-   IDynDerivedReducer,
-   IDynIndexerAPI,
+   DynAdapterFilters,
+   DynAdapterSort,
+   DynDerivedAPI,
+   DynDerivedReducer,
+   DynIndexerAPI,
 
    DynCompareFn,
    DynDataOptions,
@@ -30,13 +30,13 @@ import type {
  *
  * @template K, T
  */
-export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>, K, T>
+export class DynMapReducerDerived<K, T> implements DynDerivedReducer<Map<K, T>, K, T>
 {
    #map: DynDataHost<Map<K, T>>;
 
    readonly #derived: AdapterDerived<Map<K, T>, K, T>;
 
-   readonly #derivedPublicAPI: IDynDerivedAPI<Map<K, T>, K, T>;
+   readonly #derivedPublicAPI: DynDerivedAPI<Map<K, T>, K, T>;
 
    readonly #filters: AdapterFilters<T>;
 
@@ -59,11 +59,11 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
    /**
     * @param {DynDataHost<Map<K, T>>}  map - Data host Map.
     *
-    * @param {IDynIndexerAPI<K, T>}    parentIndex - Parent indexer.
+    * @param {DynIndexerAPI<K, T>}    parentIndex - Parent indexer.
     *
     * @param {DynDataOptions<T>}       options - Any filters and sort functions to apply.
     */
-   constructor(map: DynDataHost<Map<K, T>>, parentIndex: IDynIndexerAPI<K, T>, options: DynDataOptions<T>)
+   constructor(map: DynDataHost<Map<K, T>>, parentIndex: DynIndexerAPI<K, T>, options: DynDataOptions<T>)
    {
       this.#map = map;
 
@@ -111,7 +111,7 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
     * Returns the internal data of this instance. Be careful!
     *
     * Note: The returned map is the same map set by the main reducer. If any changes are performed to the data
-    * externally do invoke {@link IDynIndexerAPI.update} with `true` to recalculate the index and notify all
+    * externally do invoke {@link DynIndexerAPI.update} with `true` to recalculate the index and notify all
     * subscribers.
     *
     * @returns The internal data.
@@ -121,19 +121,19 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
    /**
     * @returns Derived public API.
     */
-   get derived(): IDynDerivedAPI<Map<K, T>, K, T> { return this.#derivedPublicAPI; }
+   get derived(): DynDerivedAPI<Map<K, T>, K, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.
     */
-   get filters(): IDynAdapterFilters<T> { return this.#filters; }
+   get filters(): DynAdapterFilters<T> { return this.#filters; }
 
    /**
     * Returns the Indexer public API.
     *
     * @returns Indexer API - is also iterable.
     */
-   get index(): IDynIndexerAPI<K, T> { return this.#indexPublicAPI; }
+   get index(): DynIndexerAPI<K, T> { return this.#indexPublicAPI; }
 
    /**
     * Returns whether this derived reducer is destroyed.
@@ -159,7 +159,7 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
    /**
     * @returns The sort adapter.
     */
-   get sort(): IDynAdapterSort<T> { return this.#sort; }
+   get sort(): DynAdapterSort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.

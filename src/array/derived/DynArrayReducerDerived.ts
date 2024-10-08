@@ -9,11 +9,11 @@ import {
 import { ArrayIndexer }   from '../ArrayIndexer';
 
 import type {
-   IDynAdapterFilters,
-   IDynAdapterSort,
-   IDynDerivedAPI,
-   IDynDerivedReducer,
-   IDynIndexerAPI,
+   DynAdapterFilters,
+   DynAdapterSort,
+   DynDerivedAPI,
+   DynDerivedReducer,
+   DynIndexerAPI,
 
    DynCompareFn,
    DynDataOptions,
@@ -30,13 +30,13 @@ import type {
  *
  * @template T
  */
-export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number, T>
+export class DynArrayReducerDerived<T> implements DynDerivedReducer<T[], number, T>
 {
    #array: DynDataHost<T[]>;
 
    readonly #derived: AdapterDerived<T[], number, T>;
 
-   readonly #derivedPublicAPI: IDynDerivedAPI<T[], number, T>;
+   readonly #derivedPublicAPI: DynDerivedAPI<T[], number, T>;
 
    readonly #filters: AdapterFilters<T>;
 
@@ -59,11 +59,11 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
    /**
     * @param {DynDataHost<T[]>}           array - Data host array.
     *
-    * @param {IDynIndexerAPI<number, T>}  parentIndex - Parent indexer.
+    * @param {DynIndexerAPI<number, T>}  parentIndex - Parent indexer.
     *
     * @param {DynDataOptions<T>}          options - Any filters and sort functions to apply.
     */
-   constructor(array: DynDataHost<T[]>, parentIndex: IDynIndexerAPI<number, T>, options: DynDataOptions<T>)
+   constructor(array: DynDataHost<T[]>, parentIndex: DynIndexerAPI<number, T>, options: DynDataOptions<T>)
    {
       this.#array = array;
 
@@ -111,7 +111,7 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
     * Returns the internal data of this instance. Be careful!
     *
     * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
-    * performed to the data externally do invoke {@link IDynIndexerAPI.update} with `true` to recalculate the index and
+    * performed to the data externally do invoke {@link DynIndexerAPI.update} with `true` to recalculate the index and
     * notify all subscribers.
     *
     * @returns The internal data.
@@ -121,19 +121,19 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
    /**
     * @returns Derived public API.
     */
-   get derived(): IDynDerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
+   get derived(): DynDerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.
     */
-   get filters(): IDynAdapterFilters<T> { return this.#filters; }
+   get filters(): DynAdapterFilters<T> { return this.#filters; }
 
    /**
     * Returns the Indexer public API.
     *
     * @returns Indexer API - is also iterable.
     */
-   get index(): IDynIndexerAPI<number, T> { return this.#indexPublicAPI; }
+   get index(): DynIndexerAPI<number, T> { return this.#indexPublicAPI; }
 
    /**
     * Returns whether this derived reducer is destroyed.
@@ -159,7 +159,7 @@ export class DynArrayReducerDerived<T> implements IDynDerivedReducer<T[], number
    /**
     * @returns The sort adapter.
     */
-   get sort(): IDynAdapterSort<T> { return this.#sort; }
+   get sort(): DynAdapterSort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.

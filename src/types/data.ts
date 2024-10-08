@@ -1,8 +1,8 @@
 import type {
-    IDynIndexerAPI,
-    IDynDerivedReducerCtor,
-    IDynArrayReducerCtor,
-    IDynMapReducerCtor }    from './';
+    DynIndexerAPI,
+    DynDerivedReducerCtor,
+    DynArrayReducerCtor,
+    DynMapReducerCtor }    from './';
 
 /**
  * Defines the additional options for filters and sort function.
@@ -93,7 +93,7 @@ export type DynDataIndexer<K, T> = {
     /**
      * Any associated parent index data.
      */
-    parent?: IDynIndexerAPI<K, T>;
+    parent?: DynIndexerAPI<K, T>;
 };
 
 /**
@@ -177,13 +177,13 @@ export type DynDataDerivedCreate<T> = {
     /**
      * A DerivedReducer constructor function / class.
      */
-    ctor?: IDynDerivedReducerCtor<T>;
+    ctor?: DynDerivedReducerCtor<T>;
 } & DynDataOptions<T>;
 
 /**
  * Creates a compound type for all derived reducer 'create' option combinations.
  */
-export type DynOptionsDerivedCreate<T> = string | IDynDerivedReducerCtor<T> | DynDataDerivedCreate<T>;
+export type DynOptionsDerivedCreate<T> = string | DynDerivedReducerCtor<T> | DynDataDerivedCreate<T>;
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -199,10 +199,10 @@ export type DynDataArrayCreate<T> = {
     /**
      * A DynMapReducer constructor function / class.
      */
-    ctor?: IDynArrayReducerCtor<T>;
+    ctor?: DynArrayReducerCtor<T>;
 } & DynDataOptions<T>;
 
-export type DynOptionsArrayCreate<T> = string | IDynArrayReducerCtor<T> | DynDataArrayCreate<T>
+export type DynOptionsArrayCreate<T> = string | DynArrayReducerCtor<T> | DynDataArrayCreate<T>
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -218,7 +218,7 @@ export type DynDataMapCreate<K, T> = {
     /**
      * A DynMapReducer constructor function / class.
      */
-    ctor?: IDynMapReducerCtor<K, T>;
+    ctor?: DynMapReducerCtor<K, T>;
 } & DynDataOptions<T>;
 
-export type DynOptionsMapCreate<K, T> = string | IDynMapReducerCtor<K, T> | DynDataMapCreate<K, T>
+export type DynOptionsMapCreate<K, T> = string | DynMapReducerCtor<K, T> | DynDataMapCreate<K, T>

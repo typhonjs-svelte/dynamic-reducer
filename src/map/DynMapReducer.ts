@@ -9,10 +9,10 @@ import {
 import { MapIndexer }            from './MapIndexer';
 
 import type {
-   IDynAdapterFilters,
-   IDynAdapterSort,
-   IDynDerivedAPI,
-   IDynIndexerAPI,
+   DynAdapterFilters,
+   DynAdapterSort,
+   DynDerivedAPI,
+   DynIndexerAPI,
 
    DynCompareFn,
    DynMapData,
@@ -158,19 +158,19 @@ export class DynMapReducer<K, T>
    get data(): Map<K, T> | null { return this.#map[0]; }
 
    /**
-    * @returns {IDynDerivedAPI<Map<K, T>, K, T>} Derived public API.
+    * @returns {DynDerivedAPI<Map<K, T>, K, T>} Derived public API.
     */
-   get derived(): IDynDerivedAPI<Map<K, T>, K, T> { return this.#derivedPublicAPI; }
+   get derived(): DynDerivedAPI<Map<K, T>, K, T> { return this.#derivedPublicAPI; }
 
    /**
-    * @returns {IDynAdapterFilters<T>} The filters adapter.
+    * @returns {DynAdapterFilters<T>} The filters adapter.
     */
-   get filters(): IDynAdapterFilters<T> { return this.#filters; }
+   get filters(): DynAdapterFilters<T> { return this.#filters; }
 
    /**
-    * @returns {IDynIndexerAPI<K, T>} Returns the Indexer public API.
+    * @returns {DynIndexerAPI<K, T>} Returns the Indexer public API.
     */
-   get index(): IDynIndexerAPI<K, T> { return this.#indexPublicAPI; }
+   get index(): DynIndexerAPI<K, T> { return this.#indexPublicAPI; }
 
    /**
     * @returns {boolean} Returns whether this instance is destroyed.
@@ -197,9 +197,9 @@ export class DynMapReducer<K, T>
    get reversed(): boolean { return this.#reversed; }
 
    /**
-    * @returns {IDynAdapterSort<T>} The sort adapter.
+    * @returns {DynAdapterSort<T>} The sort adapter.
     */
-   get sort(): IDynAdapterSort<T> { return this.#sort; }
+   get sort(): DynAdapterSort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.

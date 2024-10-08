@@ -1,24 +1,24 @@
 import type { AdapterDerived }  from '../adapter/AdapterDerived.js';
 
 import type {
-    IDynDerivedAPI,
-    IDynDerivedReducer,
+    DynDerivedAPI,
+    DynDerivedReducer,
     DynOptionsDerivedCreate }   from '../../types';
 
 /**
  * Provides a public API for managing derived reducers.
  */
-export class DerivedAPI<D, K, T> implements IDynDerivedAPI<D, K, T>
+export class DerivedAPI<D, K, T> implements DynDerivedAPI<D, K, T>
 {
     clear: () => void;
 
-    create: (options: DynOptionsDerivedCreate<T>) => IDynDerivedReducer<D, K, T>;
+    create: (options: DynOptionsDerivedCreate<T>) => DynDerivedReducer<D, K, T>;
 
     delete: (name: string) => boolean;
 
     destroy: () => void;
 
-    get: (name: string) => IDynDerivedReducer<D, K, T>
+    get: (name: string) => DynDerivedReducer<D, K, T>
 
     constructor(adapterDerived: AdapterDerived<D, K, T>)
     {

@@ -1,5 +1,5 @@
 import type {
-   IDynDerivedReducer,
+   DynDerivedReducer,
 
    DynCompareFn,
    DynDataFilter,
@@ -34,7 +34,7 @@ import type {
  *
  * @template T
  */
-export interface IDynAdapterFilters<T>
+export interface DynAdapterFilters<T>
 {
    /**
     * @returns {number} Returns the length of the filter data.
@@ -97,7 +97,7 @@ export interface IDynAdapterFilters<T>
  *
  * @template T
  */
-export interface IDynAdapterSort<T>
+export interface DynAdapterSort<T>
 {
    /**
     * Clears & removes any assigned sort function and triggers an index update.
@@ -131,7 +131,7 @@ export interface IDynAdapterSort<T>
  *
  * @template D, K, T
  */
-export interface IDynDerivedAPI<D, K, T>
+export interface DynDerivedAPI<D, K, T>
 {
    /**
     * Removes all derived reducers and associated subscriptions.
@@ -141,9 +141,9 @@ export interface IDynDerivedAPI<D, K, T>
    /**
     * @param {DynOptionsDerivedCreate<T>} options - Options for creating a reducer.
     *
-    * @returns {IDynDerivedReducer<D, K, T>} Newly created derived reducer.
+    * @returns {DynDerivedReducer<D, K, T>} Newly created derived reducer.
     */
-   create(options: DynOptionsDerivedCreate<T>): IDynDerivedReducer<D, K, T>;
+   create(options: DynOptionsDerivedCreate<T>): DynDerivedReducer<D, K, T>;
 
    /**
     * Deletes and destroys a derived reducer.
@@ -164,9 +164,9 @@ export interface IDynDerivedAPI<D, K, T>
     *
     * @param {string}   name - Name of derived reducer.
     *
-    * @returns {IDynDerivedReducer<D, K, T>} Any associated derived reducer.
+    * @returns {DynDerivedReducer<D, K, T>} Any associated derived reducer.
     */
-   get(name: string): IDynDerivedReducer<D, K, T>
+   get(name: string): DynDerivedReducer<D, K, T>
 }
 
 /**
@@ -183,7 +183,7 @@ export interface IDynDerivedAPI<D, K, T>
  *
  * @template K, T
  */
-export interface IDynIndexerAPI<K, T>
+export interface DynIndexerAPI<K, T>
 {
    /**
     * @returns {boolean} Returns whether the index is active.

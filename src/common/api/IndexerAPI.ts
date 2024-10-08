@@ -1,10 +1,10 @@
 import type { AdapterIndexer }  from '../adapter/AdapterIndexer';
 
 import type {
-    IDynIndexerAPI,
+    DynIndexerAPI,
     DynDataIndexer }            from '../../types';
 
-export class IndexerAPI<K, T> implements IDynIndexerAPI<K, T>
+export class IndexerAPI<K, T> implements DynIndexerAPI<K, T>
 {
     readonly #indexData: DynDataIndexer<K, T>
 

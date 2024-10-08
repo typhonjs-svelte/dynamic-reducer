@@ -1,8 +1,8 @@
 import type {
-    IDynAdapterFilters,
-    IDynAdapterSort,
-    IDynDerivedAPI,
-    IDynIndexerAPI,
+    DynAdapterFilters,
+    DynAdapterSort,
+    DynDerivedAPI,
+    DynIndexerAPI,
 
     DynArrayData,
     DynMapData,
@@ -15,7 +15,7 @@ import type { DynArrayReducer } from '../array';
 /**
  * Defines the shape of a dynamic array constructor function.
  */
-export interface IDynArrayReducerCtor<T>
+export interface DynArrayReducerCtor<T>
 {
     new (data?: Iterable<T> | DynArrayData<T>): DynArrayReducer<T>;
 }
@@ -23,7 +23,7 @@ export interface IDynArrayReducerCtor<T>
 /**
  * Defines the shape of a dynamic map constructor function.
  */
-export interface IDynMapReducerCtor<K, T>
+export interface DynMapReducerCtor<K, T>
 {
     new (data?: Map<K, T> | DynMapData<K, T>): DynMapReducer<K, T>;
 }
@@ -31,21 +31,21 @@ export interface IDynMapReducerCtor<K, T>
 /**
  * Defines the shape of a derived reducer constructor function.
  */
-export interface IDynDerivedReducerCtor<T>
+export interface DynDerivedReducerCtor<T>
 {
-    new (hostData: DynDataHost<any>, parentIndex: IDynIndexerAPI<any, T>, options: DynDataOptions<T>): IDynDerivedReducer<any, any, T>;
+    new (hostData: DynDataHost<any>, parentIndex: DynIndexerAPI<any, T>, options: DynDataOptions<T>): DynDerivedReducer<any, any, T>;
 }
 
 /**
  * Defines the interface for a derived reducer.
  */
-export interface IDynDerivedReducer<D, K, T>
+export interface DynDerivedReducer<D, K, T>
 {
     /**
      * Returns the internal data of this instance. Be careful!
      *
      * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
-     * performed to the data externally do invoke `update` via {@link IDynDerivedReducer.index} with `true` to
+     * performed to the data externally do invoke `update` via {@link DynDerivedReducer.index} with `true` to
      * recalculate the index and notify all subscribers.
      *
      * @returns The internal data.
@@ -55,17 +55,17 @@ export interface IDynDerivedReducer<D, K, T>
     /**
      * @returns Derived public API.
      */
-    get derived(): IDynDerivedAPI<D, K, T>
+    get derived(): DynDerivedAPI<D, K, T>
 
     /**
      * @returns The filters adapter.
      */
-    get filters(): IDynAdapterFilters<T>;
+    get filters(): DynAdapterFilters<T>;
 
     /**
      * @returns Returns the Indexer public API.
      */
-    get index(): IDynIndexerAPI<K, T>;
+    get index(): DynIndexerAPI<K, T>;
 
     /**
      * Returns whether this derived reducer is destroyed.
@@ -85,7 +85,7 @@ export interface IDynDerivedReducer<D, K, T>
     /**
      * @returns The sort adapter.
      */
-    get sort(): IDynAdapterSort<T>;
+    get sort(): DynAdapterSort<T>;
 
     /**
      * Sets reversed state and notifies subscribers.
@@ -106,5 +106,5 @@ export interface IDynDerivedReducer<D, K, T>
      *
      * @returns Unsubscribe function.
      */
-    subscribe(handler: (value: IDynDerivedReducer<D, K, T>) => void): () => void;
+    subscribe(handler: (value: DynDerivedReducer<D, K, T>) => void): () => void;
 }

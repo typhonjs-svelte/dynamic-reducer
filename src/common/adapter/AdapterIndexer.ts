@@ -1,7 +1,7 @@
 import { DynReducerUtils }       from '../DynReducerUtils.js';
 
 import type {
-   IDynIndexerAPI,
+   DynIndexerAPI,
 
    DynCompareFn,
    DynDataFilter,
@@ -39,11 +39,11 @@ export abstract class AdapterIndexer<D, K, T>
     *
     * @param {Function}             hostUpdate - Host update function invoked on index updates.
     *
-    * @param {IDynIndexerAPI<K, T>} [parentIndexer] - Any associated parent index API.
+    * @param {DynIndexerAPI<K, T>} [parentIndexer] - Any associated parent index API.
     *
     * @returns Indexer adapter instance.
     */
-   constructor(hostData: DynDataHost<D>, hostUpdate: Function, parentIndexer?: IDynIndexerAPI<K, T>)
+   constructor(hostData: DynDataHost<D>, hostUpdate: Function, parentIndexer?: DynIndexerAPI<K, T>)
    {
       this.hostData = hostData;
 

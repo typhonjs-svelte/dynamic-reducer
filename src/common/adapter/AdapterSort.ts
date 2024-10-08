@@ -1,11 +1,11 @@
 import type {
-   IDynAdapterSort,
+   DynAdapterSort,
 
    DynCompareFn,
    DynDataSort,
    DynIndexerUpdateFn } from '../../types';
 
-export class AdapterSort<T> implements IDynAdapterSort<T>
+export class AdapterSort<T> implements DynAdapterSort<T>
 {
    #sortData: { compareFn: DynCompareFn<T> };
 

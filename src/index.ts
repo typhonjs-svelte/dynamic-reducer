@@ -18,11 +18,11 @@ export type {
     DynDataMapCreate,
     DynOptionsMapCreate,
 
-    IDynAdapterFilters,
-    IDynAdapterSort,
-    IDynArrayReducerCtor,
-    IDynDerivedAPI,
-    IDynDerivedReducerCtor,
-    IDynDerivedReducer,
-    IDynIndexerAPI,
-    IDynMapReducerCtor }    from './types';
+    DynAdapterFilters,
+    DynAdapterSort,
+    DynArrayReducerCtor,
+    DynDerivedAPI,
+    DynDerivedReducerCtor,
+    DynDerivedReducer,
+    DynIndexerAPI,
+    DynMapReducerCtor }    from './types';

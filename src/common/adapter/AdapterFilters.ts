@@ -1,11 +1,11 @@
 import type {
-   IDynAdapterFilters,
+   DynAdapterFilters,
 
    DynDataFilter,
    DynFilterFn,
    DynIndexerUpdateFn } from '../../types';
 
-export class AdapterFilters<T> implements IDynAdapterFilters<T>
+export class AdapterFilters<T> implements DynAdapterFilters<T>
 {
    #filtersData: { filters: DynDataFilter<T>[] };
 
