@@ -179,8 +179,11 @@ export function run({ Module, chai })
                   this._totalLevel = 0;
                }
 
-               initialize()
+               initialize(optionsRest) // eslint-disable-line no-unused-vars
                {
+                  // Ensure that additional rest options are received.
+                  assert.deepEqual(optionsRest, { extra: 'data', foo: 'bar' });
+
                   this.filters.add((item) => item.type === 'class');
                   this.sort.set((a, b) => a.name.localeCompare(b.name));
 
@@ -203,7 +206,7 @@ export function run({ Module, chai })
              */
             class SpellsDerivedReducer extends DynMapReducerDerived
             {
-               initialize()
+               initialize(optionsRest) // eslint-disable-line no-unused-vars
                {
                   this.filters.add((item) => item.type === 'spell');
                   this.sort.set((a, b) => a.level - b.level);
@@ -233,7 +236,14 @@ export function run({ Module, chai })
                {
                   super(data);
 
-                  this._class = this.derived.create(ClassDerivedReducer);
+                  this._class = this.derived.create({
+                     ctor: ClassDerivedReducer,
+
+                     // Add additional options passed to `ClassDerivedReducer.initialize`.
+                     extra: 'data',
+                     foo: 'bar'
+                  });
+
                   this._spells = this.derived.create(SpellsDerivedReducer);
                }
 

@@ -79,48 +79,32 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
 
       this.#index.initAdapters(this.#filtersData, this.#sortData, this.#derived);
 
-      let filters: Iterable<DynFilterFn<T>|DynDataFilter<T>> = void 0;
-      let sort: DynCompareFn<T> | DynDataSort<T> = void 0;
+      const { filters, sort, ...optionsRest } = options;
 
-      if (options !== void 0 && ('filters' in options || 'sort' in options))
+      if (filters !== void 0)
       {
-         if (options.filters !== void 0)
+         if (!DynReducerUtils.isIterable(filters))
          {
-            if (DynReducerUtils.isIterable(options.filters))
-            {
-               filters = options.filters;
-            }
-            else
-            {
-               throw new TypeError(
-                `DerivedMapReducer error (DataDerivedOptions): 'filters' attribute is not iterable.`);
-            }
+            throw new TypeError(
+             `DerivedMapReducer error (DataDerivedOptions): 'filters' attribute is not iterable.`);
          }
 
-         if (options.sort !== void 0)
-         {
-            if (typeof options.sort === 'function')
-            {
-               sort = options.sort;
-            }
-            else if (typeof options.sort === 'object' && options.sort !== null)
-            {
-               sort = options.sort;
-            }
-            else
-            {
-               throw new TypeError(
-                `DerivedMapReducer error (DataDerivedOptions): 'sort' attribute is not a function or object.`);
-            }
-         }
+         this.filters.add(...filters);
       }
 
-      // Add any filters and sort function defined by DataDynArray.
-      if (filters) { this.filters.add(...filters); }
-      if (sort) { this.sort.set(sort); }
+      if (sort !== void 0)
+      {
+         if (typeof sort !== 'function' && (typeof sort !== 'object' || sort === null))
+         {
+            throw new TypeError(
+             `DerivedMapReducer error (DataDerivedOptions): 'sort' attribute is not a function or object.`);
+         }
+
+         this.sort.set(sort);
+      }
 
       // Invoke custom initialization for child classes.
-      this.initialize();
+      this.initialize(optionsRest);
    }
 
    /**
@@ -220,9 +204,11 @@ export class DynMapReducerDerived<K, T> implements IDynDerivedReducer<Map<K, T>,
     * Provides a callback for custom derived reducers to initialize any data / custom configuration. This allows
     * child classes to avoid implementing the constructor.
     *
+    * @param [optionsRest] - Any additional custom options passed beyond {@link DynDataOptions}.
+    *
     * @protected
     */
-   initialize() {}
+   initialize(optionsRest?: { [key: string]: any }): void {}
 
    /**
     * Provides an iterator for data stored in DerivedMapReducer.
