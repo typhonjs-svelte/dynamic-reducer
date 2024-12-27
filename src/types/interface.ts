@@ -74,17 +74,17 @@ export interface DynDerivedReducer<D, K, T>
    get index(): DynIndexerAPI<K, T>;
 
    /**
-    * Returns whether this derived reducer is destroyed.
+    * @returns Returns whether this derived reducer is destroyed.
     */
    get destroyed(): boolean;
 
    /**
-    * @returns Main data / items length or indexed length.
+    * @returns Returns the main data items or indexed items length.
     */
    get length(): number;
 
    /**
-    * @returns Gets current reversed state.
+    * @returns Returns current reversed state.
     */
    get reversed(): boolean;
 
@@ -106,9 +106,9 @@ export interface DynDerivedReducer<D, K, T>
    destroy(): void;
 
    /**
-    * Subscribe to this IDerivedReducer.
+    * Add a subscriber to this DynMapReducer instance.
     *
-    * @param handler - Callback function that is invoked on update / changes. Receives derived reducer reference.
+    * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
     *
     * @returns Unsubscribe function.
     */

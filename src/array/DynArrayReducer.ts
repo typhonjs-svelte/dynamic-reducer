@@ -26,8 +26,6 @@ import { DynArrayReducerDerived }   from './derived/DynArrayReducerDerived.js';
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
  * Svelte store support.
- *
- * @template T
  */
 export class DynArrayReducer<T>
 {
@@ -44,8 +42,6 @@ export class DynArrayReducer<T>
    readonly #index: ArrayIndexer<T>;
 
    readonly #indexPublicAPI: IndexerAPI<number, T>;
-
-   #reversed: boolean = false;
 
    readonly #sort: AdapterSort<T>;
 
@@ -150,12 +146,12 @@ export class DynArrayReducer<T>
     * performed to the data externally do invoke `update` via {@link DynArrayReducer.index} with `true` to recalculate
     * the index and notify all subscribers.
     *
-    * @returns {T[]|null} The internal data.
+    * @returns The internal data.
     */
    get data(): T[] | null { return this.#array[0]; }
 
    /**
-    * @returns {DynDerivedAPI<T[], number, T>} Derived public API.
+    * @returns Derived public API.
     */
    get derived(): DynDerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
 
@@ -165,19 +161,17 @@ export class DynArrayReducer<T>
    get filters(): DynAdapterFilters<T> { return this.#filters; }
 
    /**
-    * @returns {DynIndexerAPI<number, T>} Returns the Indexer public API.
+    * @returns Returns the Indexer public API; is also iterable.
     */
    get index(): DynIndexerAPI<number, T> { return this.#indexPublicAPI; }
 
    /**
-    * @returns {boolean} Returns whether this instance is destroyed.
+    * @returns Returns whether this instance is destroyed.
     */
    get destroyed(): boolean { return this.#destroyed; }
 
    /**
-    * Gets the main data / items length.
-    *
-    * @returns {number} Main data / items length.
+    * @returns Returns the main data items or indexed items length.
     */
    get length(): number
    {
@@ -187,21 +181,19 @@ export class DynArrayReducer<T>
    }
 
    /**
-    * Gets current reversed state.
-    *
-    * @returns {boolean} Reversed state.
+    * @returns Returns current reversed state.
     */
-   get reversed(): boolean { return this.#reversed; }
+   get reversed(): boolean { return this.#index.indexData.reversed; }
 
    /**
-    * @returns {DynAdapterSort<T>} The sort adapter.
+    * @returns The sort adapter.
     */
    get sort(): DynAdapterSort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.
     *
-    * @param {boolean}  reversed - New reversed state.
+    * @param reversed - New reversed state.
     */
    set reversed(reversed: boolean)
    {
@@ -210,8 +202,7 @@ export class DynArrayReducer<T>
          throw new TypeError(`DynArrayReducer.reversed error: 'reversed' is not a boolean.`);
       }
 
-      this.#reversed = reversed;
-      this.#index.reversed = reversed;
+      this.#index.indexData.reversed = reversed;
 
       // Recalculate index and force an update to any subscribers.
       this.index.update(true);
@@ -243,9 +234,9 @@ export class DynArrayReducer<T>
     * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
     * `replace` is set to true.
     *
-    * @param {T[] | Iterable<T> | null}   data - New data to set to internal data.
+    * @param data - New data to set to internal data.
     *
-    * @param {boolean} [replace=false] - New data to set to internal data.
+    * @param [replace=false] - New data to set to internal data.
     */
    setData(data: T[] | Iterable<T> | null, replace: boolean = false)
    {
@@ -296,10 +287,9 @@ export class DynArrayReducer<T>
    /**
     * Add a subscriber to this DynArrayReducer instance.
     *
-    * @param {(value: DynArrayReducer<T>) => void} handler - Callback function that is invoked on update / changes.
-    *        Receives `this` reference.
+    * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
     *
-    * @returns {() => void} Unsubscribe function.
+    * @returns Unsubscribe function.
     */
    subscribe(handler: (value: DynArrayReducer<T>) => void): () => void
    {
@@ -326,8 +316,7 @@ export class DynArrayReducer<T>
    /**
     * Provides an iterator for data stored in DynArrayReducer.
     *
-    * @yields {T}
-    * @returns {IterableIterator<T>} Iterator for data stored in DynArrayReducer.
+    * @returns Iterator for data stored in DynArrayReducer.
     */
    * [Symbol.iterator](): IterableIterator<T>
    {

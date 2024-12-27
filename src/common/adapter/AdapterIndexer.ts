@@ -12,8 +12,6 @@ import type { AdapterDerived }   from './AdapterDerived.js';
 /**
  * Provides construction and management of indexed data when there are parent indexes or filter / sort functions
  * applied.
- *
- * @template D, K, T
  */
 export abstract class AdapterIndexer<D, K, T>
 {
@@ -34,11 +32,11 @@ export abstract class AdapterIndexer<D, K, T>
    public destroyed = false;
 
    /**
-    * @param {DynDataHost<D>}       hostData - Hosted data structure.
+    * @param hostData - Hosted data structure.
     *
-    * @param {Function}             hostUpdate - Host update function invoked on index updates.
+    * @param hostUpdate - Host update function invoked on index updates.
     *
-    * @param {DynIndexerAPI<K, T>} [parentIndexer] - Any associated parent index API.
+    * @param [parentIndexer] - Any associated parent index API.
     *
     * @returns Indexer adapter instance.
     */
@@ -67,18 +65,6 @@ export abstract class AdapterIndexer<D, K, T>
    {
       return this.indexData.index ? this.indexData.index.length : 0;
    }
-
-   /* c8 ignore start */
-   /**
-    * @returns Returns reversed state.
-    */
-   get reversed(): boolean { return this.indexData.reversed; }
-   /* c8 ignore end */
-
-   /**
-    * @param reversed - New reversed state.
-    */
-   set reversed(reversed: boolean) { this.indexData.reversed = reversed; }
 
 // -------------------------------------------------------------------------------------------------------------------
 

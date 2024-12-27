@@ -700,13 +700,19 @@ describe(`(Map) API Test`, () =>
          assert.deepEqual([...dar], [3, 2, 1], 'correct initial data');
          assert.deepEqual([...dr], [3, 2], 'correct derived filter data');
 
+         assert.isFalse(dr.reversed);
+
          dr.reversed = true;
 
          assert.deepEqual([...dr], [2, 3], 'correct reversed derived filter data');
 
+         assert.isTrue(dr.reversed);
+
          dr.reversed = false;
 
          assert.deepEqual([...dr], [3, 2], 'correct reversed derived filter data');
+
+         assert.isFalse(dr.reversed);
 
          dr.sort.set((a, b) => a - b);
 

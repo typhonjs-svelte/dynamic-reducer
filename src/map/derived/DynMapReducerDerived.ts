@@ -25,8 +25,6 @@ import type {
  *
  * Note: That you should never directly create an instance of a derived reducer, but instead use the
  * {@link DynMapReducerDerived.initialize} callback to set up any initial state in a custom derived reducer.
- *
- * @template K, T
  */
 export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerivedReducer<Map<K, T>, K, T>
 {
@@ -44,8 +42,6 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
 
    readonly #indexPublicAPI: IndexerAPI<K, T>;
 
-   #reversed: boolean = false;
-
    readonly #sort: AdapterSort<T>;
 
    #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
@@ -55,11 +51,11 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
    #destroyed = false;
 
    /**
-    * @param {DynDataHost<Map<K, T>>}  map - Data host Map.
+    * @param map - Data host Map.
     *
-    * @param {DynIndexerAPI<K, T>}    parentIndex - Parent indexer.
+    * @param parentIndex - Parent indexer.
     *
-    * @param {DynDataOptions<T>}       options - Any filters and sort functions to apply.
+    * @param options - Any filters and sort functions to apply.
     */
    constructor(map: DynDataHost<Map<K, T>>, parentIndex: DynIndexerAPI<K, T>, options: DynDataOptions<T>)
    {
@@ -124,19 +120,17 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
    get filters(): DynAdapterFilters<T> { return this.#filters; }
 
    /**
-    * Returns the Indexer public API.
-    *
-    * @returns Indexer API - is also iterable.
+    * @returns Returns the Indexer public API; is also iterable.
     */
    get index(): DynIndexerAPI<K, T> { return this.#indexPublicAPI; }
 
    /**
-    * Returns whether this derived reducer is destroyed.
+    * @returns Returns whether this derived reducer is destroyed.
     */
    get destroyed(): boolean { return this.#destroyed; }
 
    /**
-    * @returns Main data / items length or indexed length.
+    * @returns Returns the main data items or indexed items length.
     */
    get length(): number
    {
@@ -147,12 +141,12 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
    }
 
    /**
-    * @returns Gets current reversed state.
+    * @returns Returns current reversed state.
     */
-   get reversed(): boolean { return this.#reversed; }
+   get reversed(): boolean { return this.#index.indexData.reversed; }
 
    /**
-    * @returns The sort adapter.
+    * @returns Returns the sort adapter.
     */
    get sort(): DynAdapterSort<T> { return this.#sort; }
 
@@ -168,8 +162,7 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
          throw new TypeError(`DerivedMapReducer.reversed error: 'reversed' is not a boolean.`);
       }
 
-      this.#reversed = reversed;
-      this.#index.reversed = reversed;
+      this.#index.indexData.reversed = reversed;
 
       // Recalculate index and force an update to any subscribers.
       this.index.update(true);
@@ -206,10 +199,9 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
    protected initialize(optionsRest?: { [key: string]: any }): void {}
 
    /**
-    * Provides an iterator for data stored in DerivedMapReducer.
+    * Provides an iterator for data stored in DynMapReducerDerived.
     *
-    * @returns {IterableIterator<T>}
-    * @yields {T}
+    * @returns Iterator for data stored in DynMapReducerDerived.
     */
    * [Symbol.iterator](): IterableIterator<T>
    {

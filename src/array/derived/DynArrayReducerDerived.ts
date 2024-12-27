@@ -25,8 +25,6 @@ import type {
  *
  * Note: That you should never directly create an instance of a derived reducer, but instead use the
  * {@link DynArrayReducerDerived.initialize} callback to set up any initial state in a custom derived reducer.
- *
- * @template T
  */
 export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<T[], number, T>
 {
@@ -44,8 +42,6 @@ export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<T[
 
    readonly #indexPublicAPI: IndexerAPI<number, T>;
 
-   #reversed: boolean = false;
-
    readonly #sort: AdapterSort<T>;
 
    #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
@@ -55,11 +51,11 @@ export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<T[
    #destroyed = false;
 
    /**
-    * @param {DynDataHost<T[]>}           array - Data host array.
+    * @param array - Data host array.
     *
-    * @param {DynIndexerAPI<number, T>}  parentIndex - Parent indexer.
+    * @param parentIndex - Parent indexer.
     *
-    * @param {DynDataOptions<T>}          options - Any filters and sort functions to apply.
+    * @param options - Any filters and sort functions to apply.
     */
    constructor(array: DynDataHost<T[]>, parentIndex: DynIndexerAPI<number, T>, options: DynDataOptions<T>)
    {
@@ -124,19 +120,17 @@ export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<T[
    get filters(): DynAdapterFilters<T> { return this.#filters; }
 
    /**
-    * Returns the Indexer public API.
-    *
-    * @returns Indexer API - is also iterable.
+    * @returns Returns the Indexer public API; is also iterable.
     */
    get index(): DynIndexerAPI<number, T> { return this.#indexPublicAPI; }
 
    /**
-    * Returns whether this derived reducer is destroyed.
+    * @returns Returns whether this derived reducer is destroyed.
     */
    get destroyed(): boolean { return this.#destroyed; }
 
    /**
-    * @returns Main data / items length or indexed length.
+    * @returns Returns the main data items or indexed items length.
     */
    get length(): number
    {
@@ -147,9 +141,9 @@ export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<T[
    }
 
    /**
-    * @returns Gets current reversed state.
+    * @returns Returns current reversed state.
     */
-   get reversed(): boolean { return this.#reversed; }
+   get reversed(): boolean { return this.#index.indexData.reversed; }
 
    /**
     * @returns The sort adapter.
@@ -168,8 +162,7 @@ export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<T[
          throw new TypeError(`DerivedArrayReducer.reversed error: 'reversed' is not a boolean.`);
       }
 
-      this.#reversed = reversed;
-      this.#index.reversed = reversed;
+      this.#index.indexData.reversed = reversed;
 
       // Recalculate index and force an update to any subscribers.
       this.index.update(true);
@@ -206,10 +199,9 @@ export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<T[
    protected initialize(optionsRest?: { [key: string]: any }): void {}
 
    /**
-    * Provides an iterator for data stored in DerivedArrayReducer.
+    * Provides an iterator for data stored in DynArrayReducerDerived.
     *
-    * @returns {IterableIterator<T>}
-    * @yields {T}
+    * @returns Iterator for data stored in DynArrayReducerDerived.
     */
    * [Symbol.iterator](): IterableIterator<T>
    {

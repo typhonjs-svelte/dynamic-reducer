@@ -1,10 +1,8 @@
 import {
    AdapterIndexer,
-   DynReducerUtils
-} from '../common';
+   DynReducerUtils } from '../common';
 
 /**
- * @template K, T
  */
 export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
 {
@@ -22,7 +20,7 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
     * Note: Other loop unrolling techniques like Duff's Device gave a slight faster lower bound on large data sets,
     * but the maintenance factor is not worth the extra complication.
     *
-    * @returns {K[]} New filtered index array.
+    * @returns New filtered index array.
     */
    reduceImpl(): K[]
    {
@@ -85,7 +83,7 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
     * Update the reducer indexes. If there are changes subscribers are notified. If data order is changed externally
     * pass in true to force an update to subscribers.
     *
-    * @param {boolean}  [force=false] - When true forces an update to subscribers.
+    * @param [force=false] - When true forces an update to subscribers.
     */
    update(force: boolean = false)
    {

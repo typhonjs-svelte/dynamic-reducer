@@ -6,8 +6,7 @@ import type {
    DynDataSort,
    DynDerivedReducerCtor,
    DynFilterFn,
-   DynOptionsDerivedCreate
-} from './';
+   DynOptionsDerivedCreate }  from './';
 
 /**
  * Provides the storage and sequencing of managed filters. Each filter added may be a bespoke function or a
@@ -33,8 +32,6 @@ import type {
  * dynArray.filters.removeBy(...);
  * dynArray.filters.removeById(...);
  * ```
- *
- * @template T
  */
 export interface DynAdapterFilters<T>
 {
@@ -44,12 +41,12 @@ export interface DynAdapterFilters<T>
    [Symbol.iterator](): IterableIterator<DynDataFilter<T>>;
 
    /**
-    * @returns {number} Returns the length of the filter data.
+    * @returns Returns the length of the filter data.
     */
    get length(): number;
 
    /**
-    * @param {(DynFilterFn<T>|DynDataFilter<T>)[]} filters - One or more filter functions / DynDataFilter to add.
+    * @param filters - One or more filter functions / DynDataFilter to add.
     */
    add(...filters: (DynFilterFn<T> | DynDataFilter<T>)[]): void;
 
@@ -59,7 +56,7 @@ export interface DynAdapterFilters<T>
    clear(): void;
 
    /**
-    * @param {(DynFilterFn<T>|DynDataFilter<T>)[]} filters - One or more filter functions / DynDataFilter to remove.
+    * @param filters - One or more filter functions / DynDataFilter to remove.
     */
    remove(...filters: (DynFilterFn<T> | DynDataFilter<T>)[]): void;
 
@@ -67,13 +64,12 @@ export interface DynAdapterFilters<T>
     * Remove filters by the provided callback. The callback takes 3 parameters: `id`, `filter`, and `weight`.
     * Any truthy value returned will remove that filter.
     *
-    * @param {(id: any, filter: DynFilterFn<T>, weight: number) => boolean} callback - Callback function to evaluate
-    *        each filter entry.
+    * @param callback - Callback function to evaluate each filter entry.
     */
    removeBy(callback: (id: any, filter: DynFilterFn<T>, weight: number) => boolean): void;
 
    /**
-    * @param {any[]} ids - Removes filters by ID.
+    * @param ids - Removes filters by ID.
     */
    removeById(...ids: any[]): void;
 }
@@ -93,8 +89,6 @@ export interface DynAdapterFilters<T>
  * dynArray.sort.clear();
  * dynArray.sort.set(...);
  * ```
- *
- * @template T
  */
 export interface DynAdapterSort<T>
 {
@@ -104,8 +98,8 @@ export interface DynAdapterSort<T>
    clear(): void;
 
    /**
-    * @param {DynCompareFn<T>|DynDataSort<T>} sort - A callback function that compares two values. Return > 0 to sort b
-    * before a; < 0 to sort a before b; or 0 to keep original order of a & b.
+    * @param sort - A callback function that compares two values. Return > 0 to sort `b` before `a`;
+    * < 0 to sort `a` before `b`; or 0 to keep original order of `a` & `b`.
     *
     * Note: You can set a compare function that also has a subscribe function attached as the `subscribe` attribute.
     *
@@ -127,8 +121,6 @@ export interface DynAdapterSort<T>
  * dynArray.derived.destroy();
  * dynArray.derived.get(...);
  * ```
- *
- * @template D, K, T
  */
 export interface DynDerivedAPI<D, K, T>
 {
@@ -151,9 +143,9 @@ export interface DynDerivedAPI<D, K, T>
    /**
     * Deletes and destroys a derived reducer.
     *
-    * @param {string} name - Name of the derived reducer
+    * @param name - Name of the derived reducer
     *
-    * @returns {boolean} Whether the derived reducer was deleted.
+    * @returns Whether the derived reducer was deleted.
     */
    delete(name: string): boolean;
 
@@ -165,9 +157,9 @@ export interface DynDerivedAPI<D, K, T>
    /**
     * Returns an existing derived reducer.
     *
-    * @param {string}   name - Name of derived reducer.
+    * @param name - Name of derived reducer.
     *
-    * @returns {DynDerivedReducer<D, K, T>} Any associated derived reducer.
+    * @returns Any associated derived reducer.
     */
    get(name: string): DynDerivedReducer<D, K, T>;
 }
@@ -183,38 +175,35 @@ export interface DynDerivedAPI<D, K, T>
  * dynArray.index.length;
  * dynArray.index.update(...);
  * ```
- *
- * @template K, T
  */
 export interface DynIndexerAPI<K, T>
 {
    /**
-    * @returns {boolean} Returns whether the index is active.
+    * @returns Returns whether the index is active.
     */
    get active(): boolean;
 
    /**
-    * @returns {number} Returns length of reduced index.
+    * @returns Returns length of reduced index.
     */
    get length(): number;
 
    /**
     * Manually invoke an update of the index.
     *
-    * @param {boolean}  [force] - Force update to any subscribers.
+    * @param [force] - Force update to any subscribers.
     */
    update(force?: boolean): void;
 
    /**
-    * @returns {number | null} Current hash value of the index.
+    * @returns Current hash value of the index.
     */
    get hash(): number | null;
 
    /**
     * Provides an iterator over the index array.
     *
-    * @returns {IterableIterator<K>} An iterator for the index array.
-    * @yields {K}
+    * @returns Iterator for the index array.
     */
    [Symbol.iterator](): IterableIterator<K>;
 }

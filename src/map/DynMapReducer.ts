@@ -26,8 +26,6 @@ import { DynMapReducerDerived }  from './derived/DynMapReducerDerived.js';
 /**
  * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
  * Svelte store support.
- *
- * @template K, T
  */
 export class DynMapReducer<K, T>
 {
@@ -45,8 +43,6 @@ export class DynMapReducer<K, T>
 
    readonly #indexPublicAPI: IndexerAPI<K, T>;
 
-   #reversed: boolean = false;
-
    readonly #sort: AdapterSort<T>;
 
    #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
@@ -59,7 +55,7 @@ export class DynMapReducer<K, T>
     * Initializes DynMapReducer. Any iterable is supported for initial data. Take note that if `data` is an array it
     * will be used as the host array and not copied. All non-array iterables otherwise create a new array / copy.
     *
-    * @param {Map<K, T> | DynMapData<K, T>} [data] - Data iterable to store if array or copy otherwise.
+    * @param [data] - Data iterable to store if array or copy otherwise.
     */
    constructor(data?: Map<K, T> | DynMapData<K, T>)
    {
@@ -150,34 +146,32 @@ export class DynMapReducer<K, T>
     * data externally do invoke `update` via {@link DynMapReducer.index} with `true` to recalculate the  index and
     * notify all subscribers.
     *
-    * @returns {Map<K, T> | null} The internal data.
+    * @returns The internal data.
     */
    get data(): Map<K, T> | null { return this.#map[0]; }
 
    /**
-    * @returns {DynDerivedAPI<Map<K, T>, K, T>} Derived public API.
+    * @returns Derived public API.
     */
    get derived(): DynDerivedAPI<Map<K, T>, K, T> { return this.#derivedPublicAPI; }
 
    /**
-    * @returns {DynAdapterFilters<T>} The filters adapter.
+    * @returns The filters adapter.
     */
    get filters(): DynAdapterFilters<T> { return this.#filters; }
 
    /**
-    * @returns {DynIndexerAPI<K, T>} Returns the Indexer public API.
+    * @returns Returns the Indexer public API; is also iterable.
     */
    get index(): DynIndexerAPI<K, T> { return this.#indexPublicAPI; }
 
    /**
-    * @returns {boolean} Returns whether this instance is destroyed.
+    * @returns Returns whether this instance is destroyed.
     */
    get destroyed(): boolean { return this.#destroyed; }
 
    /**
-    * Gets the main data / items length.
-    *
-    * @returns {number} Main data / items length.
+    * @returns Returns the main data items or indexed items length.
     */
    get length(): number
    {
@@ -187,21 +181,19 @@ export class DynMapReducer<K, T>
    }
 
    /**
-    * Gets current reversed state.
-    *
-    * @returns {boolean} Reversed state.
+    * @returns Returns current reversed state.
     */
-   get reversed(): boolean { return this.#reversed; }
+   get reversed(): boolean { return this.#index.indexData.reversed; }
 
    /**
-    * @returns {DynAdapterSort<T>} The sort adapter.
+    * @returns The sort adapter.
     */
    get sort(): DynAdapterSort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.
     *
-    * @param {boolean} reversed - New reversed state.
+    * @param reversed - New reversed state.
     */
    set reversed(reversed: boolean)
    {
@@ -210,8 +202,7 @@ export class DynMapReducer<K, T>
          throw new TypeError(`DynMapReducer.reversed error: 'reversed' is not a boolean.`);
       }
 
-      this.#reversed = reversed;
-      this.#index.reversed = reversed;
+      this.#index.indexData.reversed = reversed;
 
       // Recalculate index and force an update to any subscribers.
       this.index.update(true);
@@ -243,9 +234,9 @@ export class DynMapReducer<K, T>
     * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
     * `replace` is set to true.
     *
-    * @param {Map<K, T> | null}  data - New data to set to internal data.
+    * @param data - New data to set to internal data.
     *
-    * @param {boolean} [replace=false] - New data to set to internal data.
+    * @param [replace=false] - New data to set to internal data.
     */
    setData(data: Map<K, T> | null, replace: boolean = false)
    {
@@ -297,10 +288,9 @@ export class DynMapReducer<K, T>
    /**
     * Add a subscriber to this DynMapReducer instance.
     *
-    * @param {(value: DynMapReducer<K, T>) => void} handler - Callback function that is invoked on update / changes.
-    *        Receives `this` reference.
+    * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
     *
-    * @returns {() => void} Unsubscribe function.
+    * @returns Unsubscribe function.
     */
    subscribe(handler: (value: DynMapReducer<K, T>) => void): () => void
    {
@@ -327,8 +317,7 @@ export class DynMapReducer<K, T>
    /**
     * Provides an iterator for data stored in DynMapReducer.
     *
-    * @returns {IterableIterator<T>}
-    * @yields {T}
+    * @returns Iterator for data stored in DynMapReducer.
     */
    * [Symbol.iterator](): IterableIterator<T>
    {

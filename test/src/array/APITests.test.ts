@@ -93,11 +93,17 @@ describe(`(Array) API Test`, () =>
 
          assert.deepEqual([...dar], [1, 2]);
 
+         assert.isFalse(dar.reversed);
+
          dar.reversed = true;
 
          assert.deepEqual([...dar], [2, 1]);
 
+         assert.isTrue(dar.reversed);
+
          dar.reversed = false;
+
+         assert.isFalse(dar.reversed);
 
          assert.deepEqual([...dar], [1, 2]);
       });
