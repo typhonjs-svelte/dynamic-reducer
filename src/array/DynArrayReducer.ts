@@ -153,7 +153,7 @@ export class DynArrayReducer<T>
    /**
     * @returns Derived public API.
     */
-   get derived(): DynDerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
+   get derived(): DynDerivedAPI<number, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.

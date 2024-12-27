@@ -598,14 +598,6 @@ describe(`(Array) API Test`, () =>
 
    describe(`DerivedAPI`, () =>
    {
-      it(`null array data (getter)`, () =>
-      {
-         const dar = createReducer();
-         const dr = dar.derived.create('test');
-
-         assert.equal(dr.data, null, 'data (getter) returns null');
-      });
-
       it(`null array length (getter)`, () =>
       {
          const dar = createReducer();
@@ -613,15 +605,6 @@ describe(`(Array) API Test`, () =>
 
          assert.equal(dar.length, [...dar].length, 'initial length is correct');
          assert.equal(dr.length, [...dr].length, 'initial length is correct');
-      });
-
-      it(`data (getter)`, () =>
-      {
-         const array = [1, 2];
-         const dar = createReducer(array);
-         const dr = dar.derived.create('test');
-
-         assert.equal(dr.data, array, 'data (getter) returns same array');
       });
 
       it(`derived (getter)`, () =>

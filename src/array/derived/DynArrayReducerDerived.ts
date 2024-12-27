@@ -26,13 +26,13 @@ import type {
  * Note: That you should never directly create an instance of a derived reducer, but instead use the
  * {@link DynArrayReducerDerived.initialize} callback to set up any initial state in a custom derived reducer.
  */
-export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<T[], number, T>
+export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<number, T>
 {
    #array: DynDataHost<T[]>;
 
    readonly #derived: AdapterDerived<T[], number, T>;
 
-   readonly #derivedPublicAPI: DynDerivedAPI<T[], number, T>;
+   readonly #derivedPublicAPI: DynDerivedAPI<number, T>;
 
    readonly #filters: AdapterFilters<T>;
 
@@ -99,20 +99,9 @@ export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<T[
    }
 
    /**
-    * Returns the internal data of this instance. Be careful!
-    *
-    * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
-    * performed to the data externally do invoke {@link DynIndexerAPI.update} with `true` to recalculate the index and
-    * notify all subscribers.
-    *
-    * @returns The internal data.
-    */
-   get data(): T[] | null { return this.#array[0]; }
-
-   /**
     * @returns Derived public API.
     */
-   get derived(): DynDerivedAPI<T[], number, T> { return this.#derivedPublicAPI; }
+   get derived(): DynDerivedAPI<number, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.

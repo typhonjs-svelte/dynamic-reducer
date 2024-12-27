@@ -26,13 +26,13 @@ import type {
  * Note: That you should never directly create an instance of a derived reducer, but instead use the
  * {@link DynMapReducerDerived.initialize} callback to set up any initial state in a custom derived reducer.
  */
-export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerivedReducer<Map<K, T>, K, T>
+export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerivedReducer<K, T>
 {
    #map: DynDataHost<Map<K, T>>;
 
    readonly #derived: AdapterDerived<Map<K, T>, K, T>;
 
-   readonly #derivedPublicAPI: DynDerivedAPI<Map<K, T>, K, T>;
+   readonly #derivedPublicAPI: DynDerivedAPI<K, T>;
 
    readonly #filters: AdapterFilters<T>;
 
@@ -99,20 +99,9 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
    }
 
    /**
-    * Returns the internal data of this instance. Be careful!
-    *
-    * Note: The returned map is the same map set by the main reducer. If any changes are performed to the data
-    * externally do invoke {@link DynIndexerAPI.update} with `true` to recalculate the index and notify all
-    * subscribers.
-    *
-    * @returns The internal data.
-    */
-   get data(): Map<K, T> | null { return this.#map[0]; }
-
-   /**
     * @returns Derived public API.
     */
-   get derived(): DynDerivedAPI<Map<K, T>, K, T> { return this.#derivedPublicAPI; }
+   get derived(): DynDerivedAPI<K, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.

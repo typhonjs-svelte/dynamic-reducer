@@ -153,7 +153,7 @@ export class DynMapReducer<K, T>
    /**
     * @returns Derived public API.
     */
-   get derived(): DynDerivedAPI<Map<K, T>, K, T> { return this.#derivedPublicAPI; }
+   get derived(): DynDerivedAPI<K, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.

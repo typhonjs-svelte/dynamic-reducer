@@ -578,14 +578,6 @@ describe(`(Map) API Test`, () =>
 
    describe(`DerivedAPI`, () =>
    {
-      it(`null map data (getter)`, () =>
-      {
-         const dar = createReducer();
-         const dr = dar.derived.create('test');
-
-         assert.equal(dr.data, null, 'data (getter) returns null');
-      });
-
       it(`null array length (getter)`, () =>
       {
          const dar = createReducer();
@@ -593,15 +585,6 @@ describe(`(Map) API Test`, () =>
 
          assert.equal(dar.length, [...dar].length, 'initial length is correct');
          assert.equal(dr.length, [...dr].length, 'initial length is correct');
-      });
-
-      it(`data (getter)`, () =>
-      {
-         const map = new Map([[1, 1], [2, 2]]);
-         const dar = createReducer(map);
-         const dr = dar.derived.create('test');
-
-         assert.equal(dr.data, map, 'data (getter) returns same map');
       });
 
       it(`derived (getter)`, () =>

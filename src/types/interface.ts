@@ -34,34 +34,23 @@ export interface DynMapReducerCtor<K, T>
 export interface DynDerivedReducerCtor<T>
 {
    new(hostData: DynDataHost<any>, parentIndex: DynIndexerAPI<any, T>, options: DynDataOptions<T>):
-    DynDerivedReducer<any, any, T>;
+    DynDerivedReducer<any, T>;
 }
 
 /**
  * Defines the interface for a derived reducer.
  */
-export interface DynDerivedReducer<D, K, T>
+export interface DynDerivedReducer<K, T>
 {
    /**
-    * @returns Provides an iterator for data stored in DynDerivedReducer.
+    * @returns Provides an iterato`r for data stored in DynDerivedReducer.
     */
    [Symbol.iterator](): IterableIterator<T>;
 
    /**
-    * Returns the internal data of this instance. Be careful!
-    *
-    * Note: if an array is set as initial data then that array is used as the internal data. If any changes are
-    * performed to the data externally do invoke `update` via {@link DynDerivedReducer.index} with `true` to
-    * recalculate the index and notify all subscribers.
-    *
-    * @returns The internal data.
-    */
-   get data(): D | null;
-
-   /**
     * @returns Derived public API.
     */
-   get derived(): DynDerivedAPI<D, K, T>;
+   get derived(): DynDerivedAPI<K, T>;
 
    /**
     * @returns The filters adapter.
@@ -112,5 +101,5 @@ export interface DynDerivedReducer<D, K, T>
     *
     * @returns Unsubscribe function.
     */
-   subscribe(handler: (value: DynDerivedReducer<D, K, T>) => void): () => void;
+   subscribe(handler: (value: DynDerivedReducer<K, T>) => void): () => void;
 }

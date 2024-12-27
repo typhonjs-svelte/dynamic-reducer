@@ -281,9 +281,9 @@ class ClassDerivedReducer extends DynMapReducerDerived<string, CustomData>
 class SpellsDerivedReducer extends DynMapReducerDerived<string, CustomData>
 {
    #levels: {
-      one: DynDerivedReducer<any, any, any>,
-      two: DynDerivedReducer<any, any, any>,
-      three: DynDerivedReducer<any, any, any>,
+      one: DynDerivedReducer<string, CustomData>,
+      two: DynDerivedReducer<string, CustomData>,
+      three: DynDerivedReducer<string, CustomData>,
    }
 
    initialize()

@@ -20,7 +20,7 @@ export class AdapterDerived<D, K, T>
 
    #parentIndex: IndexerAPI<K, T>;
 
-   #derived: Map<string, DynDerivedReducer<D, K, T>> = new Map();
+   #derived: Map<string, DynDerivedReducer<K, T>> = new Map();
 
    #destroyed = false;
 
@@ -49,7 +49,7 @@ export class AdapterDerived<D, K, T>
     *
     * @returns Newly created derived reducer.
     */
-   create(options: DynOptionsDerivedCreate<T>): DynDerivedReducer<D, K, T>
+   create(options: DynOptionsDerivedCreate<T>): DynDerivedReducer<K, T>
    {
       if (this.#destroyed) { throw Error(`AdapterDerived.create error: this instance has been destroyed.`); }
 
@@ -155,7 +155,7 @@ export class AdapterDerived<D, K, T>
     *
     * @returns Any associated derived reducer.
     */
-   get(name: string): DynDerivedReducer<D, K, T>
+   get(name: string): DynDerivedReducer<K, T>
    {
       if (this.#destroyed) { throw Error(`AdapterDerived.get error: this instance has been destroyed.`); }
 

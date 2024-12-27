@@ -122,7 +122,7 @@ export interface DynAdapterSort<T>
  * dynArray.derived.get(...);
  * ```
  */
-export interface DynDerivedAPI<D, K, T>
+export interface DynDerivedAPI<K, T>
 {
    /**
     * Removes all derived reducers and associated subscriptions.
@@ -138,7 +138,7 @@ export interface DynDerivedAPI<D, K, T>
       ? InstanceType<O>
       : O extends { ctor: DynDerivedReducerCtor<T> }
          ? InstanceType<O['ctor']>
-         : DynDerivedReducer<D, K, T>;
+         : DynDerivedReducer<K, T>;
 
    /**
     * Deletes and destroys a derived reducer.
@@ -161,7 +161,7 @@ export interface DynDerivedAPI<D, K, T>
     *
     * @returns Any associated derived reducer.
     */
-   get(name: string): DynDerivedReducer<D, K, T>;
+   get(name: string): DynDerivedReducer<K, T>;
 }
 
 /**

@@ -272,9 +272,9 @@ class ClassDerivedReducer extends DynArrayReducerDerived<CustomData>
 class SpellsDerivedReducer extends DynArrayReducerDerived<CustomData>
 {
    #levels: {
-      one: DynDerivedReducer<any, any, any>,
-      two: DynDerivedReducer<any, any, any>,
-      three: DynDerivedReducer<any, any, any>,
+      one: DynDerivedReducer<string, CustomData>,
+      two: DynDerivedReducer<number, CustomData>,
+      three: DynDerivedReducer<number, CustomData>,
    }
 
    initialize()

@@ -9,7 +9,7 @@ import type {
 /**
  * Provides a public API for managing derived reducers.
  */
-export class DerivedAPI<D, K, T> implements DynDerivedAPI<D, K, T>
+export class DerivedAPI<D, K, T> implements DynDerivedAPI<K, T>
 {
    clear: () => void;
 
@@ -18,13 +18,13 @@ export class DerivedAPI<D, K, T> implements DynDerivedAPI<D, K, T>
          ? InstanceType<O>
          : O extends { ctor: DynDerivedReducerCtor<T> }
             ? InstanceType<O['ctor']>
-            : DynDerivedReducer<D, K, T>;
+            : DynDerivedReducer<K, T>;
 
    delete: (name: string) => boolean;
 
    destroy: () => void;
 
-   get: (name: string) => DynDerivedReducer<D, K, T>
+   get: (name: string) => DynDerivedReducer<K, T>
 
    constructor(adapterDerived: AdapterDerived<D, K, T>)
    {
