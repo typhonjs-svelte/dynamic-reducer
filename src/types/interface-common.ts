@@ -4,6 +4,7 @@ import type {
    DynCompareFn,
    DynDataFilter,
    DynDataSort,
+   DynDerivedReducerCtor,
    DynFilterFn,
    DynOptionsDerivedCreate } from './';
 
@@ -37,17 +38,14 @@ import type {
 export interface DynAdapterFilters<T>
 {
    /**
+    * @returns Provides an iterator for filters.
+    */
+   [Symbol.iterator](): IterableIterator<DynDataFilter<T>>;
+
+   /**
     * @returns {number} Returns the length of the filter data.
     */
    get length(): number;
-
-   /**
-    * Provides an iterator for filters.
-    *
-    * @returns {IterableIterator<DynDataFilter<T>>}
-    * @yields {DynDataFilter<T>}
-    */
-   [Symbol.iterator](): IterableIterator<DynDataFilter<T>> | void;
 
    /**
     * @param {(DynFilterFn<T>|DynDataFilter<T>)[]} filters - One or more filter functions / DynDataFilter to add.
@@ -139,11 +137,15 @@ export interface DynDerivedAPI<D, K, T>
    clear(): void;
 
    /**
-    * @param {DynOptionsDerivedCreate<T>} options - Options for creating a reducer.
+    * @param options - Options for creating a reducer.
     *
-    * @returns {DynDerivedReducer<D, K, T>} Newly created derived reducer.
+    * @returns Newly created derived reducer.
     */
-   create(options: DynOptionsDerivedCreate<T>): DynDerivedReducer<D, K, T>;
+   create<O extends DynOptionsDerivedCreate<T>>(options: O): O extends DynDerivedReducerCtor<T>
+      ? InstanceType<O>
+      : O extends { ctor: DynDerivedReducerCtor<T> }
+         ? InstanceType<O['ctor']>
+         : DynDerivedReducer<D, K, T>;
 
    /**
     * Deletes and destroys a derived reducer.

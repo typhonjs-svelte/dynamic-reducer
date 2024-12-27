@@ -94,6 +94,14 @@ export class AdapterDerived<D, K, T>
 
       this.#derived.set(name, derivedReducer);
 
+      // If the instantiated derived reducer has an `initialize` method then invoke it.
+      if (this.#hasInitialize(derivedReducer))
+      {
+         const { filters, sort, ...optionsRest } = rest;
+
+         derivedReducer.initialize(optionsRest);
+      }
+
       return derivedReducer;
    }
 
@@ -155,6 +163,16 @@ export class AdapterDerived<D, K, T>
       if (this.#destroyed) { throw Error(`AdapterDerived.get error: this instance has been destroyed.`); }
 
       return this.#derived.get(name);
+   }
+
+   /**
+    * Type guard to check for presence of `initialize` method.
+    *
+    * @param instance - Instance to check.
+    */
+   #hasInitialize(instance: any): instance is { initialize: (options?: any) => void }
+   {
+      return typeof instance?.initialize === 'function';
    }
 
    /**

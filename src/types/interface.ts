@@ -1,13 +1,14 @@
 import type {
-    DynAdapterFilters,
-    DynAdapterSort,
-    DynDerivedAPI,
-    DynIndexerAPI,
+   DynAdapterFilters,
+   DynAdapterSort,
+   DynDerivedAPI,
+   DynIndexerAPI,
 
-    DynArrayData,
-    DynMapData,
-    DynDataHost,
-    DynDataOptions }            from './';
+   DynArrayData,
+   DynMapData,
+   DynDataHost,
+   DynDataOptions, DynDataFilter
+} from './';
 
 import type { DynMapReducer }   from '../map';
 import type { DynArrayReducer } from '../array';
@@ -41,6 +42,11 @@ export interface DynDerivedReducerCtor<T>
  */
 export interface DynDerivedReducer<D, K, T>
 {
+   /**
+    * @returns Provides an iterator for data stored in DynDerivedReducer.
+    */
+   [Symbol.iterator](): IterableIterator<T>;
+
     /**
      * Returns the internal data of this instance. Be careful!
      *

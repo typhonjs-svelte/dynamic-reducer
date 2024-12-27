@@ -30,7 +30,7 @@ import type {
  *
  * @template T
  */
-export class DynArrayReducerDerived<T> implements DynDerivedReducer<T[], number, T>
+export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<T[], number, T>
 {
    #array: DynDataHost<T[]>;
 
@@ -79,7 +79,7 @@ export class DynArrayReducerDerived<T> implements DynDerivedReducer<T[], number,
 
       this.#index.initAdapters(this.#filtersData, this.#sortData, this.#derived);
 
-      const { filters, sort, ...optionsRest } = options;
+      const { filters, sort } = options;
 
       if (filters !== void 0)
       {
@@ -102,9 +102,6 @@ export class DynArrayReducerDerived<T> implements DynDerivedReducer<T[], number,
 
          this.sort.set(sort);
       }
-
-      // Invoke a custom initialization for child classes.
-      this.initialize(optionsRest);
    }
 
    /**
@@ -208,7 +205,7 @@ export class DynArrayReducerDerived<T> implements DynDerivedReducer<T[], number,
     *
     * @protected
     */
-   initialize(optionsRest?: { [key: string]: any }): void {}
+   protected initialize(optionsRest?: { [key: string]: any }): void {}
 
    /**
     * Provides an iterator for data stored in DerivedArrayReducer.

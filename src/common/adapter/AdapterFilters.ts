@@ -24,7 +24,7 @@ export class AdapterFilters<T> implements DynAdapterFilters<T>
 
    get length(): number { return this.#filtersData.filters.length; }
 
-   *[Symbol.iterator](): IterableIterator<DynDataFilter<T>> | void
+   *[Symbol.iterator](): IterableIterator<DynDataFilter<T>>
    {
       if (this.#filtersData.filters.length === 0) { return; }
 

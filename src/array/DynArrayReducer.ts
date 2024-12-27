@@ -141,9 +141,6 @@ export class DynArrayReducer<T>
       // Add any filters and sort function defined by DataDynArray.
       if (filters) { this.filters.add(...filters); }
       if (sort) { this.sort.set(sort); }
-
-      // Invoke custom initialization for child classes.
-      queueMicrotask(() => this.initialize());
    }
 
    /**
@@ -241,14 +238,6 @@ export class DynArrayReducer<T>
       this.#filters.clear();
       this.#sort.clear();
    }
-
-   /**
-    * Provides a callback for custom reducers to initialize any data / custom configuration. This allows
-    * child classes to avoid implementing the constructor.
-    *
-    * @protected
-    */
-   initialize() {}
 
    /**
     * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless

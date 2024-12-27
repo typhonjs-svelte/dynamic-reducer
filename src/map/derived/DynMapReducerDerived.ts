@@ -30,7 +30,7 @@ import type {
  *
  * @template K, T
  */
-export class DynMapReducerDerived<K, T> implements DynDerivedReducer<Map<K, T>, K, T>
+export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerivedReducer<Map<K, T>, K, T>
 {
    #map: DynDataHost<Map<K, T>>;
 
@@ -102,9 +102,6 @@ export class DynMapReducerDerived<K, T> implements DynDerivedReducer<Map<K, T>, 
 
          this.sort.set(sort);
       }
-
-      // Invoke custom initialization for child classes.
-      this.initialize(optionsRest);
    }
 
    /**
@@ -208,7 +205,7 @@ export class DynMapReducerDerived<K, T> implements DynDerivedReducer<Map<K, T>, 
     *
     * @protected
     */
-   initialize(optionsRest?: { [key: string]: any }): void {}
+   protected initialize(optionsRest?: { [key: string]: any }): void {}
 
    /**
     * Provides an iterator for data stored in DerivedMapReducer.

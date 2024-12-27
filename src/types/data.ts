@@ -178,6 +178,11 @@ export type DynDataDerivedCreate<T> = {
      * A DerivedReducer constructor function / class.
      */
     ctor?: DynDerivedReducerCtor<T>;
+
+   /**
+    * Extra data to pass through to `initialize`.
+    */
+   [key: string]: any;
 } & DynDataOptions<T>;
 
 /**
