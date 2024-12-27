@@ -4,9 +4,9 @@ import {
    AdapterSort,
    DerivedAPI,
    DynReducerUtils,
-   IndexerAPI }      from '../../common';
+   IndexerAPI }         from '../../common';
 
-import { ArrayIndexer }   from '../ArrayIndexer';
+import { ArrayIndexer } from '../ArrayIndexer';
 
 import type {
    DynAdapterFilters,
@@ -18,9 +18,7 @@ import type {
    DynCompareFn,
    DynDataOptions,
    DynDataFilter,
-   DynDataHost,
-   DynDataSort,
-   DynFilterFn }        from '../../types';
+   DynDataHost }        from '../../types';
 
 /**
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
@@ -213,7 +211,7 @@ export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<T[
     * @returns {IterableIterator<T>}
     * @yields {T}
     */
-   *[Symbol.iterator](): IterableIterator<T>
+   * [Symbol.iterator](): IterableIterator<T>
    {
       const array = this.#array[0];
 

@@ -4,7 +4,7 @@ import {
    AdapterSort,
    DerivedAPI,
    DynReducerUtils,
-   IndexerAPI }      from '../../common';
+   IndexerAPI }         from '../../common';
 
 import { MapIndexer }   from '../MapIndexer';
 
@@ -18,9 +18,7 @@ import type {
    DynCompareFn,
    DynDataOptions,
    DynDataFilter,
-   DynDataHost,
-   DynDataSort,
-   DynFilterFn }        from '../../types';
+   DynDataHost }        from '../../types';
 
 /**
  * Provides the base implementation derived reducer for Maps / DynMapReducer.
@@ -79,7 +77,7 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
 
       this.#index.initAdapters(this.#filtersData, this.#sortData, this.#derived);
 
-      const { filters, sort, ...optionsRest } = options;
+      const { filters, sort } = options;
 
       if (filters !== void 0)
       {
@@ -213,7 +211,7 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
     * @returns {IterableIterator<T>}
     * @yields {T}
     */
-   *[Symbol.iterator](): IterableIterator<T>
+   * [Symbol.iterator](): IterableIterator<T>
    {
       const map = this.#map[0];
 

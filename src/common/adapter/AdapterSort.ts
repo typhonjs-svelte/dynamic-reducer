@@ -38,7 +38,7 @@ export class AdapterSort<T> implements DynAdapterSort<T>
       if (typeof oldCompareFn === 'function') { this.#indexUpdate(true); }
    }
 
-   set(sort: DynCompareFn<T>|DynDataSort<T>)
+   set(sort: DynCompareFn<T> | DynDataSort<T>)
    {
       if (typeof this.#unsubscribe === 'function')
       {

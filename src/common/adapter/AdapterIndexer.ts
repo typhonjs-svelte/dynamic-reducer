@@ -2,7 +2,6 @@ import { DynReducerUtils }       from '../DynReducerUtils.js';
 
 import type {
    DynIndexerAPI,
-
    DynCompareFn,
    DynDataFilter,
    DynDataHost,

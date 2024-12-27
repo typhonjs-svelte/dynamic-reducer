@@ -61,7 +61,7 @@ export class DynArrayReducer<T>
     *
     * @param [data] - Data iterable to store if array or copy otherwise.
     */
-   constructor(data?: Iterable<T>|DynArrayData<T>)
+   constructor(data?: Iterable<T> | DynArrayData<T>)
    {
       let dataIterable: Iterable<T> = void 0;
       let filters: Iterable<DynFilterFn<T> | DynDataFilter<T>> = void 0;
@@ -152,7 +152,7 @@ export class DynArrayReducer<T>
     *
     * @returns {T[]|null} The internal data.
     */
-   get data(): T[]|null { return this.#array[0]; }
+   get data(): T[] | null { return this.#array[0]; }
 
    /**
     * @returns {DynDerivedAPI<T[], number, T>} Derived public API.
@@ -329,7 +329,7 @@ export class DynArrayReducer<T>
     * @yields {T}
     * @returns {IterableIterator<T>} Iterator for data stored in DynArrayReducer.
     */
-   *[Symbol.iterator](): IterableIterator<T>
+   * [Symbol.iterator](): IterableIterator<T>
    {
       const array = this.#array[0];
 

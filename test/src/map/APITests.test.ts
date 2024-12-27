@@ -222,7 +222,10 @@ describe(`(Map) API Test`, () =>
 
       it(`length (getter)`, () =>
       {
-         const dar = createReducer({ data: new Map([[1, 1], [2, 2]]), filters: [() => null, () => null] });
+         const dar = createReducer({
+            data: new Map([[1, 1], [2, 2]]),
+            filters: [() => null, () => null]
+         });
          assert.equal(dar.filters.length, 2, 'length (getter) returns 2');
       });
 
@@ -240,7 +243,8 @@ describe(`(Map) API Test`, () =>
             filters: [{ id: 'a', filter: () => null }, { id: 'b', filter: () => null }]
          });
 
-         assert.deepEqual([...dar.filters].map((f) => f.id), ['a', 'b'], 'iterator returns values');
+         assert.deepEqual([...dar.filters].map(
+          (f) => f.id), ['a', 'b'], 'iterator returns values');
       });
 
       it(`iterator - add with no id (default void 0 assigned)`, () =>
@@ -250,7 +254,8 @@ describe(`(Map) API Test`, () =>
             filters: [{ filter: () => null }, { filter: () => null }]
          });
 
-         assert.deepEqual([...dar.filters].map((f) => f.id), [void 0, void 0], 'iterator returns values');
+         assert.deepEqual([...dar.filters].map(
+          (f) => f.id), [void 0, void 0], 'iterator returns values');
       });
 
       it(`add - multiple w/ weight`, () =>
@@ -258,14 +263,14 @@ describe(`(Map) API Test`, () =>
          const dar = createReducer({
             data: new Map(),
             filters: [
-               { id: 'c', filter: () => null },
-               { id: 'a', filter: () => null, weight: 0.1 },
-               { id: 'b', filter: () => null, weight: 0.5 }
+               {id: 'c', filter: () => null},
+               {id: 'a', filter: () => null, weight: 0.1},
+               {id: 'b', filter: () => null, weight: 0.5}
             ]
          });
 
-         assert.deepEqual([...dar.filters].map((f) => ({ id: f.id, weight: f.weight })),
-          [{ id: 'a', weight: 0.1 }, { id: 'b', weight: 0.5 }, { id: 'c', weight: 1 }], 'add multiple w/ weight');
+         assert.deepEqual([...dar.filters].map((f) => ({id: f.id, weight: f.weight})),
+            [{id: 'a', weight: 0.1}, {id: 'b', weight: 0.5}, {id: 'c', weight: 1}], 'add multiple w/ weight');
       });
 
       it(`add - filter exclude / add value to array / regenerate index`, () =>
@@ -531,7 +536,11 @@ describe(`(Map) API Test`, () =>
          let unsubscribeCalled = false;
 
          const compare = (a, b) => b - a;
-         compare.subscribe = (handler) => { handler(); return () => unsubscribeCalled = true; };
+         compare.subscribe = (handler) =>
+         {
+            handler();
+            return () => unsubscribeCalled = true;
+         };
 
          dar.sort.set(compare);
 
@@ -551,7 +560,11 @@ describe(`(Map) API Test`, () =>
 
          dar.sort.set({
             compare: (a, b) => b - a,
-            subscribe: (handler) => { handler(); return () => unsubscribeCalled = true; }
+            subscribe: (handler) =>
+            {
+               handler();
+               return () => unsubscribeCalled = true;
+            }
          });
 
          assert.deepEqual([...dar], [2, 1], 'reverse order');
@@ -659,7 +672,7 @@ describe(`(Map) API Test`, () =>
          const dar = createReducer(new Map([[1, 1], [2, 2], [3, 3]]));
          const dr = dar.derived.create({
             name: 'test',
-            filters: [{ id: 'test', filter: (entry) => entry >= 2, weight: 0.5 }],
+            filters: [{id: 'test', filter: (entry) => entry >= 2, weight: 0.5}],
             sort: { compare: (a, b) => b - a }
          });
 
@@ -970,9 +983,18 @@ describe(`(Map) API Test`, () =>
          /**  */
          function named() {}
 
-         const dar = createReducer({ data: new Map([[() => null, 1], [() => null, 2]]), sort });
-         const dar2 = createReducer({ data: new Map([[() => null, 1], [() => null, 2]]), sort });
-         const dar3 = createReducer({ data: new Map([[() => null, 3], [named, 4]]), sort });
+         const dar = createReducer({
+            data: new Map([[() => null, 1], [() => null, 2]]),
+            sort
+         });
+         const dar2 = createReducer({
+            data: new Map([[() => null, 1], [() => null, 2]]),
+            sort
+         });
+         const dar3 = createReducer({
+            data: new Map([[() => null, 3], [named, 4]]),
+            sort
+         });
 
          assert.isNumber(dar.index.hash, 'hash is number');
          assert.isNumber(dar2.index.hash, 'hash is number');
@@ -1013,7 +1035,10 @@ describe(`(Map) API Test`, () =>
          const sort = (a, b) => a - b;
 
          const dar = createReducer({ data: new Map([[{}, 1], [{}, 2]]), sort });
-         const dar2 = createReducer({ data: new Map([[{ key: false }, 1], [{ key: true }, 2]]), sort });
+         const dar2 = createReducer({
+            data: new Map([[{key: false}, 1], [{key: true}, 2]]),
+            sort
+         });
 
          assert.isNumber(dar.index.hash, 'hash is number');
          assert.isNumber(dar2.index.hash, 'hash is number');
@@ -1027,9 +1052,18 @@ describe(`(Map) API Test`, () =>
          // A default sort method creates an index in DynMapReducer.
          const sort = (a, b) => a - b;
 
-         const dar = createReducer({ data: new Map([[Symbol.for('one'), 1], [Symbol.for('two'), 2]]), sort });
-         const dar2 = createReducer({ data: new Map([[Symbol.for('one'), 1], [Symbol.for('two'), 2]]), sort });
-         const dar3 = createReducer({ data: new Map([[Symbol.for('one'), 3], [Symbol.for('three'), 4]]), sort });
+         const dar = createReducer({
+            data: new Map([[Symbol.for('one'), 1], [Symbol.for('two'), 2]]),
+            sort
+         });
+         const dar2 = createReducer({
+            data: new Map([[Symbol.for('one'), 1], [Symbol.for('two'), 2]]),
+            sort
+         });
+         const dar3 = createReducer({
+            data: new Map([[Symbol.for('one'), 3], [Symbol.for('three'), 4]]),
+            sort
+         });
 
          assert.isNumber(dar.index.hash, 'hash is number');
          assert.isNumber(dar2.index.hash, 'hash is number');

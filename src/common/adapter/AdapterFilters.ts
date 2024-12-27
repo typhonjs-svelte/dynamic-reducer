@@ -1,6 +1,5 @@
 import type {
    DynAdapterFilters,
-
    DynDataFilter,
    DynFilterFn,
    DynIndexerUpdateFn } from '../../types';
@@ -24,7 +23,7 @@ export class AdapterFilters<T> implements DynAdapterFilters<T>
 
    get length(): number { return this.#filtersData.filters.length; }
 
-   *[Symbol.iterator](): IterableIterator<DynDataFilter<T>>
+   * [Symbol.iterator](): IterableIterator<DynDataFilter<T>>
    {
       if (this.#filtersData.filters.length === 0) { return; }
 
@@ -34,7 +33,7 @@ export class AdapterFilters<T> implements DynAdapterFilters<T>
       }
    }
 
-   add(...filters: (DynFilterFn<T>|DynDataFilter<T>)[])
+   add(...filters: (DynFilterFn<T> | DynDataFilter<T>)[])
    {
       /**
        * Tracks the number of filters added that have subscriber functionality.
@@ -73,10 +72,10 @@ export class AdapterFilters<T> implements DynAdapterFilters<T>
                }
 
                if (filter.weight !== void 0 && typeof filter.weight !== 'number' ||
-                   (filter.weight < 0 || filter.weight > 1))
+                (filter.weight < 0 || filter.weight > 1))
                {
                   throw new TypeError(
-                      `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
+                   `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
                }
 
                data = {
@@ -152,7 +151,7 @@ export class AdapterFilters<T> implements DynAdapterFilters<T>
       this.#indexUpdate();
    }
 
-   remove(...filters: (DynFilterFn<T>|DynDataFilter<T>)[])
+   remove(...filters: (DynFilterFn<T> | DynDataFilter<T>)[])
    {
       const length = this.#filtersData.filters.length;
 

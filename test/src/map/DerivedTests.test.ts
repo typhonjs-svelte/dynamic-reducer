@@ -3,8 +3,7 @@ import { assert }          from 'vitest';
 import {
    DynDerivedReducer,
    DynMapReducer,
-   DynMapReducerDerived
-} from '#package';
+   DynMapReducerDerived }  from '#package';
 
 import type { DynMapData } from '#package';
 
@@ -155,17 +154,17 @@ describe(`(Map) Derived Tests`, () =>
          const customReducer = new CustomDynMap(data);
 
          assert.deepEqual([...customReducer], [
-             { type: 'equipment', name: 'backpack' },
-             { type: 'consumable', name: 'potion' },
-             { type: 'class', name: 'sorcerer', level: 1 },
-             { type: 'spell', name: 'bane', level: 1 },
-             { type: 'spell', name: 'silence', level: 2 },
-             { type: 'consumable', name: 'ham' },
-             { type: 'spell', name: 'shield', level: 1 },
-             { type: 'equipment', name: 'icepick' },
-             { type: 'class', name: 'cleric', level: 4 },
-             { type: 'spell', name: 'spirit guardians', level: 3 }
-          ], 'matches initial data');
+            { type: 'equipment', name: 'backpack' },
+            { type: 'consumable', name: 'potion' },
+            { type: 'class', name: 'sorcerer', level: 1 },
+            { type: 'spell', name: 'bane', level: 1 },
+            { type: 'spell', name: 'silence', level: 2 },
+            { type: 'consumable', name: 'ham' },
+            { type: 'spell', name: 'shield', level: 1 },
+            { type: 'equipment', name: 'icepick' },
+            { type: 'class', name: 'cleric', level: 4 },
+            { type: 'spell', name: 'spirit guardians', level: 3 }
+         ], 'matches initial data');
 
          assert.deepEqual([...customReducer.class], [
             { type: 'class', name: 'cleric', level: 4 },
@@ -246,12 +245,12 @@ function createData(): Map<string, CustomData>
  */
 class ClassDerivedReducer extends DynMapReducerDerived<string, CustomData>
 {
-   _totalLevel: number;
+   #totalLevel: number;
 
    destroy()
    {
       super.destroy();
-      this._totalLevel = 0;
+      this.#totalLevel = 0;
    }
 
    initialize(optionsRest) // eslint-disable-line no-unused-vars
@@ -265,13 +264,13 @@ class ClassDerivedReducer extends DynMapReducerDerived<string, CustomData>
       this.subscribe(() => this.calculate());
    }
 
-   get totalLevel() { return this._totalLevel; }
+   get totalLevel() { return this.#totalLevel; }
 
    calculate()
    {
-      this._totalLevel = 0;
+      this.#totalLevel = 0;
 
-      for (const clazz of this) { this._totalLevel += clazz.level; }
+      for (const clazz of this) { this.#totalLevel += clazz.level; }
    }
 }
 
@@ -281,7 +280,7 @@ class ClassDerivedReducer extends DynMapReducerDerived<string, CustomData>
  */
 class SpellsDerivedReducer extends DynMapReducerDerived<string, CustomData>
 {
-   _levels: {
+   #levels: {
       one: DynDerivedReducer<any, any, any>,
       two: DynDerivedReducer<any, any, any>,
       three: DynDerivedReducer<any, any, any>,
@@ -292,20 +291,22 @@ class SpellsDerivedReducer extends DynMapReducerDerived<string, CustomData>
       this.filters.add((item) => item.type === 'spell');
       this.sort.set((a, b) => a.level - b.level);
 
-      this._levels = {
+      this.#levels = {
          one: this.derived.create('one'),
          two: this.derived.create('two'),
          three: this.derived.create('three')
       };
 
-      this._levels.one.filters.add((item) => item.level === 1);
-      this._levels.two.filters.add((item) => item.level === 2);
-      this._levels.three.filters.add((item) => item.level === 3);
+      this.#levels.one.filters.add((item) => item.level === 1);
+      this.#levels.two.filters.add((item) => item.level === 2);
+      this.#levels.three.filters.add((item) => item.level === 3);
    }
 
-   get one() { return this._levels.one; }
-   get two() { return this._levels.two; }
-   get three() { return this._levels.three; }
+   get one() { return this.#levels.one; }
+
+   get two() { return this.#levels.two; }
+
+   get three() { return this.#levels.three; }
 }
 
 /**
@@ -313,14 +314,14 @@ class SpellsDerivedReducer extends DynMapReducerDerived<string, CustomData>
  */
 class CustomDynMap extends DynMapReducer<string, CustomData>
 {
-   _class: ClassDerivedReducer;
-   _spells: SpellsDerivedReducer;
+   #class: ClassDerivedReducer;
+   #spells: SpellsDerivedReducer;
 
    constructor(data?: Map<string, CustomData>)
    {
       super(data);
 
-      this._class = this.derived.create({
+      this.#class = this.derived.create({
          ctor: ClassDerivedReducer,
 
          // Add additional options passed to `ClassDerivedReducer.initialize`.
@@ -328,16 +329,16 @@ class CustomDynMap extends DynMapReducer<string, CustomData>
          foo: 'bar'
       });
 
-      this._spells = this.derived.create(SpellsDerivedReducer);
+      this.#spells = this.derived.create(SpellsDerivedReducer);
    }
 
    /**
     * @returns Class derived reducer
     */
-   get class(): ClassDerivedReducer { return this._class; }
+   get class(): ClassDerivedReducer { return this.#class; }
 
    /**
     * @returns Spells derived reducer
     */
-   get spells(): SpellsDerivedReducer { return this._spells; }
+   get spells(): SpellsDerivedReducer { return this.#spells; }
 }

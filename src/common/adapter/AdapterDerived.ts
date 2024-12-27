@@ -1,4 +1,4 @@
-import { DynReducerUtils } from '../DynReducerUtils.js';
+import { DynReducerUtils }    from '../DynReducerUtils.js';
 
 import type {
    DynDerivedReducer,
@@ -7,7 +7,7 @@ import type {
    DynDataHost,
    DynOptionsDerivedCreate }  from '../../types';
 
-import type { IndexerAPI } from '../api/IndexerAPI.js';
+import type { IndexerAPI }    from '../api/IndexerAPI.js';
 
 /**
  * Provides the `derived` API for all dynamic reducers.
@@ -74,7 +74,7 @@ export class AdapterDerived<D, K, T>
       }
       else if (typeof options === 'object' && options !== null)
       {
-         ({ name, ctor = DerivedReducerCtor, ...rest } = options);
+         ({name, ctor = DerivedReducerCtor, ...rest} = options);
       }
       else
       {

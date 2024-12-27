@@ -1,4 +1,4 @@
-import type { DynDerivedReducerCtor } from '../types';
+import type { DynDerivedReducerCtor }  from '../types';
 
 export class DynReducerUtils
 {
@@ -61,7 +61,7 @@ export class DynReducerUtils
    /**
     * Converts an unknown value for hashing purposes in {@link AdapterIndexer.calcHashUpdate}.
     *
-    * Currently objects / Map w/ object keys is not supported. Potentially can include `object-hash` to handle this
+    * Currently, objects / Map w/ object keys is not supported. Potentially can include `object-hash` to handle this
     * case, but it is not common to use objects as keys in Maps.
     *
     * @param value - An unknown value to convert to a number.

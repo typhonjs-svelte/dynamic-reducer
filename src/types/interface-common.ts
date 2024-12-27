@@ -6,7 +6,8 @@ import type {
    DynDataSort,
    DynDerivedReducerCtor,
    DynFilterFn,
-   DynOptionsDerivedCreate } from './';
+   DynOptionsDerivedCreate
+} from './';
 
 /**
  * Provides the storage and sequencing of managed filters. Each filter added may be a bespoke function or a
@@ -50,7 +51,7 @@ export interface DynAdapterFilters<T>
    /**
     * @param {(DynFilterFn<T>|DynDataFilter<T>)[]} filters - One or more filter functions / DynDataFilter to add.
     */
-   add(...filters: (DynFilterFn<T>|DynDataFilter<T>)[]): void;
+   add(...filters: (DynFilterFn<T> | DynDataFilter<T>)[]): void;
 
    /**
     * Clears and removes all filters.
@@ -60,7 +61,7 @@ export interface DynAdapterFilters<T>
    /**
     * @param {(DynFilterFn<T>|DynDataFilter<T>)[]} filters - One or more filter functions / DynDataFilter to remove.
     */
-   remove(...filters: (DynFilterFn<T>|DynDataFilter<T>)[]): void;
+   remove(...filters: (DynFilterFn<T> | DynDataFilter<T>)[]): void;
 
    /**
     * Remove filters by the provided callback. The callback takes 3 parameters: `id`, `filter`, and `weight`.
@@ -110,7 +111,7 @@ export interface DynAdapterSort<T>
     *
     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#parameters
     */
-   set(sort: DynCompareFn<T>|DynDataSort<T>): void;
+   set(sort: DynCompareFn<T> | DynDataSort<T>): void;
 }
 
 /**
@@ -168,7 +169,7 @@ export interface DynDerivedAPI<D, K, T>
     *
     * @returns {DynDerivedReducer<D, K, T>} Any associated derived reducer.
     */
-   get(name: string): DynDerivedReducer<D, K, T>
+   get(name: string): DynDerivedReducer<D, K, T>;
 }
 
 /**
@@ -195,7 +196,7 @@ export interface DynIndexerAPI<K, T>
    /**
     * @returns {number} Returns length of reduced index.
     */
-   get length() : number;
+   get length(): number;
 
    /**
     * Manually invoke an update of the index.

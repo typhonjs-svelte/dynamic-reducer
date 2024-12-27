@@ -1,6 +1,7 @@
 import {
    AdapterIndexer,
-   DynReducerUtils } from '../common';
+   DynReducerUtils
+} from '../common';
 
 /**
  * @template K, T

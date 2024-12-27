@@ -1,10 +1,10 @@
-import type {AdapterDerived} from '../adapter/AdapterDerived.js';
+import type { AdapterDerived }   from '../adapter/AdapterDerived.js';
 
 import type {
    DynDerivedAPI,
    DynDerivedReducer,
    DynDerivedReducerCtor,
-   DynOptionsDerivedCreate } from '../../types';
+   DynOptionsDerivedCreate }     from '../../types';
 
 /**
  * Provides a public API for managing derived reducers.

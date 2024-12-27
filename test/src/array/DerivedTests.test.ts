@@ -1,9 +1,9 @@
-import { assert }             from 'vitest';
+import { assert }          from 'vitest';
 
 import {
    DynArrayReducer,
    DynArrayReducerDerived,
-   DynDerivedReducer }        from '#package';
+   DynDerivedReducer }     from '#package';
 
 /**
  * Provides a way to create DynArrayReducer with the types applied in the instance returned.
@@ -294,7 +294,9 @@ class SpellsDerivedReducer extends DynArrayReducerDerived<CustomData>
    }
 
    get one() { return this.#levels.one; }
+
    get two() { return this.#levels.two; }
+
    get three() { return this.#levels.three; }
 }
 

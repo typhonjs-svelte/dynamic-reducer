@@ -550,7 +550,11 @@ describe(`(Array) API Test`, () =>
          let unsubscribeCalled = false;
 
          const compare = (a, b) => b - a;
-         compare.subscribe = (handler) => { handler(); return () => unsubscribeCalled = true; };
+         compare.subscribe = (handler) =>
+         {
+            handler();
+            return () => unsubscribeCalled = true;
+         };
 
          dar.sort.set(compare);
 
@@ -570,7 +574,11 @@ describe(`(Array) API Test`, () =>
 
          dar.sort.set({
             compare: (a, b) => b - a,
-            subscribe: (handler) => { handler(); return () => unsubscribeCalled = true; }
+            subscribe: (handler) =>
+            {
+               handler();
+               return () => unsubscribeCalled = true;
+            }
          });
 
          assert.deepEqual([...dar], [2, 1], 'reverse order');

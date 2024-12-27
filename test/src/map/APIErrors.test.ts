@@ -216,7 +216,6 @@ describe(`(Map) API Errors`, () =>
       {
          const dar = createReducer();
 
-         // @ts-expect-error
          expect(() => dar.derived.create(DynMapReducer)).to.throw(Error,
           `AdapterDerived.create error: 'options' does not conform to allowed parameters.`);
       });
