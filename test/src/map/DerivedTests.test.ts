@@ -314,8 +314,8 @@ class SpellsDerivedReducer extends DynMapReducerDerived<string, CustomData>
  */
 class CustomDynMap extends DynMapReducer<string, CustomData>
 {
-   #class: ClassDerivedReducer;
-   #spells: SpellsDerivedReducer;
+   readonly #class: ClassDerivedReducer;
+   readonly #spells: SpellsDerivedReducer;
 
    constructor(data?: Map<string, CustomData>)
    {
