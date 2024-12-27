@@ -143,7 +143,7 @@ export class DynArrayReducer<T>
       if (sort) { this.sort.set(sort); }
 
       // Invoke custom initialization for child classes.
-      this.initialize();
+      queueMicrotask(() => this.initialize());
    }
 
    /**
@@ -296,6 +296,9 @@ export class DynArrayReducer<T>
             this.#array[0] = null;
          }
       }
+
+      // Force clear the index and always rebuild.
+      this.#index.indexData.index = null;
 
       // Recalculate index and force an update to any subscribers.
       this.index.update(true);

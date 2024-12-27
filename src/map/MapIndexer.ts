@@ -118,7 +118,7 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
       if (this.sortData.compareFn && map instanceof Map)
       {
          // If there is no index then create one with keys matching host item length.
-         if (!this.indexData.index) { this.indexData.index = this.indexData.index = [...map.keys()]; }
+         if (!this.indexData.index) { this.indexData.index = [...map.keys()]; }
 
          this.indexData.index.sort(this.sortFn);
       }

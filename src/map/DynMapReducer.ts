@@ -4,7 +4,7 @@ import {
    AdapterSort,
    DerivedAPI,
    DynReducerUtils,
-   IndexerAPI }               from '../common';
+   IndexerAPI }                  from '../common';
 
 import { MapIndexer }            from './MapIndexer';
 
@@ -142,8 +142,8 @@ export class DynMapReducer<K, T>
       if (filters) { this.filters.add(...filters); }
       if (sort) { this.sort.set(sort); }
 
-      // Invoke an custom initialization for child classes.
-      this.initialize();
+      // Invoke custom initialization for child classes.
+      queueMicrotask(() => this.initialize());
    }
 
    /**
@@ -297,6 +297,9 @@ export class DynMapReducer<K, T>
       {
          this.#map[0] = null;
       }
+
+      // Force clear the index and always rebuild.
+      this.#index.indexData.index = null;
 
       // Recalculate index and force an update to any subscribers.
       this.index.update(true);
