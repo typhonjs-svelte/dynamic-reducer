@@ -1,6 +1,7 @@
 /.dts/
+/coverage/
 /dist/
 /docs/
-/docs-ts/
+/html/
 /test/fixtures
 /types/

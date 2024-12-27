@@ -4,7 +4,7 @@ npm-debug.log
 *-debug.log
 *-error.log
 /.dts/
-/.nyc_output/
 /coverage/
 /dist/
+/html/
 node_modules
