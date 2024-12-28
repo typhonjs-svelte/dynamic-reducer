@@ -4,7 +4,7 @@ import {
    DynMapReducer,
    DynMapReducerDerived }  from '#package';
 
-import type { DynMapData } from '#package';
+import type { DynReducer } from '#package';
 
 /**
  * Provides a way to create DynArrayReducer with the types applied in the instance returned.
@@ -13,7 +13,7 @@ import type { DynMapData } from '#package';
  *
  * @returns New DynMapReducer instance.
  */
-function createReducer<K, T>(data?: Map<K, T> | DynMapData<K, T>): DynMapReducer<K, T>
+function createReducer<K, T>(data?: Map<K, T> | DynReducer.Options.MapReducer<K, T>): DynMapReducer<K, T>
 {
    return new DynMapReducer<K, T>(data);
 }

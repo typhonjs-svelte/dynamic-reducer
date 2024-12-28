@@ -1,26 +1,21 @@
 import { DynReducerUtils }    from '../DynReducerUtils.js';
 
-import type {
-   DynDerivedReducer,
-   DynDerivedReducerCtor,
-   DynDataOptions,
-   DynDataHost,
-   DynOptionsDerivedCreate }  from '../../types';
-
 import type { IndexerAPI }    from '../api/IndexerAPI.js';
+
+import type { DynReducer }    from '../../types';
 
 /**
  * Provides the `derived` API for all dynamic reducers.
  */
 export class AdapterDerived<D, K, T>
 {
-   #hostData: DynDataHost<D>;
+   #hostData: DynReducer.Data.Host<D>;
 
-   readonly #DerivedReducerCtor: DynDerivedReducerCtor<T>;
+   readonly #DerivedReducerCtor: DynReducer.Ctor.DerivedReducer<T>;
 
    #parentIndex: IndexerAPI<K, T>;
 
-   #derived: Map<string, DynDerivedReducer<K, T>> = new Map();
+   #derived: Map<string, DynReducer.DerivedMap<K, T>> = new Map();
 
    #destroyed = false;
 
@@ -31,7 +26,8 @@ export class AdapterDerived<D, K, T>
     *
     * @param DerivedReducerCtor - The default derived reducer constructor function.
     */
-   constructor(hostData: DynDataHost<D>, parentIndex: IndexerAPI<K, T>, DerivedReducerCtor: DynDerivedReducerCtor<T>)
+   constructor(hostData: DynReducer.Data.Host<D>, parentIndex: IndexerAPI<K, T>,
+    DerivedReducerCtor: DynReducer.Ctor.DerivedReducer<T>)
    {
       this.#hostData = hostData;
 
@@ -49,17 +45,17 @@ export class AdapterDerived<D, K, T>
     *
     * @returns Newly created derived reducer.
     */
-   create(options: DynOptionsDerivedCreate<T>): DynDerivedReducer<K, T>
+   create(options: DynReducer.Options.DerivedCreate<T>): DynReducer.DerivedMap<K, T>
    {
       if (this.#destroyed) { throw Error(`AdapterDerived.create error: this instance has been destroyed.`); }
 
       let name: string;
 
-      let rest: DynDataOptions<T> = {};
+      let rest: DynReducer.Options.Common<T> = {};
 
-      let ctor: DynDerivedReducerCtor<T>;
+      let ctor: DynReducer.Ctor.DerivedReducer<T>;
 
-      const DerivedReducerCtor: DynDerivedReducerCtor<T> = this.#DerivedReducerCtor;
+      const DerivedReducerCtor: DynReducer.Ctor.DerivedReducer<T> = this.#DerivedReducerCtor;
 
       if (typeof options === 'string')
       {
@@ -155,7 +151,7 @@ export class AdapterDerived<D, K, T>
     *
     * @returns Any associated derived reducer.
     */
-   get(name: string): DynDerivedReducer<K, T>
+   get(name: string): DynReducer.DerivedMap<K, T>
    {
       if (this.#destroyed) { throw Error(`AdapterDerived.get error: this instance has been destroyed.`); }
 

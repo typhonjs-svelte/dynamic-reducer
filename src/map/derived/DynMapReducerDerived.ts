@@ -4,21 +4,11 @@ import {
    AdapterSort,
    DerivedAPI,
    DynReducerUtils,
-   IndexerAPI }         from '../../common';
+   IndexerAPI }            from '#common';
 
-import { MapIndexer }   from '../MapIndexer';
+import { MapIndexer }      from '../MapIndexer';
 
-import type {
-   DynAdapterFilters,
-   DynAdapterSort,
-   DynDerivedAPI,
-   DynDerivedReducer,
-   DynIndexerAPI,
-
-   DynCompareFn,
-   DynDataOptions,
-   DynDataFilter,
-   DynDataHost }        from '../../types';
+import type { DynReducer } from '../../types';
 
 /**
  * Provides the base implementation derived reducer for Maps / DynMapReducer.
@@ -26,17 +16,17 @@ import type {
  * Note: That you should never directly create an instance of a derived reducer, but instead use the
  * {@link DynMapReducerDerived.initialize} callback to set up any initial state in a custom derived reducer.
  */
-export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerivedReducer<K, T>
+export class DynMapReducerDerived<K = unknown, T = unknown> implements DynReducer.DerivedMap<K, T>
 {
-   #map: DynDataHost<Map<K, T>>;
+   #map: DynReducer.Data.Host<Map<K, T>>;
 
    readonly #derived: AdapterDerived<Map<K, T>, K, T>;
 
-   readonly #derivedPublicAPI: DynDerivedAPI<K, T>;
+   readonly #derivedPublicAPI: DynReducer.API.Derived<K, T>;
 
    readonly #filters: AdapterFilters<T>;
 
-   readonly #filtersData: { filters: DynDataFilter<T>[] } = { filters: [] };
+   readonly #filtersData: { filters: DynReducer.Data.Filter<T>[] } = { filters: [] };
 
    readonly #index: MapIndexer<K, T>;
 
@@ -44,11 +34,11 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
 
    readonly #sort: AdapterSort<T>;
 
-   #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: DynReducer.Data.CompareFn<T> } = { compareFn: null };
 
    #subscriptions: Function[] = [];
 
-   #destroyed = false;
+   #destroyed: boolean = false;
 
    /**
     * @param map - Data host Map.
@@ -57,7 +47,8 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
     *
     * @param options - Any filters and sort functions to apply.
     */
-   constructor(map: DynDataHost<Map<K, T>>, parentIndex: DynIndexerAPI<K, T>, options: DynDataOptions<T>)
+   constructor(map: DynReducer.Data.Host<Map<K, T>>, parentIndex: DynReducer.API.Index<K, T>,
+    options: DynReducer.Options.Common<T>)
    {
       this.#map = map;
 
@@ -101,17 +92,17 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
    /**
     * @returns Derived public API.
     */
-   get derived(): DynDerivedAPI<K, T> { return this.#derivedPublicAPI; }
+   get derived(): DynReducer.API.Derived<K, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.
     */
-   get filters(): DynAdapterFilters<T> { return this.#filters; }
+   get filters(): DynReducer.API.Filters<T> { return this.#filters; }
 
    /**
     * @returns Returns the Indexer public API; is also iterable.
     */
-   get index(): DynIndexerAPI<K, T> { return this.#indexPublicAPI; }
+   get index(): DynReducer.API.Index<K, T> { return this.#indexPublicAPI; }
 
    /**
     * @returns Returns whether this derived reducer is destroyed.
@@ -137,7 +128,7 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynDerive
    /**
     * @returns Returns the sort adapter.
     */
-   get sort(): DynAdapterSort<T> { return this.#sort; }
+   get sort(): DynReducer.API.Sort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.

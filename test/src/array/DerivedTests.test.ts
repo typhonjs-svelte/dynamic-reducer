@@ -1,9 +1,10 @@
-import { assert }          from 'vitest';
+import { assert }             from 'vitest';
 
 import {
    DynArrayReducer,
-   DynArrayReducerDerived,
-   DynDerivedReducer }     from '#package';
+   DynArrayReducerDerived }   from '#package';
+
+import type { DynReducer }    from '#package';
 
 /**
  * Provides a way to create DynArrayReducer with the types applied in the instance returned.
@@ -272,15 +273,15 @@ class ClassDerivedReducer extends DynArrayReducerDerived<CustomData>
 class SpellsDerivedReducer extends DynArrayReducerDerived<CustomData>
 {
    #levels: {
-      one: DynDerivedReducer<string, CustomData>,
-      two: DynDerivedReducer<number, CustomData>,
-      three: DynDerivedReducer<number, CustomData>,
+      one: DynReducer.DerivedList<CustomData>,
+      two: DynReducer.DerivedList<CustomData>,
+      three: DynReducer.DerivedList<CustomData>,
    }
 
    initialize()
    {
-      this.filters.add((item) => item.type === 'spell');
-      this.sort.set((a, b) => a.level - b.level);
+      this.filters.add((item: CustomData): boolean => item.type === 'spell');
+      this.sort.set((a: CustomData, b: CustomData): number => a.level - b.level);
 
       this.#levels = {
          one: this.derived.create('one'),
@@ -288,16 +289,16 @@ class SpellsDerivedReducer extends DynArrayReducerDerived<CustomData>
          three: this.derived.create('three')
       };
 
-      this.#levels.one.filters.add((item) => item.level === 1);
-      this.#levels.two.filters.add((item) => item.level === 2);
-      this.#levels.three.filters.add((item) => item.level === 3);
+      this.#levels.one.filters.add((item: CustomData): boolean => item.level === 1);
+      this.#levels.two.filters.add((item: CustomData): boolean => item.level === 2);
+      this.#levels.three.filters.add((item: CustomData): boolean => item.level === 3);
    }
 
-   get one() { return this.#levels.one; }
+   get one(): DynReducer.DerivedList<CustomData> { return this.#levels.one; }
 
-   get two() { return this.#levels.two; }
+   get two(): DynReducer.DerivedList<CustomData> { return this.#levels.two; }
 
-   get three() { return this.#levels.three; }
+   get three(): DynReducer.DerivedList<CustomData> { return this.#levels.three; }
 }
 
 /**

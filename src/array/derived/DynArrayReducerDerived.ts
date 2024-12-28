@@ -4,21 +4,11 @@ import {
    AdapterSort,
    DerivedAPI,
    DynReducerUtils,
-   IndexerAPI }         from '../../common';
+   IndexerAPI }            from '#common';
 
-import { ArrayIndexer } from '../ArrayIndexer';
+import { ArrayIndexer }    from '../ArrayIndexer';
 
-import type {
-   DynAdapterFilters,
-   DynAdapterSort,
-   DynDerivedAPI,
-   DynDerivedReducer,
-   DynIndexerAPI,
-
-   DynCompareFn,
-   DynDataOptions,
-   DynDataFilter,
-   DynDataHost }        from '../../types';
+import type { DynReducer } from '../../types';
 
 /**
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
@@ -26,17 +16,17 @@ import type {
  * Note: That you should never directly create an instance of a derived reducer, but instead use the
  * {@link DynArrayReducerDerived.initialize} callback to set up any initial state in a custom derived reducer.
  */
-export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<number, T>
+export class DynArrayReducerDerived<T = unknown> implements DynReducer.DerivedMap<number, T>
 {
-   #array: DynDataHost<T[]>;
+   #array: DynReducer.Data.Host<T[]>;
 
    readonly #derived: AdapterDerived<T[], number, T>;
 
-   readonly #derivedPublicAPI: DynDerivedAPI<number, T>;
+   readonly #derivedPublicAPI: DynReducer.API.Derived<number, T>;
 
    readonly #filters: AdapterFilters<T>;
 
-   readonly #filtersData: { filters: DynDataFilter<T>[] } = { filters: [] };
+   readonly #filtersData: { filters: DynReducer.Data.Filter<T>[] } = { filters: [] };
 
    readonly #index: ArrayIndexer<T>;
 
@@ -44,11 +34,11 @@ export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<nu
 
    readonly #sort: AdapterSort<T>;
 
-   #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: DynReducer.Data.CompareFn<T> } = { compareFn: null };
 
    #subscriptions: Function[] = [];
 
-   #destroyed = false;
+   #destroyed: boolean = false;
 
    /**
     * @param array - Data host array.
@@ -57,7 +47,8 @@ export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<nu
     *
     * @param options - Any filters and sort functions to apply.
     */
-   constructor(array: DynDataHost<T[]>, parentIndex: DynIndexerAPI<number, T>, options: DynDataOptions<T>)
+   constructor(array: DynReducer.Data.Host<T[]>, parentIndex: DynReducer.API.Index<number, T>,
+    options: DynReducer.Options.Common<T>)
    {
       this.#array = array;
 
@@ -101,17 +92,17 @@ export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<nu
    /**
     * @returns Derived public API.
     */
-   get derived(): DynDerivedAPI<number, T> { return this.#derivedPublicAPI; }
+   get derived(): DynReducer.API.Derived<number, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.
     */
-   get filters(): DynAdapterFilters<T> { return this.#filters; }
+   get filters(): DynReducer.API.Filters<T> { return this.#filters; }
 
    /**
     * @returns Returns the Indexer public API; is also iterable.
     */
-   get index(): DynIndexerAPI<number, T> { return this.#indexPublicAPI; }
+   get index(): DynReducer.API.Index<number, T> { return this.#indexPublicAPI; }
 
    /**
     * @returns Returns whether this derived reducer is destroyed.
@@ -137,7 +128,7 @@ export class DynArrayReducerDerived<T = unknown> implements DynDerivedReducer<nu
    /**
     * @returns The sort adapter.
     */
-   get sort(): DynAdapterSort<T> { return this.#sort; }
+   get sort(): DynReducer.API.Sort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.

@@ -1,30 +1,26 @@
-import type { AdapterDerived }   from '../adapter/AdapterDerived.js';
+import type { AdapterDerived }   from '../adapter/AdapterDerived';
 
-import type {
-   DynDerivedAPI,
-   DynDerivedReducer,
-   DynDerivedReducerCtor,
-   DynOptionsDerivedCreate }     from '../../types';
+import type { DynReducer }       from '../../types';
 
 /**
  * Provides a public API for managing derived reducers.
  */
-export class DerivedAPI<D, K, T> implements DynDerivedAPI<K, T>
+export class DerivedAPI<D, K, T> implements DynReducer.API.Derived<K, T>
 {
    clear: () => void;
 
-   create: <O extends DynOptionsDerivedCreate<T>>(options: O) =>
-      O extends DynDerivedReducerCtor<T>
+   create: <O extends DynReducer.Options.DerivedCreate<T>>(options: O) =>
+      O extends DynReducer.Ctor.DerivedReducer<T>
          ? InstanceType<O>
-         : O extends { ctor: DynDerivedReducerCtor<T> }
+         : O extends { ctor: DynReducer.Ctor.DerivedReducer<T> }
             ? InstanceType<O['ctor']>
-            : DynDerivedReducer<K, T>;
+            : DynReducer.DerivedMap<K, T>;
 
    delete: (name: string) => boolean;
 
    destroy: () => void;
 
-   get: (name: string) => DynDerivedReducer<K, T>
+   get: (name: string) => DynReducer.DerivedMap<K, T>
 
    constructor(adapterDerived: AdapterDerived<D, K, T>)
    {

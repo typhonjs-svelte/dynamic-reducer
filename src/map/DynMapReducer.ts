@@ -4,24 +4,12 @@ import {
    AdapterSort,
    DerivedAPI,
    DynReducerUtils,
-   IndexerAPI }                  from '../common';
+   IndexerAPI }                  from '#common';
 
 import { MapIndexer }            from './MapIndexer';
-
-import type {
-   DynAdapterFilters,
-   DynAdapterSort,
-   DynDerivedAPI,
-   DynIndexerAPI,
-
-   DynCompareFn,
-   DynMapData,
-   DynDataFilter,
-   DynDataHost,
-   DynDataSort,
-   DynFilterFn }                 from '../types';
-
 import { DynMapReducerDerived }  from './derived/DynMapReducerDerived.js';
+
+import type { DynReducer }       from '../types';
 
 /**
  * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -29,7 +17,7 @@ import { DynMapReducerDerived }  from './derived/DynMapReducerDerived.js';
  */
 export class DynMapReducer<K, T>
 {
-   #map: DynDataHost<Map<K, T>> = [null];
+   #map: DynReducer.Data.Host<Map<K, T>> = [null];
 
    readonly #derived: AdapterDerived<Map<K, T>, K, T>;
 
@@ -37,7 +25,7 @@ export class DynMapReducer<K, T>
 
    readonly #filters: AdapterFilters<T>;
 
-   readonly #filtersData: { filters: DynDataFilter<T>[] } = { filters: [] };
+   readonly #filtersData: { filters: DynReducer.Data.Filter<T>[] } = { filters: [] };
 
    readonly #index: MapIndexer<K, T>;
 
@@ -45,7 +33,7 @@ export class DynMapReducer<K, T>
 
    readonly #sort: AdapterSort<T>;
 
-   #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: DynReducer.Data.CompareFn<T> } = { compareFn: null };
 
    #subscriptions: Function[] = [];
 
@@ -57,11 +45,11 @@ export class DynMapReducer<K, T>
     *
     * @param [data] - Data iterable to store if array or copy otherwise.
     */
-   constructor(data?: Map<K, T> | DynMapData<K, T>)
+   constructor(data?: Map<K, T> | DynReducer.Options.MapReducer<K, T>)
    {
       let dataMap: Map<K, T> = void 0;
-      let filters: Iterable<DynFilterFn<T> | DynDataFilter<T>> = void 0;
-      let sort: DynCompareFn<T> | DynDataSort<T> = void 0;
+      let filters: Iterable<DynReducer.Data.FilterFn<T> | DynReducer.Data.Filter<T>> = void 0;
+      let sort: DynReducer.Data.CompareFn<T> | DynReducer.Data.Sort<T> = void 0;
 
       if (data === null)
       {
@@ -84,7 +72,10 @@ export class DynMapReducer<K, T>
             throw new TypeError(`DynMapReducer error (DataDynMap): 'data' attribute is not a Map.`);
          }
 
-         dataMap = data.data;
+         if (data.data instanceof Map)
+         {
+            dataMap = data.data;
+         }
 
          if (data.filters !== void 0)
          {
@@ -153,17 +144,17 @@ export class DynMapReducer<K, T>
    /**
     * @returns Derived public API.
     */
-   get derived(): DynDerivedAPI<K, T> { return this.#derivedPublicAPI; }
+   get derived(): DynReducer.API.Derived<K, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.
     */
-   get filters(): DynAdapterFilters<T> { return this.#filters; }
+   get filters(): DynReducer.API.Filters<T> { return this.#filters; }
 
    /**
     * @returns Returns the Indexer public API; is also iterable.
     */
-   get index(): DynIndexerAPI<K, T> { return this.#indexPublicAPI; }
+   get index(): DynReducer.API.Index<K, T> { return this.#indexPublicAPI; }
 
    /**
     * @returns Returns whether this instance is destroyed.
@@ -188,7 +179,7 @@ export class DynMapReducer<K, T>
    /**
     * @returns The sort adapter.
     */
-   get sort(): DynAdapterSort<T> { return this.#sort; }
+   get sort(): DynReducer.API.Sort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.

@@ -1,18 +1,14 @@
-import type {
-   DynAdapterFilters,
-   DynDataFilter,
-   DynFilterFn,
-   DynIndexerUpdateFn } from '../../types';
+import type { DynReducer } from '../../types';
 
-export class AdapterFilters<T> implements DynAdapterFilters<T>
+export class AdapterFilters<T> implements DynReducer.API.Filters<T>
 {
-   #filtersData: { filters: DynDataFilter<T>[] };
+   #filtersData: { filters: DynReducer.Data.Filter<T>[] };
 
-   readonly #indexUpdate: DynIndexerUpdateFn;
+   readonly #indexUpdate: DynReducer.Data.IndexUpdateFn;
 
    #mapUnsubscribe: Map<Function, Function> = new Map();
 
-   constructor(indexUpdate: DynIndexerUpdateFn, filtersAdapter: { filters: DynDataFilter<T>[] })
+   constructor(indexUpdate: DynReducer.Data.IndexUpdateFn, filtersAdapter: { filters: DynReducer.Data.Filter<T>[] })
    {
       this.#indexUpdate = indexUpdate;
 
@@ -23,7 +19,7 @@ export class AdapterFilters<T> implements DynAdapterFilters<T>
 
    get length(): number { return this.#filtersData.filters.length; }
 
-   * [Symbol.iterator](): IterableIterator<DynDataFilter<T>>
+   * [Symbol.iterator](): IterableIterator<DynReducer.Data.Filter<T>>
    {
       if (this.#filtersData.filters.length === 0) { return; }
 
@@ -33,7 +29,7 @@ export class AdapterFilters<T> implements DynAdapterFilters<T>
       }
    }
 
-   add(...filters: (DynFilterFn<T> | DynDataFilter<T>)[])
+   add(...filters: (DynReducer.Data.FilterFn<T> | DynReducer.Data.Filter<T>)[])
    {
       /**
        * Tracks the number of filters added that have subscriber functionality.
@@ -49,14 +45,14 @@ export class AdapterFilters<T> implements DynAdapterFilters<T>
             throw new TypeError(`AdapterFilters error: 'filter' is not a function or object.`);
          }
 
-         let data: DynDataFilter<T> = void 0;
-         let subscribeFn: (indexUpdate: DynIndexerUpdateFn) => () => void = void 0;
+         let data: DynReducer.Data.Filter<T> = void 0;
+         let subscribeFn: (indexUpdate: DynReducer.Data.IndexUpdateFn) => () => void = void 0;
 
          if (filterType === 'function')
          {
             data = {
                id: void 0,
-               filter: filter as DynFilterFn<T>,
+               filter: filter as DynReducer.Data.FilterFn<T>,
                weight: 1
             };
 
@@ -151,7 +147,7 @@ export class AdapterFilters<T> implements DynAdapterFilters<T>
       this.#indexUpdate();
    }
 
-   remove(...filters: (DynFilterFn<T> | DynDataFilter<T>)[])
+   remove(...filters: (DynReducer.Data.FilterFn<T> | DynReducer.Data.Filter<T>)[])
    {
       const length = this.#filtersData.filters.length;
 
@@ -186,7 +182,7 @@ export class AdapterFilters<T> implements DynAdapterFilters<T>
       if (length !== this.#filtersData.filters.length) { this.#indexUpdate(true); }
    }
 
-   removeBy(callback: (id: any, filter: DynFilterFn<T>, weight: number) => boolean)
+   removeBy(callback: (id: any, filter: DynReducer.Data.FilterFn<T>, weight: number) => boolean)
    {
       const length = this.#filtersData.filters.length;
 

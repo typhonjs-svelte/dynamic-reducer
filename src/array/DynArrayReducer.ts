@@ -4,24 +4,13 @@ import {
    AdapterSort,
    DerivedAPI,
    DynReducerUtils,
-   IndexerAPI }                     from '../common';
+   IndexerAPI }                     from '#common';
 
 import { ArrayIndexer }             from './ArrayIndexer';
 
-import {
-   DynAdapterFilters,
-   DynAdapterSort,
-   DynDerivedAPI,
-   DynIndexerAPI,
+import { DynArrayReducerDerived }   from './derived/DynArrayReducerDerived';
 
-   DynCompareFn,
-   DynArrayData,
-   DynDataFilter,
-   DynDataHost,
-   DynDataSort,
-   DynFilterFn }                    from '../types';
-
-import { DynArrayReducerDerived }   from './derived/DynArrayReducerDerived.js';
+import type { DynReducer }          from '../types';
 
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -29,7 +18,7 @@ import { DynArrayReducerDerived }   from './derived/DynArrayReducerDerived.js';
  */
 export class DynArrayReducer<T>
 {
-   #array: DynDataHost<T[]> = [null];
+   #array: DynReducer.Data.Host<T[]> = [null];
 
    readonly #derived: AdapterDerived<T[], number, T>;
 
@@ -37,7 +26,7 @@ export class DynArrayReducer<T>
 
    readonly #filters: AdapterFilters<T>;
 
-   readonly #filtersData: { filters: DynDataFilter<T>[] } = { filters: [] };
+   readonly #filtersData: { filters: DynReducer.Data.Filter<T>[] } = { filters: [] };
 
    readonly #index: ArrayIndexer<T>;
 
@@ -45,11 +34,11 @@ export class DynArrayReducer<T>
 
    readonly #sort: AdapterSort<T>;
 
-   #sortData: { compareFn: DynCompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: DynReducer.Data.CompareFn<T> } = { compareFn: null };
 
    #subscriptions: Function[] = [];
 
-   #destroyed = false;
+   #destroyed: boolean = false;
 
    /**
     * Initializes DynArrayReducer. Any iterable is supported for initial data. Take note that if `data` is an array it
@@ -57,11 +46,11 @@ export class DynArrayReducer<T>
     *
     * @param [data] - Data iterable to store if array or copy otherwise.
     */
-   constructor(data?: Iterable<T> | DynArrayData<T>)
+   constructor(data?: Iterable<T> | DynReducer.Options.ArrayReducer<T>)
    {
       let dataIterable: Iterable<T> = void 0;
-      let filters: Iterable<DynFilterFn<T> | DynDataFilter<T>> = void 0;
-      let sort: DynCompareFn<T> | DynDataSort<T> = void 0;
+      let filters: Iterable<DynReducer.Data.FilterFn<T> | DynReducer.Data.Filter<T>> = void 0;
+      let sort: DynReducer.Data.CompareFn<T> | DynReducer.Data.Sort<T> = void 0;
 
       if (data === null)
       {
@@ -153,17 +142,17 @@ export class DynArrayReducer<T>
    /**
     * @returns Derived public API.
     */
-   get derived(): DynDerivedAPI<number, T> { return this.#derivedPublicAPI; }
+   get derived(): DynReducer.API.Derived<number, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.
     */
-   get filters(): DynAdapterFilters<T> { return this.#filters; }
+   get filters(): DynReducer.API.Filters<T> { return this.#filters; }
 
    /**
     * @returns Returns the Indexer public API; is also iterable.
     */
-   get index(): DynIndexerAPI<number, T> { return this.#indexPublicAPI; }
+   get index(): DynReducer.API.Index<number, T> { return this.#indexPublicAPI; }
 
    /**
     * @returns Returns whether this instance is destroyed.
@@ -188,7 +177,7 @@ export class DynArrayReducer<T>
    /**
     * @returns The sort adapter.
     */
-   get sort(): DynAdapterSort<T> { return this.#sort; }
+   get sort(): DynReducer.API.Sort<T> { return this.#sort; }
 
    /**
     * Sets reversed state and notifies subscribers.

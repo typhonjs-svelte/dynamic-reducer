@@ -1,4 +1,4 @@
-import type { DynDerivedReducerCtor }  from '../types';
+import type { DynReducer } from '../types';
 
 export class DynReducerUtils
 {
@@ -113,7 +113,7 @@ export class DynReducerUtils
     *
     * @returns target constructor function has Prototype.
     */
-   static hasPrototype(target: any, Prototype: DynDerivedReducerCtor<any>): boolean
+   static hasPrototype(target: any, Prototype: DynReducer.Ctor.DerivedReducer<any>): boolean
    {
       /* c8 ignore next */
       if (typeof target !== 'function') { return false; }

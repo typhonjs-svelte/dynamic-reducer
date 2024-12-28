@@ -1,13 +1,8 @@
 import { DynReducerUtils }       from '../DynReducerUtils.js';
 
-import type {
-   DynIndexerAPI,
-   DynCompareFn,
-   DynDataFilter,
-   DynDataHost,
-   DynDataIndexer }              from '../../types';
-
 import type { AdapterDerived }   from './AdapterDerived.js';
+
+import type { DynReducer }       from '../../types';
 
 /**
  * Provides construction and management of indexed data when there are parent indexes or filter / sort functions
@@ -17,19 +12,19 @@ export abstract class AdapterIndexer<D, K, T>
 {
    public derivedAdapter: AdapterDerived<D, K, T>
 
-   public filtersData: { filters: DynDataFilter<T>[] };
+   public filtersData: { filters: DynReducer.Data.Filter<T>[] };
 
-   public hostData: DynDataHost<D>;
+   public hostData: DynReducer.Data.Host<D>;
 
    public hostUpdate: Function;
 
-   public indexData: DynDataIndexer<K, T>;
+   public indexData: DynReducer.Data.Index<K, T>;
 
-   public sortData: { compareFn: DynCompareFn<T> };
+   public sortData: { compareFn: DynReducer.Data.CompareFn<T> };
 
    public sortFn: (a: K, b: K) => number;
 
-   public destroyed = false;
+   public destroyed: boolean = false;
 
    /**
     * @param hostData - Hosted data structure.
@@ -40,7 +35,7 @@ export abstract class AdapterIndexer<D, K, T>
     *
     * @returns Indexer adapter instance.
     */
-   constructor(hostData: DynDataHost<D>, hostUpdate: Function, parentIndexer?: DynIndexerAPI<K, T>)
+   constructor(hostData: DynReducer.Data.Host<D>, hostUpdate: Function, parentIndexer?: DynReducer.API.Index<K, T>)
    {
       this.hostData = hostData;
 
@@ -134,7 +129,7 @@ export abstract class AdapterIndexer<D, K, T>
     *
     * @param derivedAdapter - Associated AdapterDerived instance.
     */
-   initAdapters(filtersData: { filters: DynDataFilter<T>[] }, sortData: { compareFn: DynCompareFn<T> },
+   initAdapters(filtersData: { filters: DynReducer.Data.Filter<T>[] }, sortData: { compareFn: DynReducer.Data.CompareFn<T> },
     derivedAdapter: AdapterDerived<D, K, T>)
    {
       this.filtersData = filtersData;
