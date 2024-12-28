@@ -61,9 +61,9 @@
   "apidocs": "https://typhonjs-svelte.github.io/dynamic-reducer/",
   "scripts": {
     "build": "rollup -c",
+    "check": "esm-d-ts check src/index.ts",
     "docs": "typedoc-pkg --api-link es --export typedoc",
     "eslint": "eslint .",
-    "posttest": "npm run eslint",
     "prepublishOnly": "npm run test",
     "pretest": "npm run build",
     "test": "vitest --coverage",
