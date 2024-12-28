@@ -17,7 +17,7 @@ export class AdapterDerived<D, K, T>
 
    #derived: Map<string, DynReducer.DerivedMap<K, T>> = new Map();
 
-   #destroyed = false;
+   #destroyed: boolean = false;
 
    /**
     * @param hostData - Hosted data structure.

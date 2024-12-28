@@ -14,9 +14,9 @@ import type { DynReducer } from '../../types';
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
  *
  * Note: That you should never directly create an instance of a derived reducer, but instead use the
- * {@link DynArrayReducerDerived.initialize} callback to set up any initial state in a custom derived reducer.
+ * {@link DynArrayReducerDerived.initialize} function to set up any initial state in a custom derived reducer.
  */
-export class DynArrayReducerDerived<T = unknown> implements DynReducer.DerivedMap<number, T>
+export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
 {
    #array: DynReducer.Data.Host<T[]>;
 

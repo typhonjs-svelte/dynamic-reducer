@@ -14,9 +14,9 @@ import type { DynReducer } from '../../types';
  * Provides the base implementation derived reducer for Maps / DynMapReducer.
  *
  * Note: That you should never directly create an instance of a derived reducer, but instead use the
- * {@link DynMapReducerDerived.initialize} callback to set up any initial state in a custom derived reducer.
+ * {@link DynMapReducerDerived.initialize} function to set up any initial state in a custom derived reducer.
  */
-export class DynMapReducerDerived<K = unknown, T = unknown> implements DynReducer.DerivedMap<K, T>
+export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
 {
    #map: DynReducer.Data.Host<Map<K, T>>;
 

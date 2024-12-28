@@ -98,11 +98,11 @@ export declare namespace DynReducer {
           *
           * @returns Newly created derived reducer.
           */
-         create<O extends DynReducer.Options.DerivedCreate<T>>(options: O): O extends Ctor.DerivedReducer<T>
+         create<O extends Options.DerivedCreate<T>>(options: O): O extends Ctor.DerivedReducer<T>
             ? InstanceType<O>
             : O extends { ctor: Ctor.DerivedReducer<T> }
                ? InstanceType<O['ctor']>
-               : DynReducer.DerivedMap<K, T>;
+               : DerivedMap<K, T>;
 
          /**
           * Deletes and destroys a derived reducer.
@@ -125,7 +125,7 @@ export declare namespace DynReducer {
           *
           * @returns Any associated derived reducer.
           */
-         get(name: string): DynReducer.DerivedMap<K, T>;
+         get(name: string): DerivedMap<K, T>;
       }
 
       /**
@@ -160,7 +160,7 @@ export declare namespace DynReducer {
          /**
           * @returns Provides an iterator for filters.
           */
-         [Symbol.iterator](): IterableIterator<DynReducer.Data.Filter<T>>;
+         [Symbol.iterator](): IterableIterator<Data.Filter<T>>;
 
          /**
           * @returns Returns the length of the filter data.
@@ -170,7 +170,7 @@ export declare namespace DynReducer {
          /**
           * @param filters - One or more filter functions / DynDataFilter to add.
           */
-         add(...filters: (DynReducer.Data.FilterFn<T> | DynReducer.Data.Filter<T>)[]): void;
+         add(...filters: (Data.FilterFn<T> | Data.Filter<T>)[]): void;
 
          /**
           * Clears and removes all filters.
@@ -180,7 +180,7 @@ export declare namespace DynReducer {
          /**
           * @param filters - One or more filter functions / DynDataFilter to remove.
           */
-         remove(...filters: (DynReducer.Data.FilterFn<T> | DynReducer.Data.Filter<T>)[]): void;
+         remove(...filters: (Data.FilterFn<T> | Data.Filter<T>)[]): void;
 
          /**
           * Remove filters by the provided callback. The callback takes 3 parameters: `id`, `filter`, and `weight`.
@@ -188,7 +188,7 @@ export declare namespace DynReducer {
           *
           * @param callback - Callback function to evaluate each filter entry.
           */
-         removeBy(callback: (id: any, filter: DynReducer.Data.FilterFn<T>, weight: number) => boolean): void;
+         removeBy(callback: (id: any, filter: Data.FilterFn<T>, weight: number) => boolean): void;
 
          /**
           * @param ids - Removes filters by ID.
@@ -273,53 +273,31 @@ export declare namespace DynReducer {
           *
           * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#parameters
           */
-         set(sort: DynReducer.Data.CompareFn<T> | DynReducer.Data.Sort<T>): void;
+         set(sort: Data.CompareFn<T> | Data.Sort<T>): void;
       }
    }
 
    export namespace Ctor {
       /**
-       * Defines the shape of a dynamic array constructor function.
-       */
-      export interface ArrayReducer<T>
-      {
-         new(data?: Iterable<T> | DynReducer.Options.ArrayReducer<T>): DynArrayReducer<T>;
-      }
-
-      /**
        * Defines the shape of a derived reducer constructor function.
        */
       export interface DerivedReducer<T>
       {
-         new(hostData: DynReducer.Data.Host<any>, parentIndex: DynReducer.API.Index<any, T>,
-          options: DynReducer.Options.Common<T>): DynReducer.DerivedMap<any, T>;
+         new(hostData: Data.Host<any>, parentIndex: API.Index<any, T>, options: Options.Common<T>): DerivedMap<any, T>;
       }
 
-      /**
-       * Defines the shape of a dynamic map constructor function.
-       */
-      export interface MapReducer<K, T>
+      export interface DerivedListReducer<T> extends DerivedReducer<T>
       {
-         new(data?: Map<K, T> | DynReducer.Options.MapReducer<K, T>): DynMapReducer<K, T>;
+         new(hostData: Data.Host<T[]>, parentIndex: API.Index<number, T>, options: Options.Common<T>): DerivedList<T>;
+      }
+
+      export interface DerivedMapReducer<K, T> extends DerivedReducer<T>
+      {
+         new(hostData: Data.Host<Map<K, T>>, parentIndex: API.Index<K, T>, options: Options.Common<T>): DerivedMap<K, T>;
       }
    }
 
    export namespace Data {
-      /**
-       * Defines object / options for creating a dynamic array reducer.
-       */
-      export type ArrayCreate<T> = {
-         /**
-          * Name of dynamic array reducer.
-          */
-         name?: string;
-
-         /**
-          * A DynMapReducer constructor function / class.
-          */
-         ctor?: Ctor.ArrayReducer<T>;
-      } & Options.Common<T>;
-
       /**
        * A callback function that compares two values. Return > 0 to sort 'b' before 'a'; < 0 to sort 'a' before 'b'; or 0 to
        * keep original order of 'a' & 'b'.
@@ -451,21 +429,6 @@ export declare namespace DynReducer {
       export type IndexUpdateFn = (force?: boolean) => void;
 
       /**
-       * Defines object / options for creating a dynamic map reducer.
-       */
-      export type MapCreate<K, T> = {
-         /**
-          * Name of dynamic map reducer.
-          */
-         name?: string;
-
-         /**
-          * A DynMapReducer constructor function / class.
-          */
-         ctor?: Ctor.MapReducer<K, T>;
-      } & Options.Common<T>;
-
-      /**
        * Defines an object to configure sort functionality.
        */
       export type Sort<T> = {
@@ -493,9 +456,6 @@ export declare namespace DynReducer {
           */
          data?: Iterable<T>;
       } & Common<T>;
-
-      // TODO: REMOVE?
-      export type ArrayCreate<T> = string | Ctor.ArrayReducer<T> | Data.ArrayCreate<T>
 
       /**
        * Defines the additional options for filters and sort function.
@@ -526,8 +486,5 @@ export declare namespace DynReducer {
           */
          data?: Map<K, T>;
       } & Common<T>;
-
-      // TODO: REMOVE?
-      export type MapCreate<K, T> = string | Ctor.MapReducer<K, T> | Data.MapCreate<K, T>
    }
 }
