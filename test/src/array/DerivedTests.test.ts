@@ -15,7 +15,7 @@ import type { DynReducer }    from '#package';
  */
 function createReducer<T>(data?: T[] | object): DynArrayReducer<T>
 {
-   return new DynArrayReducer(data);
+   return new DynArrayReducer<T>(data);
 }
 
 describe(`(Array) Derived Tests`, () =>
@@ -198,11 +198,17 @@ describe(`(Array) Derived Tests`, () =>
    });
 });
 
-type CustomData = {
+interface CommonData {
    type: string;
    name: string;
-   level?: number;
 }
+
+interface LevelData extends CommonData {
+   type: 'class' | 'spell'
+   level: number;
+}
+
+type CustomData = CommonData | LevelData;
 
 /**
  * Creates hypothetical list of mixed items of a TTRPG game setting that defines the characteristics and equipment of a
@@ -232,7 +238,7 @@ function createData(): CustomData[]
  * A derived custom reducer that filters by item `class` and provides a subscriber to calculate derived
  * values (total level) from filtered data.
  */
-class ClassDerivedReducer extends DynArrayReducerDerived<CustomData>
+class ClassDerivedReducer extends DynArrayReducerDerived<LevelData>
 {
    #totalLevel: number;
 
@@ -247,8 +253,8 @@ class ClassDerivedReducer extends DynArrayReducerDerived<CustomData>
       // Ensure that additional rest options are received.
       assert.deepEqual(optionsRest, { extra: 'data', foo: 'bar' });
 
-      this.filters.add((item) => item.type === 'class');
-      this.sort.set((a, b) => a.name.localeCompare(b.name));
+      this.filters.add((item: CustomData): boolean => item.type === 'class');
+      this.sort.set((a: CustomData, b: CustomData): number => a.name.localeCompare(b.name));
 
       this.subscribe(() => this.#calculate());
    }
@@ -270,18 +276,18 @@ class ClassDerivedReducer extends DynArrayReducerDerived<CustomData>
  * A derived custom reducer that filters by item type `spell` and provides further derived reducers for
  * spell levels 1-3.
  */
-class SpellsDerivedReducer extends DynArrayReducerDerived<CustomData>
+class SpellsDerivedReducer extends DynArrayReducerDerived<LevelData>
 {
    #levels: {
-      one: DynReducer.DerivedList<CustomData>,
-      two: DynReducer.DerivedList<CustomData>,
-      three: DynReducer.DerivedList<CustomData>,
+      one: DynReducer.DerivedList<LevelData>,
+      two: DynReducer.DerivedList<LevelData>,
+      three: DynReducer.DerivedList<LevelData>,
    }
 
    initialize()
    {
       this.filters.add((item: CustomData): boolean => item.type === 'spell');
-      this.sort.set((a: CustomData, b: CustomData): number => a.level - b.level);
+      this.sort.set((a: LevelData, b: LevelData): number => a.level - b.level);
 
       this.#levels = {
          one: this.derived.create('one'),
@@ -289,16 +295,16 @@ class SpellsDerivedReducer extends DynArrayReducerDerived<CustomData>
          three: this.derived.create('three')
       };
 
-      this.#levels.one.filters.add((item: CustomData): boolean => item.level === 1);
-      this.#levels.two.filters.add((item: CustomData): boolean => item.level === 2);
-      this.#levels.three.filters.add((item: CustomData): boolean => item.level === 3);
+      this.#levels.one.filters.add((item: LevelData): boolean => item.level === 1);
+      this.#levels.two.filters.add((item: LevelData): boolean => item.level === 2);
+      this.#levels.three.filters.add((item: LevelData): boolean => item.level === 3);
    }
 
-   get one(): DynReducer.DerivedList<CustomData> { return this.#levels.one; }
+   get one(): DynReducer.DerivedList<LevelData> { return this.#levels.one; }
 
-   get two(): DynReducer.DerivedList<CustomData> { return this.#levels.two; }
+   get two(): DynReducer.DerivedList<LevelData> { return this.#levels.two; }
 
-   get three(): DynReducer.DerivedList<CustomData> { return this.#levels.three; }
+   get three(): DynReducer.DerivedList<LevelData> { return this.#levels.three; }
 }
 
 /**

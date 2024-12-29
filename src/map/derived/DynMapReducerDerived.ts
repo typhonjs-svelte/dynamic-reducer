@@ -34,7 +34,7 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
 
    readonly #sort: AdapterSort<T>;
 
-   #sortData: { compareFn: DynReducer.Data.CompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: DynReducer.Data.CompareFn<T> | null } = { compareFn: null };
 
    #subscriptions: Function[] = [];
 
@@ -185,13 +185,13 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
     */
    * [Symbol.iterator](): IterableIterator<T>
    {
-      const map = this.#map[0];
+      const map: Map<K, T> | null = this.#map[0];
 
       if (this.#destroyed || map === null || map?.size === 0) { return; }
 
       if (this.#index.active)
       {
-         for (const key of this.index) { yield map.get(key); }
+         for (const key of this.index) { yield map.get(key)!; }
       }
       else
       {

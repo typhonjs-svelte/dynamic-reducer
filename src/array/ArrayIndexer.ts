@@ -1,6 +1,8 @@
 import {
    AdapterIndexer,
-   DynReducerUtils } from '../common';
+   DynReducerUtils }       from '#common';
+
+import type { DynReducer } from '../types';
 
 /**
  */
@@ -11,7 +13,7 @@ export class ArrayIndexer<T> extends AdapterIndexer<T[], number, T>
     */
    createSortFn(): (a: number, b: number) => number
    {
-      return (a, b) => this.sortData.compareFn(this.hostData[0][a], this.hostData[0][b]);
+      return (a: number, b: number): number => this.sortData.compareFn!(this.hostData[0]![a], this.hostData[0]![b]);
    }
 
    /**
@@ -26,14 +28,14 @@ export class ArrayIndexer<T> extends AdapterIndexer<T[], number, T>
    {
       const data: number[] = [];
 
-      const array = this.hostData[0];
+      const array: T[] | null = this.hostData[0];
       if (!array) { return data; }
 
-      const filters = this.filtersData.filters;
+      const filters: DynReducer.Data.Filter<T>[] = this.filtersData.filters;
 
-      let include = true;
+      let include: boolean = true;
 
-      const parentIndex = this.indexData.parent;
+      const parentIndex: DynReducer.API.Index<number, T> | null | undefined = this.indexData.parent;
 
       // Source index data is coming from an active parent index.
       if (DynReducerUtils.isIterable(parentIndex) && parentIndex.active)

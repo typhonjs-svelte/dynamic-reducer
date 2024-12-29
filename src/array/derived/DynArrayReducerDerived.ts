@@ -34,7 +34,7 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
 
    readonly #sort: AdapterSort<T>;
 
-   #sortData: { compareFn: DynReducer.Data.CompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: DynReducer.Data.CompareFn<T> | null } = { compareFn: null };
 
    #subscriptions: Function[] = [];
 

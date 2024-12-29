@@ -13,7 +13,7 @@ import {
  */
 function createReducer<T>(data?: T[] | object): DynArrayReducer<T>
 {
-   return new DynArrayReducer(data);
+   return new DynArrayReducer<T>(data);
 }
 
 describe(`(Array) API Test`, () =>
@@ -317,7 +317,7 @@ describe(`(Array) API Test`, () =>
 
          let unsubscribeCalled = false;
 
-         const filter = () => null;
+         const filter = () => false;
          filter.subscribe = () => () => unsubscribeCalled = true;
 
          dar.filters.add(filter);
@@ -332,7 +332,7 @@ describe(`(Array) API Test`, () =>
          const dar = createReducer();
 
          assert.equal(dar.filters.length, 0);
-         dar.filters.remove(() => null);
+         dar.filters.remove(() => false);
          assert.equal(dar.filters.length, 0);
       });
 
@@ -340,7 +340,7 @@ describe(`(Array) API Test`, () =>
       {
          const dar = createReducer();
 
-         const filter = () => null;
+         const filter = () => false;
 
          dar.filters.add(filter);
          assert.equal(dar.filters.length, 1);
@@ -354,7 +354,7 @@ describe(`(Array) API Test`, () =>
 
          let unsubscribeCalled = false;
 
-         const filter = () => null;
+         const filter = () => false;
          filter.subscribe = () => () => unsubscribeCalled = true;
 
          dar.filters.add(filter);
@@ -371,7 +371,7 @@ describe(`(Array) API Test`, () =>
       {
          const dar = createReducer();
 
-         const filterData = { filter: () => null };
+         const filterData = { filter: () => false };
 
          dar.filters.add(filterData);
 
@@ -386,7 +386,7 @@ describe(`(Array) API Test`, () =>
       {
          const dar = createReducer();
 
-         dar.filters.add(() => null);
+         dar.filters.add(() => false);
 
          assert.equal(dar.filters.length, 1);
 
@@ -401,7 +401,7 @@ describe(`(Array) API Test`, () =>
          const dar = createReducer();
 
          assert.equal(dar.filters.length, 0);
-         dar.filters.removeBy(() => null);
+         dar.filters.removeBy(() => false);
          assert.equal(dar.filters.length, 0);
       });
 
@@ -411,7 +411,7 @@ describe(`(Array) API Test`, () =>
 
          let unsubscribeCalled = false;
 
-         const filter = () => null;
+         const filter = () => false;
          filter.subscribe = () => () => unsubscribeCalled = true;
 
          dar.filters.add(filter);
@@ -428,7 +428,7 @@ describe(`(Array) API Test`, () =>
       {
          const dar = createReducer();
 
-         dar.filters.add(() => null);
+         dar.filters.add(() => false);
 
          assert.equal(dar.filters.length, 1);
 
@@ -461,7 +461,7 @@ describe(`(Array) API Test`, () =>
 
          let unsubscribeCalled = false;
 
-         const filter = () => null;
+         const filter = () => false;
          filter.subscribe = () => () => unsubscribeCalled = true;
 
          dar.filters.add({ id: 123, filter });
@@ -480,7 +480,7 @@ describe(`(Array) API Test`, () =>
 
          let unsubscribeCalled = false;
 
-         const filter = () => null;
+         const filter = () => false;
 
          dar.filters.add({ id: 123, filter, subscribe: () => () => unsubscribeCalled = true });
 
@@ -640,7 +640,7 @@ describe(`(Array) API Test`, () =>
 
       it(`Extended prototype is valid (create / get / delete)`, () =>
       {
-         class ExtendedArrayReducer extends DynArrayReducerDerived {}
+         class ExtendedArrayReducer extends DynArrayReducerDerived<number> {}
 
          const dar = createReducer();
          const dr = dar.derived.create(ExtendedArrayReducer);
@@ -660,6 +660,10 @@ describe(`(Array) API Test`, () =>
             filters: [(entry) => entry >= 2],
             sort: (a, b) => b - a
          });
+
+         const dr2 = dar.derived.get('test');
+
+         assert.equal(dr, dr2);
 
          assert.deepEqual([...dar], [1, 2, 3], 'correct initial data');
          assert.deepEqual([...dr], [3, 2], 'correct derived filter sorted data');

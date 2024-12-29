@@ -45,8 +45,8 @@ export class AdapterFilters<T> implements DynReducer.API.Filters<T>
             throw new TypeError(`AdapterFilters error: 'filter' is not a function or object.`);
          }
 
-         let data: DynReducer.Data.Filter<T> = void 0;
-         let subscribeFn: (indexUpdate: DynReducer.Data.IndexUpdateFn) => () => void = void 0;
+         let data: DynReducer.Data.Filter<T>;
+         let subscribeFn: ((indexUpdate: DynReducer.Data.IndexUpdateFn) => () => void) | undefined;
 
          if (filterType === 'function')
          {
@@ -67,8 +67,8 @@ export class AdapterFilters<T> implements DynReducer.API.Filters<T>
                   throw new TypeError(`AdapterFilters error: 'filter' attribute is not a function.`);
                }
 
-               if (filter.weight !== void 0 && typeof filter.weight !== 'number' ||
-                (filter.weight < 0 || filter.weight > 1))
+               if (filter.weight !== void 0 && (typeof filter.weight !== 'number' ||
+                filter.weight < 0 || filter.weight > 1))
                {
                   throw new TypeError(
                    `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
@@ -87,11 +87,15 @@ export class AdapterFilters<T> implements DynReducer.API.Filters<T>
                throw new TypeError(`AdapterFilters error: 'filter' attribute is not a function.`);
             }
          }
+         else
+         {
+            throw new TypeError(`AdapterFilters error: 'filter' is not defined.`);
+         }
 
          // Find the index to insert where data.weight is less than existing values weight.
-         const index = this.#filtersData.filters.findIndex((value) =>
+         const index: number = this.#filtersData.filters.findIndex((value): boolean =>
          {
-            return data.weight < value.weight;
+            return data.weight! < value.weight!;
          });
 
          // If an index was found insert at that location.
@@ -168,7 +172,7 @@ export class AdapterFilters<T> implements DynReducer.API.Filters<T>
                this.#filtersData.filters.splice(cntr, 1);
 
                // Invoke any unsubscribe function for given filter then remove from tracking.
-               let unsubscribe: Function = void 0;
+               let unsubscribe: Function | undefined;
                if (typeof (unsubscribe = this.#mapUnsubscribe.get(actualFilter)) === 'function')
                {
                   unsubscribe();
@@ -199,7 +203,7 @@ export class AdapterFilters<T> implements DynReducer.API.Filters<T>
 
          if (remove)
          {
-            let unsubscribe: Function;
+            let unsubscribe: Function | undefined;
             if (typeof (unsubscribe = this.#mapUnsubscribe.get(data.filter)) === 'function')
             {
                unsubscribe();
@@ -229,7 +233,7 @@ export class AdapterFilters<T> implements DynReducer.API.Filters<T>
          // If not keeping invoke any unsubscribe function for given filter then remove from tracking.
          if (!!remove)
          {
-            let unsubscribe: Function;
+            let unsubscribe: Function | undefined;
             if (typeof (unsubscribe = this.#mapUnsubscribe.get(data.filter)) === 'function')
             {
                unsubscribe();

@@ -2,13 +2,13 @@ import type { DynReducer } from '../../types';
 
 export class AdapterSort<T> implements DynReducer.API.Sort<T>
 {
-   #sortData: { compareFn: DynReducer.Data.CompareFn<T> };
+   #sortData: { compareFn: DynReducer.Data.CompareFn<T> | null };
 
    readonly #indexUpdate: DynReducer.Data.IndexUpdateFn;
 
-   #unsubscribe: Function;
+   #unsubscribe: Function | undefined;
 
-   constructor(indexUpdate: DynReducer.Data.IndexUpdateFn, sortData: { compareFn: DynReducer.Data.CompareFn<T> })
+   constructor(indexUpdate: DynReducer.Data.IndexUpdateFn, sortData: { compareFn: DynReducer.Data.CompareFn<T> | null })
    {
       this.#indexUpdate = indexUpdate;
 
@@ -19,7 +19,7 @@ export class AdapterSort<T> implements DynReducer.API.Sort<T>
 
    clear()
    {
-      const oldCompareFn = this.#sortData.compareFn;
+      const oldCompareFn: DynReducer.Data.CompareFn<T> | null = this.#sortData.compareFn;
 
       this.#sortData.compareFn = null;
 
@@ -41,8 +41,8 @@ export class AdapterSort<T> implements DynReducer.API.Sort<T>
          this.#unsubscribe = void 0;
       }
 
-      let compareFn: DynReducer.Data.CompareFn<T> = void 0;
-      let subscribeFn: (indexUpdate: DynReducer.Data.IndexUpdateFn) => () => void = void 0;
+      let compareFn: DynReducer.Data.CompareFn<T>;
+      let subscribeFn: ((indexUpdate: DynReducer.Data.IndexUpdateFn) => () => void) | undefined;
 
       switch (typeof sort)
       {
@@ -65,13 +65,13 @@ export class AdapterSort<T> implements DynReducer.API.Sort<T>
             break;
       }
 
-      if (typeof compareFn === 'function')
+      if (typeof compareFn! === 'function')
       {
          this.#sortData.compareFn = compareFn;
       }
       else
       {
-         const oldCompareFn = this.#sortData.compareFn;
+         const oldCompareFn: DynReducer.Data.CompareFn<T> | null = this.#sortData.compareFn;
          this.#sortData.compareFn = null;
 
          // Update index if the old compare function exists.

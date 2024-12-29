@@ -224,7 +224,7 @@ describe(`(Map) API Test`, () =>
       {
          const dar = createReducer({
             data: new Map([[1, 1], [2, 2]]),
-            filters: [() => null, () => null]
+            filters: [() => false, () => false]
          });
          assert.equal(dar.filters.length, 2, 'length (getter) returns 2');
       });
@@ -240,7 +240,7 @@ describe(`(Map) API Test`, () =>
       {
          const dar = createReducer({
             data: new Map([[1, 1], [2, 2]]),
-            filters: [{ id: 'a', filter: () => null }, { id: 'b', filter: () => null }]
+            filters: [{ id: 'a', filter: () => false }, { id: 'b', filter: () => false }]
          });
 
          assert.deepEqual([...dar.filters].map(
@@ -251,7 +251,7 @@ describe(`(Map) API Test`, () =>
       {
          const dar = createReducer({
             data: new Map([[1, 1], [2, 2]]),
-            filters: [{ filter: () => null }, { filter: () => null }]
+            filters: [{ filter: () => false }, { filter: () => false }]
          });
 
          assert.deepEqual([...dar.filters].map(
@@ -263,9 +263,9 @@ describe(`(Map) API Test`, () =>
          const dar = createReducer({
             data: new Map(),
             filters: [
-               {id: 'c', filter: () => null},
-               {id: 'a', filter: () => null, weight: 0.1},
-               {id: 'b', filter: () => null, weight: 0.5}
+               {id: 'c', filter: () => false},
+               {id: 'a', filter: () => false, weight: 0.1},
+               {id: 'b', filter: () => false, weight: 0.5}
             ]
          });
 
@@ -297,7 +297,7 @@ describe(`(Map) API Test`, () =>
 
          let unsubscribeCalled = false;
 
-         const filter = () => null;
+         const filter = () => false;
          filter.subscribe = () => () => unsubscribeCalled = true;
 
          dar.filters.add(filter);
@@ -312,7 +312,7 @@ describe(`(Map) API Test`, () =>
          const dar = createReducer();
 
          assert.equal(dar.filters.length, 0);
-         dar.filters.remove(() => null);
+         dar.filters.remove(() => false);
          assert.equal(dar.filters.length, 0);
       });
 
@@ -320,7 +320,7 @@ describe(`(Map) API Test`, () =>
       {
          const dar = createReducer();
 
-         const filter = () => null;
+         const filter = () => false;
 
          dar.filters.add(filter);
          assert.equal(dar.filters.length, 1);
@@ -334,7 +334,7 @@ describe(`(Map) API Test`, () =>
 
          let unsubscribeCalled = false;
 
-         const filter = () => null;
+         const filter = () => false;
          filter.subscribe = () => () => unsubscribeCalled = true;
 
          dar.filters.add(filter);
@@ -351,7 +351,7 @@ describe(`(Map) API Test`, () =>
       {
          const dar = createReducer();
 
-         const filterData = { filter: () => null };
+         const filterData = { filter: () => false };
 
          dar.filters.add(filterData);
 
@@ -366,7 +366,7 @@ describe(`(Map) API Test`, () =>
       {
          const dar = createReducer();
 
-         dar.filters.add(() => null);
+         dar.filters.add(() => false);
 
          assert.equal(dar.filters.length, 1);
 
@@ -381,7 +381,7 @@ describe(`(Map) API Test`, () =>
          const dar = createReducer();
 
          assert.equal(dar.filters.length, 0);
-         dar.filters.removeBy(() => null);
+         dar.filters.removeBy(() => false);
          assert.equal(dar.filters.length, 0);
       });
 
@@ -391,7 +391,7 @@ describe(`(Map) API Test`, () =>
 
          let unsubscribeCalled = false;
 
-         const filter = () => null;
+         const filter = () => false;
          filter.subscribe = () => () => unsubscribeCalled = true;
 
          dar.filters.add(filter);
@@ -408,7 +408,7 @@ describe(`(Map) API Test`, () =>
       {
          const dar = createReducer();
 
-         dar.filters.add(() => null);
+         dar.filters.add(() => false);
 
          assert.equal(dar.filters.length, 1);
 
@@ -441,7 +441,7 @@ describe(`(Map) API Test`, () =>
 
          let unsubscribeCalled = false;
 
-         const filter = () => null;
+         const filter = () => false;
          filter.subscribe = () => () => unsubscribeCalled = true;
 
          dar.filters.add({ id: 123, filter });
@@ -460,7 +460,7 @@ describe(`(Map) API Test`, () =>
 
          let unsubscribeCalled = false;
 
-         const filter = () => null;
+         const filter = () => false;
 
          dar.filters.add({ id: 123, filter, subscribe: () => () => unsubscribeCalled = true });
 
@@ -620,7 +620,7 @@ describe(`(Map) API Test`, () =>
 
       it(`Extended prototype is valid (create / get / delete)`, () =>
       {
-         class ExtendedMapReducer extends DynMapReducerDerived {}
+         class ExtendedMapReducer extends DynMapReducerDerived<string, number> {}
 
          const dar = createReducer();
          const dr = dar.derived.create(ExtendedMapReducer);
@@ -640,6 +640,10 @@ describe(`(Map) API Test`, () =>
             filters: [(entry) => entry >= 2],
             sort: (a, b) => b - a
          });
+
+         const dr2 = dar.derived.get('test');
+
+         assert.equal(dr, dr2);
 
          assert.deepEqual([...dar], [1, 2, 3], 'correct initial data');
          assert.deepEqual([...dr], [3, 2], 'correct derived filter sorted data');

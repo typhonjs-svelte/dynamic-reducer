@@ -273,7 +273,7 @@ export declare namespace DynReducer {
           *
           * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#parameters
           */
-         set(sort: Data.CompareFn<T> | Data.Sort<T>): void;
+         set(sort: Data.CompareFn<T> | Data.Sort<T> | null | undefined): void;
       }
    }
 
@@ -283,17 +283,20 @@ export declare namespace DynReducer {
        */
       export interface DerivedReducer<T>
       {
-         new(hostData: Data.Host<any>, parentIndex: API.Index<any, T>, options: Options.Common<T>): DerivedMap<any, T>;
+         new(hostData: Data.Host<any>, parentIndex: API.Index<any, T> | null, options: Options.Common<T>):
+          DerivedMap<any, T>;
       }
 
       export interface DerivedListReducer<T> extends DerivedReducer<T>
       {
-         new(hostData: Data.Host<T[]>, parentIndex: API.Index<number, T>, options: Options.Common<T>): DerivedList<T>;
+         new(hostData: Data.Host<T[]>, parentIndex: API.Index<number, T> | null, options: Options.Common<T>):
+          DerivedList<T>;
       }
 
       export interface DerivedMapReducer<K, T> extends DerivedReducer<T>
       {
-         new(hostData: Data.Host<Map<K, T>>, parentIndex: API.Index<K, T>, options: Options.Common<T>): DerivedMap<K, T>;
+         new(hostData: Data.Host<Map<K, T>>, parentIndex: API.Index<K, T> | null, options: Options.Common<T>):
+          DerivedMap<K, T>;
       }
    }
 
@@ -418,7 +421,7 @@ export declare namespace DynReducer {
          /**
           * Any associated parent index data.
           */
-         parent?: API.Index<K, T>;
+         parent?: API.Index<K, T> | null;
       };
 
       /**

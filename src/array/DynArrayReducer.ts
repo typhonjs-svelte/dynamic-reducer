@@ -34,7 +34,7 @@ export class DynArrayReducer<T>
 
    readonly #sort: AdapterSort<T>;
 
-   #sortData: { compareFn: DynReducer.Data.CompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: DynReducer.Data.CompareFn<T> | null } = { compareFn: null };
 
    #subscriptions: Function[] = [];
 
@@ -48,9 +48,9 @@ export class DynArrayReducer<T>
     */
    constructor(data?: Iterable<T> | DynReducer.Options.ArrayReducer<T>)
    {
-      let dataIterable: Iterable<T> = void 0;
-      let filters: Iterable<DynReducer.Data.FilterFn<T> | DynReducer.Data.Filter<T>> = void 0;
-      let sort: DynReducer.Data.CompareFn<T> | DynReducer.Data.Sort<T> = void 0;
+      let dataIterable: Iterable<T> | undefined;
+      let filters: Iterable<DynReducer.Data.FilterFn<T> | DynReducer.Data.Filter<T>> | undefined;
+      let sort: DynReducer.Data.CompareFn<T> | DynReducer.Data.Sort<T> | undefined;
 
       if (data === null)
       {

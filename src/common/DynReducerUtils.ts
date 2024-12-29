@@ -11,7 +11,7 @@ export class DynReducerUtils
     *
     * @returns Arrays are equal.
     */
-   static arrayEquals(a: any[], b: any[]): boolean
+   static arrayEquals(a: any[] | null, b: any[] | null): boolean
    {
       if (a === b) { return true; }
 
@@ -41,8 +41,10 @@ export class DynReducerUtils
     *
     * @returns Hash code.
     */
-   static hashString(str: string, seed: number = 0): number
+   static hashString(str: string | undefined, seed: number = 0): number
    {
+      if (str === undefined || str === null) { return 0; }
+
       let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
 
       for (let ch: number, i = 0; i < str.length; i++)
@@ -136,7 +138,7 @@ export class DynReducerUtils
     *
     * @returns Is data iterable.
     */
-   static isIterable(data: any): boolean
+   static isIterable(data: any): data is Iterable<any>
    {
       return data !== null && data !== void 0 && typeof data === 'object' &&
        typeof data[Symbol.iterator] === 'function';

@@ -20,7 +20,7 @@ export abstract class AdapterIndexer<D, K, T>
 
    public indexData: DynReducer.Data.Index<K, T>;
 
-   public sortData: { compareFn: DynReducer.Data.CompareFn<T> };
+   public sortData: { compareFn: DynReducer.Data.CompareFn<T> | null };
 
    public sortFn: (a: K, b: K) => number;
 
@@ -76,19 +76,19 @@ export abstract class AdapterIndexer<D, K, T>
     *
     * @param [force=false] - When true forces an update to subscribers.
     */
-   calcHashUpdate(oldIndex: K[], oldHash: number | null, force: boolean = false)
+   calcHashUpdate(oldIndex: K[] | null, oldHash: number | null, force: boolean = false)
    {
       // Use force if a boolean otherwise default to false.
-      const actualForce = typeof force === 'boolean' ? force : /* c8 ignore next */ false;
+      const actualForce: boolean = typeof force === 'boolean' ? force : /* c8 ignore next */ false;
 
       let newHash: number | null = null;
-      const newIndex = this.indexData.index;
+      const newIndex: K[] | null = this.indexData.index;
 
       if (newIndex)
       {
          for (let cntr: number = newIndex.length; --cntr >= 0;)
          {
-            newHash ^= DynReducerUtils.hashUnknown(newIndex[cntr]) + 0x9e3779b9 + (newHash << 6) + (newHash >> 2);
+            newHash! ^= DynReducerUtils.hashUnknown(newIndex[cntr]) + 0x9e3779b9 + (newHash! << 6) + (newHash! >> 2);
          }
       }
 
@@ -114,7 +114,7 @@ export abstract class AdapterIndexer<D, K, T>
 
       this.indexData.index = null;
       this.indexData.hash = null;
-      this.indexData.reversed = null;
+      this.indexData.reversed = false;
       this.indexData.parent = null;
 
       this.destroyed = true;
@@ -129,8 +129,8 @@ export abstract class AdapterIndexer<D, K, T>
     *
     * @param derivedAdapter - Associated AdapterDerived instance.
     */
-   initAdapters(filtersData: { filters: DynReducer.Data.Filter<T>[] }, sortData: { compareFn: DynReducer.Data.CompareFn<T> },
-    derivedAdapter: AdapterDerived<D, K, T>)
+   initAdapters(filtersData: { filters: DynReducer.Data.Filter<T>[] },
+    sortData: { compareFn: DynReducer.Data.CompareFn<T> | null }, derivedAdapter: AdapterDerived<D, K, T>)
    {
       this.filtersData = filtersData;
 

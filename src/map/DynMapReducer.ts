@@ -33,7 +33,7 @@ export class DynMapReducer<K, T>
 
    readonly #sort: AdapterSort<T>;
 
-   #sortData: { compareFn: DynReducer.Data.CompareFn<T> } = { compareFn: null };
+   #sortData: { compareFn: DynReducer.Data.CompareFn<T> | null } = { compareFn: null };
 
    #subscriptions: Function[] = [];
 
@@ -47,9 +47,9 @@ export class DynMapReducer<K, T>
     */
    constructor(data?: Map<K, T> | DynReducer.Options.MapReducer<K, T>)
    {
-      let dataMap: Map<K, T> = void 0;
-      let filters: Iterable<DynReducer.Data.FilterFn<T> | DynReducer.Data.Filter<T>> = void 0;
-      let sort: DynReducer.Data.CompareFn<T> | DynReducer.Data.Sort<T> = void 0;
+      let dataMap: Map<K, T> | undefined;
+      let filters: Iterable<DynReducer.Data.FilterFn<T> | DynReducer.Data.Filter<T>> | undefined;
+      let sort: DynReducer.Data.CompareFn<T> | DynReducer.Data.Sort<T> | undefined;
 
       if (data === null)
       {
@@ -241,7 +241,7 @@ export class DynMapReducer<K, T>
          throw new TypeError(`DynMapReducer.setData error: 'replace' is not a boolean.`);
       }
 
-      const map = this.#map[0];
+      const map: Map<K, T> | null = this.#map[0];
 
       // If the array isn't defined or 'replace' is true then replace internal data with new array or create an array
       // from an iterable.
@@ -256,7 +256,7 @@ export class DynMapReducer<K, T>
 
          for (const key of data.keys())
          {
-            map.set(key, data.get(key));
+            map.set(key, data.get(key)!);
 
             if (removeKeySet.has(key)) { removeKeySet.delete(key); }
          }
@@ -318,7 +318,7 @@ export class DynMapReducer<K, T>
 
       if (this.#index.active)
       {
-         for (const key of this.index) { yield map.get(key); }
+         for (const key of this.index) { yield map.get(key)!; }
       }
       else
       {

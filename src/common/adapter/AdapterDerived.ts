@@ -13,7 +13,7 @@ export class AdapterDerived<D, K, T>
 
    readonly #DerivedReducerCtor: DynReducer.Ctor.DerivedReducer<T>;
 
-   #parentIndex: IndexerAPI<K, T>;
+   #parentIndex: IndexerAPI<K, T> | null;
 
    #derived: Map<string, DynReducer.DerivedMap<K, T>> = new Map();
 
@@ -49,7 +49,7 @@ export class AdapterDerived<D, K, T>
    {
       if (this.#destroyed) { throw Error(`AdapterDerived.create error: this instance has been destroyed.`); }
 
-      let name: string;
+      let name: string | undefined;
 
       let rest: DynReducer.Options.Common<T> = {};
 
@@ -68,7 +68,7 @@ export class AdapterDerived<D, K, T>
       }
       else if (typeof options === 'object' && options !== null)
       {
-         ({name, ctor = DerivedReducerCtor, ...rest} = options);
+         ({ name, ctor = DerivedReducerCtor, ...rest } = options);
       }
       else
       {
@@ -151,7 +151,7 @@ export class AdapterDerived<D, K, T>
     *
     * @returns Any associated derived reducer.
     */
-   get(name: string): DynReducer.DerivedMap<K, T>
+   get(name: string): DynReducer.DerivedMap<K, T> | undefined
    {
       if (this.#destroyed) { throw Error(`AdapterDerived.get error: this instance has been destroyed.`); }
 

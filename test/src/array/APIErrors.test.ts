@@ -11,7 +11,7 @@ import { DynArrayReducer } from '#package';
  */
 function createReducer<T>(data?: T[]): DynArrayReducer<T>
 {
-   return new DynArrayReducer(data);
+   return new DynArrayReducer<T>(data);
 }
 
 describe(`(Array) API Errors`, () =>
@@ -20,6 +20,7 @@ describe(`(Array) API Errors`, () =>
    {
       it(`null argument`, () =>
       {
+         // @ts-expect-error
          expect(() => new DynArrayReducer(null)).to.throw(TypeError,
           `DynArrayReducer error: 'data' is not iterable.`);
       });
@@ -95,6 +96,7 @@ describe(`(Array) API Errors`, () =>
       {
          const dar = createReducer();
 
+         // @ts-expect-error
          expect(() => dar.filters.add(null)).to.throw(TypeError,
           `AdapterFilters error: 'filter' is not a function or object.`);
       });
@@ -130,7 +132,7 @@ describe(`(Array) API Errors`, () =>
       {
          const dar = createReducer();
 
-         expect(() => dar.filters.add({ filter: () => null, weight: -1 })).to.throw(TypeError,
+         expect(() => dar.filters.add({ filter: () => false, weight: -1 })).to.throw(TypeError,
           `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
       });
 
@@ -138,7 +140,7 @@ describe(`(Array) API Errors`, () =>
       {
          const dar = createReducer();
 
-         expect(() => dar.filters.add({ filter: () => null, weight: 2 })).to.throw(TypeError,
+         expect(() => dar.filters.add({ filter: () => false, weight: 2 })).to.throw(TypeError,
           `AdapterFilters error: 'weight' attribute is not a number between '0 - 1' inclusive.`);
       });
 
@@ -146,9 +148,10 @@ describe(`(Array) API Errors`, () =>
       {
          const dar = createReducer();
 
-         const filter = () => null;
+         const filter = () => false;
          filter.subscribe = () => null;
 
+         // @ts-expect-error
          expect(() => dar.filters.add(filter)).to.throw(TypeError,
           `AdapterFilters error: Filter has subscribe function, but no unsubscribe function is returned.`);
       });
@@ -157,7 +160,7 @@ describe(`(Array) API Errors`, () =>
       {
          const dar = createReducer();
 
-         const filter = () => null;
+         const filter = () => false;
          filter.subscribe = () => () => null;
 
          expect(() => dar.filters.add(filter, filter)).to.throw(Error,
@@ -169,7 +172,7 @@ describe(`(Array) API Errors`, () =>
       it(`removeBy - callback not a function`, () =>
       {
          const dar = createReducer();
-         dar.filters.add(() => null);
+         dar.filters.add(() => false);
 
          // @ts-expect-error
          expect(() => dar.filters.removeBy()).to.throw(TypeError,
@@ -183,9 +186,10 @@ describe(`(Array) API Errors`, () =>
       {
          const dar = createReducer();
 
-         const compareFn = () => null;
+         const compareFn = () => 0;
          compareFn.subscribe = () => null;
 
+         // @ts-expect-error
          expect(() => dar.sort.set(compareFn)).to.throw(Error,
           `AdapterSort error: sort has 'subscribe' function, but no 'unsubscribe' function is returned.`);
       });
@@ -261,6 +265,7 @@ describe(`(Array) API Errors`, () =>
          const dar = createReducer();
          const dr = dar.derived.create('test');
 
+         // @ts-expect-error
          expect(() => dr.reversed = null).to.throw(Error,
           `DerivedArrayReducer.reversed error: 'reversed' is not a boolean.`);
       });

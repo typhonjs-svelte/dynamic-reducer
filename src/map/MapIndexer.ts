@@ -11,7 +11,7 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
     */
    createSortFn(): (a: K, b: K) => number
    {
-      return (a, b) => this.sortData.compareFn(this.hostData[0].get(a), this.hostData[0].get(b));
+      return (a, b) => this.sortData.compareFn!(this.hostData[0]!.get(a)!, this.hostData[0]!.get(b)!);
    }
 
    /**
@@ -40,8 +40,10 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
       {
          for (const key of parentIndex)
          {
-            const value = map.get(key);
+            const value: T | undefined = map.get(key);
             include = true;
+
+            if (value === undefined) { continue; }
 
             for (let filCntr = 0, filLength = filters.length; filCntr < filLength; filCntr++)
             {
@@ -61,7 +63,9 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
          {
             include = true;
 
-            const value = map.get(key);
+            const value: T | undefined = map.get(key);
+
+            if (value === undefined) { continue; }
 
             for (let filCntr = 0, filLength = filters.length; filCntr < filLength; filCntr++)
             {
