@@ -1,5 +1,5 @@
-import typescript          from '@rollup/plugin-typescript';
-import { generateDTS }     from '@typhonjs-build-test/esm-d-ts';
+import typescript       from '@rollup/plugin-typescript';
+import { generateDTS }  from '@typhonjs-build-test/esm-d-ts';
 
 // Produce sourcemaps or not.
 const s_SOURCEMAP = true;
@@ -15,7 +15,7 @@ export default () =>
             sourcemap: s_SOURCEMAP,
          }],
          plugins: [
-            typescript(),
+            typescript({ include: ['src/**/*'] }),
             generateDTS.plugin({ importsResolve: true })
          ]
       }

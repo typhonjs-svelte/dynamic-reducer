@@ -5,6 +5,7 @@
     "target": "ES2022",
     "baseUrl": ".",
 
+    "strictNullChecks": true,
     "sourceMap": true,
     "inlineSources": true,
     "strict": false,
@@ -13,6 +14,6 @@
     "types": ["vitest/globals"]
   },
 
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules/*"]
 }
