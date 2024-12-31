@@ -35,7 +35,7 @@ export class DynMapReducer<K, T>
 
    #sortData: { compareFn: DynReducer.Data.CompareFn<T> | null } = { compareFn: null };
 
-   #subscriptions: Function[] = [];
+   #subscribers: Set<Function> = new Set();
 
    #destroyed = false;
 
@@ -214,11 +214,11 @@ export class DynMapReducer<K, T>
       this.index.update(true);
 
       // Remove all subscriptions.
-      this.#subscriptions.length = 0;
+      this.#subscribers.clear();
 
-      this.#index.destroy();
       this.#filters.clear();
       this.#sort.clear();
+      this.#index.destroy();
    }
 
    /**
@@ -285,16 +285,12 @@ export class DynMapReducer<K, T>
     */
    subscribe(handler: (value: DynMapReducer<K, T>) => void): () => void
    {
-      this.#subscriptions.push(handler); // add handler to the array of subscribers
+      if (!this.#subscribers.has(handler)) { this.#subscribers.add(handler); }
 
       handler(this);                     // call handler with current value
 
       // Return unsubscribe function.
-      return () =>
-      {
-         const index = this.#subscriptions.findIndex((sub) => sub === handler);
-         if (index >= 0) { this.#subscriptions.splice(index, 1); }
-      };
+      return (): void => { this.#subscribers.delete(handler); }
    }
 
    /**
@@ -302,7 +298,7 @@ export class DynMapReducer<K, T>
     */
    #updateSubscribers()
    {
-      for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](this); }
+      for (const subscriber of this.#subscribers) { subscriber(this); }
    }
 
    /**

@@ -43,9 +43,10 @@ export class DynReducerUtils
     */
    static hashString(str: string | undefined, seed: number = 0): number
    {
-      if (str === undefined || str === null) { return 0; }
+      /* c8 ignore next */
+      if (str === void 0 || str === null) { return 0; }
 
-      let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+      let h1: number = 0xdeadbeef ^ seed, h2: number = 0x41c6ce57 ^ seed;
 
       for (let ch: number, i = 0; i < str.length; i++)
       {

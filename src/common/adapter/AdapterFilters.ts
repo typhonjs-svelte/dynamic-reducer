@@ -86,6 +86,7 @@ export class AdapterFilters<T> implements DynReducer.API.Filters<T>
             {
                throw new TypeError(`AdapterFilters error: 'filter' attribute is not a function.`);
             }
+         /* c8 ignore next 5 */ // TS type guard for `else` conditional.
          }
          else
          {

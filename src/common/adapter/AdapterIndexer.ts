@@ -14,7 +14,7 @@ export abstract class AdapterIndexer<D, K, T>
 
    public filtersData: { filters: DynReducer.Data.Filter<T>[] };
 
-   public hostData: DynReducer.Data.Host<D>;
+   public hostData: DynReducer.Data.Host<D> | null;
 
    public hostUpdate: Function;
 
@@ -112,6 +112,7 @@ export abstract class AdapterIndexer<D, K, T>
    {
       if (this.destroyed) { return; }
 
+      this.hostData = null;
       this.indexData.index = null;
       this.indexData.hash = null;
       this.indexData.reversed = false;

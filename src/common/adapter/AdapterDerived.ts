@@ -9,7 +9,7 @@ import type { DynReducer }    from '../../types';
  */
 export class AdapterDerived<D, K, T>
 {
-   #hostData: DynReducer.Data.Host<D>;
+   #hostData: DynReducer.Data.Host<D> | null;
 
    readonly #DerivedReducerCtor: DynReducer.Ctor.DerivedReducer<T>;
 
@@ -47,7 +47,10 @@ export class AdapterDerived<D, K, T>
     */
    create(options: DynReducer.Options.DerivedCreate<T>): DynReducer.DerivedMap<K, T>
    {
-      if (this.#destroyed) { throw Error(`AdapterDerived.create error: this instance has been destroyed.`); }
+      if (this.#destroyed || this.#hostData === null)
+      {
+         throw Error(`AdapterDerived.create error: this instance has been destroyed.`);
+      }
 
       let name: string | undefined;
 
@@ -138,7 +141,7 @@ export class AdapterDerived<D, K, T>
 
       this.clear();
 
-      this.#hostData = [null];
+      this.#hostData = null;
       this.#parentIndex = null;
 
       this.#destroyed = true;

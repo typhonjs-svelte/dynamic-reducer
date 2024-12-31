@@ -18,7 +18,7 @@ import type { DynReducer } from '../../types';
  */
 export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
 {
-   #array: DynReducer.Data.Host<T[]>;
+   #array: DynReducer.Data.Host<T[]> | null;
 
    readonly #derived: AdapterDerived<T[], number, T>;
 
@@ -36,7 +36,7 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
 
    #sortData: { compareFn: DynReducer.Data.CompareFn<T> | null } = { compareFn: null };
 
-   #subscriptions: Function[] = [];
+   #subscribers: Set<Function> = new Set();
 
    #destroyed: boolean = false;
 
@@ -114,7 +114,7 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
     */
    get length(): number
    {
-      const array = this.#array[0];
+      const array: T[] | null | undefined = this.#array?.[0];
 
       return this.#index.active ? this.index.length :
        array ? array.length : 0;
@@ -156,11 +156,11 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
       this.#destroyed = true;
 
       // Remove any external data reference and perform a final update.
-      this.#array = [null];
-      this.#index.update(true);
+      this.#array = null;
+      this.index.update(true);
 
       // Remove all subscriptions.
-      this.#subscriptions.length = 0;
+      this.#subscribers.clear();
 
       this.#derived.destroy();
       this.#index.destroy();
@@ -185,7 +185,7 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
     */
    * [Symbol.iterator](): IterableIterator<T>
    {
-      const array = this.#array[0];
+      const array: T[] | null = this.#array?.[0] ?? null;
 
       if (this.#destroyed || array === null || array?.length === 0) { return; }
 
@@ -217,23 +217,19 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
     */
    subscribe(handler: (value: DynArrayReducerDerived<T>) => void): () => void
    {
-      this.#subscriptions.push(handler); // add handler to the array of subscribers
+      if (!this.#subscribers.has(handler)) { this.#subscribers.add(handler); }
 
       handler(this);                     // call handler with current value
 
       // Return unsubscribe function.
-      return () =>
-      {
-         const index = this.#subscriptions.findIndex((sub) => sub === handler);
-         if (index >= 0) { this.#subscriptions.splice(index, 1); }
-      };
+      return (): void => { this.#subscribers.delete(handler); }
    }
 
    /**
     * Updates subscribers on changes.
     */
-   #updateSubscribers()
+   #updateSubscribers(): void
    {
-      for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](this); }
+      for (const subscriber of this.#subscribers) { subscriber(this); }
    }
 }

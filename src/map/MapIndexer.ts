@@ -1,6 +1,7 @@
 import {
    AdapterIndexer,
    DynReducerUtils } from '../common';
+import {DynReducer} from "#package";
 
 /**
  */
@@ -11,7 +12,15 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
     */
    createSortFn(): (a: K, b: K) => number
    {
-      return (a, b) => this.sortData.compareFn!(this.hostData[0]!.get(a)!, this.hostData[0]!.get(b)!);
+      return (a, b) =>
+      {
+         const data: Map<K, T> | null | undefined = this.hostData?.[0];
+         const dataA: T | undefined = data?.get(a);
+         const dataB: T | undefined = data?.get(b);
+
+         /* c8 ignore next */
+         return dataA && dataB ? this.sortData.compareFn!(dataA, dataB) : 0;
+      }
    }
 
    /**
@@ -26,14 +35,14 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
    {
       const data: K[] = [];
 
-      const map = this.hostData[0];
+      const map: Map<K, T> | null | undefined = this.hostData?.[0];
       if (!map) { return data; }
 
-      const filters = this.filtersData.filters;
+      const filters: DynReducer.Data.Filter<T>[] = this.filtersData.filters;
 
-      let include = true;
+      let include: boolean = true;
 
-      const parentIndex = this.indexData.parent;
+      const parentIndex: DynReducer.API.Index<K, T> | null | undefined = this.indexData.parent;
 
       // Source index data is coming from an active parent index.
       if (DynReducerUtils.isIterable(parentIndex) && parentIndex.active)
@@ -43,6 +52,7 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
             const value: T | undefined = map.get(key);
             include = true;
 
+            /* c8 ignore next */
             if (value === undefined) { continue; }
 
             for (let filCntr = 0, filLength = filters.length; filCntr < filLength; filCntr++)
@@ -65,7 +75,8 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
 
             const value: T | undefined = map.get(key);
 
-            if (value === undefined) { continue; }
+            /* c8 ignore next */
+            if (value === void 0) { continue; }
 
             for (let filCntr = 0, filLength = filters.length; filCntr < filLength; filCntr++)
             {
@@ -93,11 +104,11 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
    {
       if (this.destroyed) { return; }
 
-      const oldIndex = this.indexData.index;
-      const oldHash = this.indexData.hash;
+      const oldIndex: K[] | null = this.indexData.index;
+      const oldHash: number | null = this.indexData.hash;
 
-      const map = this.hostData[0];
-      const parentIndex = this.indexData.parent;
+      const map: Map<K, T> | null | undefined = this.hostData?.[0];
+      const parentIndex: DynReducer.API.Index<K, T> | null | undefined = this.indexData.parent;
 
       // Clear index if there are no filters and no sort function or the index length doesn't match the item length.
       if ((this.filtersData.filters.length === 0 && !this.sortData.compareFn) ||

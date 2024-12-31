@@ -13,7 +13,14 @@ export class ArrayIndexer<T> extends AdapterIndexer<T[], number, T>
     */
    createSortFn(): (a: number, b: number) => number
    {
-      return (a: number, b: number): number => this.sortData.compareFn!(this.hostData[0]![a], this.hostData[0]![b]);
+      return (a: number, b: number): number =>
+      {
+         const data: T[] | null | undefined = this.hostData?.[0];
+         const dataA: T | undefined = data?.[a];
+         const dataB: T | undefined = data?.[b];
+         /* c8 ignore next */
+         return dataA && dataB ? this.sortData.compareFn!(dataA, dataB) : 0;
+      }
    }
 
    /**
@@ -28,7 +35,7 @@ export class ArrayIndexer<T> extends AdapterIndexer<T[], number, T>
    {
       const data: number[] = [];
 
-      const array: T[] | null = this.hostData[0];
+      const array: T[] | null | undefined = this.hostData?.[0];
       if (!array) { return data; }
 
       const filters: DynReducer.Data.Filter<T>[] = this.filtersData.filters;
@@ -89,11 +96,11 @@ export class ArrayIndexer<T> extends AdapterIndexer<T[], number, T>
    {
       if (this.destroyed) { return; }
 
-      const oldIndex = this.indexData.index;
-      const oldHash = this.indexData.hash;
+      const oldIndex: number[] | null = this.indexData.index;
+      const oldHash: number | null = this.indexData.hash;
 
-      const array = this.hostData[0];
-      const parentIndex = this.indexData.parent;
+      const array: T[] | null | undefined = this.hostData?.[0];
+      const parentIndex: DynReducer.API.Index<number, T> | null | undefined = this.indexData.parent;
 
       // Clear index if there are no filters and no sort function or the index length doesn't match the item length.
       if ((this.filtersData.filters.length === 0 && !this.sortData.compareFn) ||

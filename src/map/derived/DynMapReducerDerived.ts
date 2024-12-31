@@ -18,7 +18,7 @@ import type { DynReducer } from '../../types';
  */
 export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
 {
-   #map: DynReducer.Data.Host<Map<K, T>>;
+   #map: DynReducer.Data.Host<Map<K, T>> | null;
 
    readonly #derived: AdapterDerived<Map<K, T>, K, T>;
 
@@ -36,7 +36,7 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
 
    #sortData: { compareFn: DynReducer.Data.CompareFn<T> | null } = { compareFn: null };
 
-   #subscriptions: Function[] = [];
+   #subscribers: Set<Function> = new Set();
 
    #destroyed: boolean = false;
 
@@ -114,7 +114,7 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
     */
    get length(): number
    {
-      const map = this.#map[0];
+      const map: Map<K, T> | null | undefined = this.#map?.[0];
 
       return this.#index.active ? this.index.length :
        map ? map.size : 0;
@@ -160,7 +160,7 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
       this.#index.update(true);
 
       // Remove all subscriptions.
-      this.#subscriptions.length = 0;
+      this.#subscribers.clear();
 
       this.#derived.destroy();
       this.#index.destroy();
@@ -185,7 +185,7 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
     */
    * [Symbol.iterator](): IterableIterator<T>
    {
-      const map: Map<K, T> | null = this.#map[0];
+      const map: Map<K, T> | null = this.#map?.[0] ?? null;
 
       if (this.#destroyed || map === null || map?.size === 0) { return; }
 
@@ -219,16 +219,12 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
     */
    subscribe(handler: (value: DynMapReducerDerived<K, T>) => void): () => void
    {
-      this.#subscriptions.push(handler); // add handler to the array of subscribers
+      if (!this.#subscribers.has(handler)) { this.#subscribers.add(handler); }
 
       handler(this);                     // call handler with current value
 
       // Return unsubscribe function.
-      return () =>
-      {
-         const index = this.#subscriptions.findIndex((sub) => sub === handler);
-         if (index >= 0) { this.#subscriptions.splice(index, 1); }
-      };
+      return (): void => { this.#subscribers.delete(handler); }
    }
 
    /**
@@ -236,6 +232,6 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
     */
    #updateSubscribers()
    {
-      for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](this); }
+      for (const subscriber of this.#subscribers) { subscriber(this); }
    }
 }
