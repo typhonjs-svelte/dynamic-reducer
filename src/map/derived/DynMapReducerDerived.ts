@@ -17,6 +17,10 @@ import type { Internal }   from '../../types/internal';
  *
  * Note: That you should never directly create an instance of a derived reducer, but instead use the
  * {@link DynMapReducerDerived.initialize} function to set up any initial state in a custom derived reducer.
+ *
+ * @typeParam K `any` - Key type.
+ *
+ * @typeParam T `any` - Type of data.
  */
 export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
 {
@@ -48,6 +52,10 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
     * @param parentIndex - Parent indexer.
     *
     * @param options - Any filters and sort functions to apply.
+    *
+    * @typeParam K `any` - Key type.
+    *
+    * @typeParam T `any` - Type of data.
     */
    constructor(map: Internal.Data.Host<Map<K, T>>, parentIndex: DynReducer.API.Index<K, T>,
     options: DynReducer.Options.Common<T>)

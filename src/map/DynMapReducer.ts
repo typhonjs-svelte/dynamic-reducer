@@ -14,8 +14,12 @@ import type { DynReducer }       from '../types';
 import type { Internal }         from '../types/internal';
 
 /**
- * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
- * Svelte store support.
+ * Provides a managed {@link Map} with non-destructive reducing / filtering / sorting capabilities with subscription /
+ * Svelte store support allowing for a {@link Map} to be treated like an iterable list.
+ *
+ * @typeParam K `any` - Key type.
+ *
+ * @typeParam T `any` - Type of data.
  */
 export class DynMapReducer<K, T>
 {
@@ -46,6 +50,10 @@ export class DynMapReducer<K, T>
     * will be used as the host array and not copied. All non-array iterables otherwise create a new array / copy.
     *
     * @param [data] - Data iterable to store if array or copy otherwise.
+    *
+    * @typeParam K `any` - Key type.
+    *
+    * @typeParam T `any` - Type of data.
     */
    constructor(data?: Map<K, T> | DynReducer.Options.MapReducer<K, T>)
    {

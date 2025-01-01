@@ -16,6 +16,8 @@ import type { Internal }            from '../types/internal';
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
  * Svelte store support.
+ *
+ * @typeParam T `any` - Type of data.
  */
 export class DynArrayReducer<T>
 {
@@ -46,8 +48,10 @@ export class DynArrayReducer<T>
     * will be used as the host array and not copied. All non-array iterables otherwise create a new array / copy.
     *
     * @param [data] - Data iterable to store if array or copy otherwise.
+    *
+    * @typeParam T `any` - Type of data.
     */
-   constructor(data?: Iterable<T> | DynReducer.Options.ArrayReducer<T>)
+   constructor(data?: Iterable<T> | DynReducer.Options.ListReducer<T>)
    {
       let dataIterable: Iterable<T> | undefined;
       let filters: Iterable<DynReducer.Data.FilterFn<T> | DynReducer.Data.Filter<T>> | undefined;

@@ -17,6 +17,8 @@ import type { Internal }   from '../../types/internal';
  *
  * Note: That you should never directly create an instance of a derived reducer, but instead use the
  * {@link DynArrayReducerDerived.initialize} function to set up any initial state in a custom derived reducer.
+ *
+ * @typeParam T `any` - Type of data.
  */
 export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
 {
@@ -48,6 +50,8 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
     * @param parentIndex - Parent indexer.
     *
     * @param options - Any filters and sort functions to apply.
+    *
+    * @typeParam T `any` - Type of data.
     */
    constructor(array: Internal.Data.Host<T[]>, parentIndex: DynReducer.API.Index<number, T>,
     options: DynReducer.Options.Common<T>)

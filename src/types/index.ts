@@ -1,14 +1,90 @@
 import type { DynArrayReducerDerived } from '../array';
-import type { DynMapReducerDerived } from '../map';
+import type { DynMapReducerDerived }   from '../map';
 
+/**
+ * Defines all public types for the `dynamic-reducer` library.
+ */
 export declare namespace DynReducer {
    /**
-    * Defines the common interface for a derived reducer.
+    * Defines the common interface for a derived list reducer.
+    *
+    * @typeParam T `any` - Type of data.
+    */
+   export interface DerivedList<T>
+   {
+      /**
+       * @returns Provides an iterator for data stored in the derived reducer.
+       */
+      [Symbol.iterator](): IterableIterator<T>;
+
+      /**
+       * @returns Derived public API.
+       */
+      get derived(): API.DerivedList<T>;
+
+      /**
+       * @returns The filters adapter.
+       */
+      get filters(): API.Filters<T>;
+
+      /**
+       * @returns Returns the Indexer public API.
+       */
+      get index(): API.Index<number, T>;
+
+      /**
+       * @returns Returns whether this derived reducer is destroyed.
+       */
+      get destroyed(): boolean;
+
+      /**
+       * @returns Returns the main data items or indexed items length.
+       */
+      get length(): number;
+
+      /**
+       * @returns Returns current reversed state.
+       */
+      get reversed(): boolean;
+
+      /**
+       * @returns The sort adapter.
+       */
+      get sort(): API.Sort<T>;
+
+      /**
+       * Sets reversed state and notifies subscribers.
+       *
+       * @param reversed - New reversed state.
+       */
+      set reversed(reversed: boolean);
+
+      /**
+       * Removes all derived reducers, subscriptions, and cleans up all resources.
+       */
+      destroy(): void;
+
+      /**
+       * Add a subscriber to this DynMapReducer instance.
+       *
+       * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
+       *
+       * @returns Unsubscribe function.
+       */
+      subscribe(handler: (value: DerivedList<T>) => void): () => void;
+   }
+
+   /**
+    * Defines the common interface for a derived map reducer.
+    *
+    * @typeParam K `any` - Key type.
+    *
+    * @typeParam T `any` - Type of data.
     */
    export interface DerivedMap<K, T>
    {
       /**
-       * @returns Provides an iterato`r for data stored in DynDerivedReducer.
+       * @returns Provides an iterator for data stored in the derived reducer.
        */
       [Symbol.iterator](): IterableIterator<T>;
 
@@ -70,78 +146,15 @@ export declare namespace DynReducer {
    }
 
    /**
-    * Defines the common interface for a derived reducer.
+    * Defines the main composed public API for top-level and derived reducers.
     */
-   export interface DerivedList<T>
-   {
-      /**
-       * @returns Provides an iterato`r for data stored in DynDerivedReducer.
-       */
-      [Symbol.iterator](): IterableIterator<T>;
-
-      /**
-       * @returns Derived public API.
-       */
-      get derived(): API.DerivedList<T>;
-
-      /**
-       * @returns The filters adapter.
-       */
-      get filters(): API.Filters<T>;
-
-      /**
-       * @returns Returns the Indexer public API.
-       */
-      get index(): API.Index<number, T>;
-
-      /**
-       * @returns Returns whether this derived reducer is destroyed.
-       */
-      get destroyed(): boolean;
-
-      /**
-       * @returns Returns the main data items or indexed items length.
-       */
-      get length(): number;
-
-      /**
-       * @returns Returns current reversed state.
-       */
-      get reversed(): boolean;
-
-      /**
-       * @returns The sort adapter.
-       */
-      get sort(): API.Sort<T>;
-
-      /**
-       * Sets reversed state and notifies subscribers.
-       *
-       * @param reversed - New reversed state.
-       */
-      set reversed(reversed: boolean);
-
-      /**
-       * Removes all derived reducers, subscriptions, and cleans up all resources.
-       */
-      destroy(): void;
-
-      /**
-       * Add a subscriber to this DynMapReducer instance.
-       *
-       * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
-       *
-       * @returns Unsubscribe function.
-       */
-      subscribe(handler: (value: DerivedList<T>) => void): () => void;
-   }
-
    export namespace API {
       /**
-       * Provides the public API for derived reducers. There are several ways to create a derived reducer from utilizing the
-       * default implementation or passing in a constructor function / class for a custom derived reducer.
+       * Provides the public API for derived list reducers. There are several ways to create a derived reducer from
+       * utilizing the default implementation or passing in a constructor function / class for a custom derived reducer.
        *
-       * This class forms the public API which is accessible from the `.derived` getter in the main reducer implementation.
+       * This API is accessible from the `derived` getter in the top-level and derived list reducers.
+       *
        * ```
        * const dynArray = new DynArrayReducer([...]);
        * dynArray.derived.clear();
@@ -150,61 +163,8 @@ export declare namespace DynReducer {
        * dynArray.derived.destroy();
        * dynArray.derived.get(...);
        * ```
-       */
-      export interface DerivedMap<K, T>
-      {
-         /**
-          * Removes all derived reducers and associated subscriptions.
-          */
-         clear(): void;
-
-         /**
-          * @param options - Options for creating a reducer.
-          *
-          * @returns Newly created derived reducer.
-          */
-         create<O extends Options.DerivedMapCreate<K, T>>(options: O): O extends typeof DynMapReducerDerived<K, T>
-            ? InstanceType<O>
-            : O extends { ctor: typeof DynMapReducerDerived<K, T> }
-               ? InstanceType<O['ctor']>
-               : DynReducer.DerivedMap<K, T>;
-
-         /**
-          * Deletes and destroys a derived reducer.
-          *
-          * @param name - Name of the derived reducer
-          *
-          * @returns Whether the derived reducer was deleted.
-          */
-         delete(name: string): boolean;
-
-         /**
-          * Removes all derived reducers, associated subscriptions, and cleans up all resources.
-          */
-         destroy(): void;
-
-         /**
-          * Returns an existing derived reducer.
-          *
-          * @param name - Name of derived reducer.
-          *
-          * @returns Any associated derived reducer.
-          */
-         get(name: string): DynReducer.DerivedMap<K, T> | undefined;
-      }
-      /**
-       * Provides the public API for derived reducers. There are several ways to create a derived reducer from utilizing the
-       * default implementation or passing in a constructor function / class for a custom derived reducer.
        *
-       * This class forms the public API which is accessible from the `.derived` getter in the main reducer implementation.
-       * ```
-       * const dynArray = new DynArrayReducer([...]);
-       * dynArray.derived.clear();
-       * dynArray.derived.create(...);
-       * dynArray.derived.delete(...);
-       * dynArray.derived.destroy();
-       * dynArray.derived.get(...);
-       * ```
+       * @typeParam T `any` - Type of data.
        */
       export interface DerivedList<T>
       {
@@ -249,6 +209,67 @@ export declare namespace DynReducer {
       }
 
       /**
+       * Provides the public API for derived map reducers. There are several ways to create a derived reducer from
+       * utilizing the default implementation or passing in a constructor function / class for a custom derived reducer.
+       *
+       * This API is accessible from the `derived` getter in the top-level and derived map reducers.
+       *
+       * ```
+       * const dynMap = new DynMapReducer([...]);
+       * dynMap.derived.clear();
+       * dynMap.derived.create(...);
+       * dynMap.derived.delete(...);
+       * dynMap.derived.destroy();
+       * dynMap.derived.get(...);
+       * ```
+       *
+       * @typeParam K `any` - Key type.
+       *
+       * @typeParam T `any` - Type of data.
+       */
+      export interface DerivedMap<K, T>
+      {
+         /**
+          * Removes all derived reducers and associated subscriptions.
+          */
+         clear(): void;
+
+         /**
+          * @param options - Options for creating a reducer.
+          *
+          * @returns Newly created derived reducer.
+          */
+         create<O extends Options.DerivedMapCreate<K, T>>(options: O): O extends typeof DynMapReducerDerived<K, T>
+            ? InstanceType<O>
+            : O extends { ctor: typeof DynMapReducerDerived<K, T> }
+               ? InstanceType<O['ctor']>
+               : DynReducer.DerivedMap<K, T>;
+
+         /**
+          * Deletes and destroys a derived reducer.
+          *
+          * @param name - Name of the derived reducer
+          *
+          * @returns Whether the derived reducer was deleted.
+          */
+         delete(name: string): boolean;
+
+         /**
+          * Removes all derived reducers, associated subscriptions, and cleans up all resources.
+          */
+         destroy(): void;
+
+         /**
+          * Returns an existing derived reducer.
+          *
+          * @param name - Name of derived reducer.
+          *
+          * @returns Any associated derived reducer.
+          */
+         get(name: string): DynReducer.DerivedMap<K, T> | undefined;
+      }
+
+      /**
        * Provides the storage and sequencing of managed filters. Each filter added may be a bespoke function or a
        * {@link DynReducer.Data.Filter} object containing an `id`, `filter`, and `weight` attributes; `filter` is the
        * only required attribute.
@@ -274,6 +295,8 @@ export declare namespace DynReducer {
        * dynArray.filters.removeBy(...);
        * dynArray.filters.removeById(...);
        * ```
+       *
+       * @typeParam T `any` - Type of data.
        */
       export interface Filters<T>
       {
@@ -328,6 +351,10 @@ export declare namespace DynReducer {
        * dynArray.index.length;
        * dynArray.index.update(...);
        * ```
+       *
+       * @typeParam K `any` - Key type.
+       *
+       * @typeParam T `any` - Type of data.
        */
       export interface Index<K, T>
       {
@@ -376,6 +403,8 @@ export declare namespace DynReducer {
        * dynArray.sort.clear();
        * dynArray.sort.set(...);
        * ```
+       *
+       * @typeParam T `any` - Type of data.
        */
       export interface Sort<T>
       {
@@ -397,15 +426,20 @@ export declare namespace DynReducer {
       }
    }
 
+   /**
+    * Defines data utilized by the `dynamic-reducer` library.
+    */
    export namespace Data {
       /**
-       * A callback function that compares two values. Return > 0 to sort 'b' before 'a'; < 0 to sort 'a' before 'b'; or 0 to
-       * keep original order of 'a' & 'b'.
+       * A callback function that compares two values. Return > 0 to sort 'b' before 'a'; < 0 to sort 'a' before 'b';
+       * or 0 to keep original order of 'a' & 'b'.
        *
-       * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a subscribe
-       * function is provided automatic updates to the reduced index is performed.
+       * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a
+       * subscribe function is provided automatic updates to the reduced index is performed.
+       *
+       * @typeParam T `any` - Type of data.
        */
-      export type CompareFn<T> = {
+      export interface CompareFn<T> {
          /**
           * @param a - Element 'a' of backing data to sort.
           *
@@ -420,30 +454,12 @@ export declare namespace DynReducer {
           *        function.
           */
          subscribe?: (indexUpdate: IndexUpdateFn) => () => void;
-      };
+      }
 
       /**
-       * Defines object / options for creating a derived reducer.
-       */
-      export type DerivedMapCreate<K, T> = {
-         /**
-          * Name of derived reducer.
-          */
-         name?: string;
-
-         /**
-          * A DerivedReducer constructor function / class.
-          */
-         ctor?: typeof DynMapReducerDerived<K, T>;
-
-         /**
-          * Extra data to pass through to `initialize`.
-          */
-         [key: string]: any;
-      } & Options.Common<T>;
-
-      /**
-       * Defines object / options for creating a derived reducer.
+       * Defines object / options for creating a derived list reducer.
+       *
+       * @typeParam T `any` - Type of data.
        */
       export interface DerivedListCreate<T> extends Options.Common<T> {
          /**
@@ -463,7 +479,33 @@ export declare namespace DynReducer {
       }
 
       /**
+       * Defines object / options for creating a derived map reducer.
+       *
+       * @typeParam K `any` - Key type.
+       *
+       * @typeParam T `any` - Type of data.
+       */
+      export interface DerivedMapCreate<K, T> extends Options.Common<T> {
+         /**
+          * Name of derived reducer.
+          */
+         name?: string;
+
+         /**
+          * A DerivedReducer constructor function / class.
+          */
+         ctor?: typeof DynMapReducerDerived<K, T>;
+
+         /**
+          * Extra data to pass through to `initialize`.
+          */
+         [key: string]: any;
+      }
+
+      /**
        * Defines the data object to configure a filter w/ additional configuration options.
+       *
+       * @typeParam T `any` - Type of data.
        */
       export type Filter<T> = {
          /**
@@ -492,10 +534,12 @@ export declare namespace DynReducer {
       /**
        * Filter function that takes an element argument and returns a truthy value to keep it.
        *
-       * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a subscribe
-       * function is provided automatic updates to the reduced index is performed.
+       * This function has an optional subscribe function that follows the Svelte store Subscriber pattern. If a
+       * subscribe function is provided automatic updates to the reduced index is performed.
+       *
+       * @typeParam T `any` - Type of data.
        */
-      export type FilterFn<T> = {
+      export interface FilterFn<T> {
          /**
           * @param element - Element of backing data structure to filter.
           *
@@ -509,7 +553,7 @@ export declare namespace DynReducer {
           * @param indexUpdate - Callback function that is invoked on update / changes. Receives `this` reference.
           */
          subscribe?: (indexUpdate: IndexUpdateFn) => () => void;
-      };
+      }
 
       /**
        * Updates associated dynamic reducer indexer.
@@ -520,6 +564,8 @@ export declare namespace DynReducer {
 
       /**
        * Defines an object to configure sort functionality.
+       *
+       * @typeParam T `any` - Type of data.
        */
       export type Sort<T> = {
          /**
@@ -536,19 +582,26 @@ export declare namespace DynReducer {
       };
    }
 
+   /**
+    * Defines all options objects utilized by the `dynamic-reducer` library.
+    */
    export namespace Options {
       /**
        * The main options object for DynArrayReducer.
+       *
+       * @typeParam T `any` - Type of data.
        */
-      export type ArrayReducer<T> = {
+      export interface ListReducer<T> extends Common<T> {
          /**
           * Initial data iterable list.
           */
          data?: Iterable<T>;
-      } & Common<T>;
+      }
 
       /**
        * Defines the additional options for filters and sort function.
+       *
+       * @typeParam T `any` - Type of data.
        */
       export interface Common<T> {
          /**
@@ -563,7 +616,11 @@ export declare namespace DynReducer {
       }
 
       /**
-       * Creates a compound type for all derived reducer 'create' option combinations.
+       * Creates a compound type for all derived list reducer 'create' option combinations.
+       *
+       * Includes additional type inference constraints for {@link Data.DerivedListCreate}.
+       *
+       * @typeParam T `any` - Type of data.
        */
       export type DerivedListCreate<T> =
          | string
@@ -575,7 +632,13 @@ export declare namespace DynReducer {
          ));
 
       /**
-       * Creates a compound type for all derived reducer 'create' option combinations.
+       * Creates a compound type for all derived map reducer 'create' option combinations.
+       *
+       * Includes additional type inference constraints for {@link Data.DerivedMapCreate}.
+       *
+       * @typeParam K `any` - Key type.
+       *
+       * @typeParam T `any` - Type of data.
        */
       export type DerivedMapCreate<K, T> =
          | string
@@ -588,12 +651,16 @@ export declare namespace DynReducer {
 
       /**
        * The main options object for DynMapReducer.
+       *
+       * @typeParam K `any` - Key type.
+       *
+       * @typeParam T `any` - Type of data.
        */
-      export type MapReducer<K, T> = {
+      export interface MapReducer<K, T> extends Common<T> {
          /**
           * Optional initial backing Map.
           */
          data?: Map<K, T>;
-      } & Common<T>;
+      }
    }
 }
