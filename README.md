@@ -11,7 +11,7 @@
 
 
 
-Provides managed reducing / filtering / sorting capabilities with subscription / Svelte store support for 
-arrays and Maps.
+Provides managed reducing / filtering / sorting capabilities with subscription / Svelte store support for
+arrays and Maps. In particular, this allows Maps to be treated like a filtered / sorted iterable list.
 
 [API documentation](https://typhonjs-svelte.github.io/dynamic-reducer/)
