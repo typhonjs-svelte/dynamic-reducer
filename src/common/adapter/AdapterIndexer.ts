@@ -19,7 +19,7 @@ export abstract class AdapterIndexer<D, K, T>
 
    public hostUpdate: Function;
 
-   public indexData: DynReducer.Data.Index<K, T>;
+   public indexData: Internal.Data.Index<K, T>;
 
    public sortData: { compareFn: DynReducer.Data.CompareFn<T> | null };
 

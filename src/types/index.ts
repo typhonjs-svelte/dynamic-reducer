@@ -512,31 +512,6 @@ export declare namespace DynReducer {
       };
 
       /**
-       * Defines the data object storing index data in AdapterIndexer.
-       */
-      export type Index<K, T> = {
-         /**
-          * The index array.
-          */
-         index: K[] | null;
-
-         /**
-          * Hashcode for current index content.
-          */
-         hash: number | null;
-
-         /**
-          * Is iteration reversed?
-          */
-         reversed: boolean;
-
-         /**
-          * Any associated parent index data.
-          */
-         parent?: API.Index<K, T> | null;
-      };
-
-      /**
        * Updates associated dynamic reducer indexer.
        *
        * @param [force] - Force an update the index regardless of hash calculations.

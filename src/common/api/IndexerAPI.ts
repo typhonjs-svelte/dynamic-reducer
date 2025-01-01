@@ -1,10 +1,11 @@
 import type { AdapterIndexer }   from '../adapter/AdapterIndexer';
 
 import type { DynReducer }       from '../../types';
+import type { Internal }         from '../../types/internal';
 
 export class IndexerAPI<K, T> implements DynReducer.API.Index<K, T>
 {
-   readonly #indexData: DynReducer.Data.Index<K, T>
+   readonly #indexData: Internal.Data.Index<K, T>
 
    /**
     * Provides a getter to determine if the index is active.

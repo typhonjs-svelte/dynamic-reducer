@@ -17,6 +17,31 @@ export namespace Internal {
        * Provides a compound type for the backing data structure stored in reducers.
        */
       export type Host<D> = (D | null)[];
+
+      /**
+       * Defines the data object storing index data in AdapterIndexer.
+       */
+      export type Index<K, T> = {
+         /**
+          * The index array.
+          */
+         index: K[] | null;
+
+         /**
+          * Hashcode for current index content.
+          */
+         hash: number | null;
+
+         /**
+          * Is iteration reversed?
+          */
+         reversed: boolean;
+
+         /**
+          * Any associated parent index data.
+          */
+         parent?: DynReducer.API.Index<K, T> | null;
+      };
    }
 
    export namespace Options {
