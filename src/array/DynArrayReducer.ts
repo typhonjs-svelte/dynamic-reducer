@@ -11,6 +11,7 @@ import { DerivedListAPI }           from './derived/DerivedListAPI';
 import { DynArrayReducerDerived }   from './derived/DynArrayReducerDerived';
 
 import type { DynReducer }          from '../types';
+import type { Internal }            from '../types/internal';
 
 /**
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -18,7 +19,7 @@ import type { DynReducer }          from '../types';
  */
 export class DynArrayReducer<T>
 {
-   #array: DynReducer.Data.Host<T[]> = [null];
+   #array: Internal.Data.Host<T[]> = [null];
 
    readonly #derived: AdapterDerived<T[], number, T>;
 

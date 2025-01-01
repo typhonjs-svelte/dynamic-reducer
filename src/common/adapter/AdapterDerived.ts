@@ -3,15 +3,16 @@ import { DynReducerUtils }    from '../DynReducerUtils';
 import type { IndexerAPI }    from '../api/IndexerAPI';
 
 import type { DynReducer }    from '../../types';
+import type { Internal }      from '../../types/internal';
 
 /**
  * Provides the `derived` API for all dynamic reducers.
  */
 export class AdapterDerived<D, K, T>
 {
-   #hostData: DynReducer.Data.Host<D> | null;
+   #hostData: Internal.Data.Host<D> | null;
 
-   readonly #DerivedReducerCtor: DynReducer.Ctor.DerivedReducer<K, T>;
+   readonly #DerivedReducerCtor: Internal.Ctor.DerivedReducer<K, T>;
 
    #parentIndex: IndexerAPI<K, T> | null;
 
@@ -26,8 +27,8 @@ export class AdapterDerived<D, K, T>
     *
     * @param DerivedReducerCtor - The default derived reducer constructor function.
     */
-   constructor(hostData: DynReducer.Data.Host<D>, parentIndex: IndexerAPI<K, T>,
-    DerivedReducerCtor: DynReducer.Ctor.DerivedReducer<K, T>)
+   constructor(hostData: Internal.Data.Host<D>, parentIndex: IndexerAPI<K, T>,
+    DerivedReducerCtor: Internal.Ctor.DerivedReducer<K, T>)
    {
       this.#hostData = hostData;
 
@@ -45,7 +46,7 @@ export class AdapterDerived<D, K, T>
     *
     * @returns Newly created derived reducer.
     */
-   create(options: DynReducer.Options.DerivedCreate<K, T>): DynReducer.DerivedList<T> | DynReducer.DerivedMap<K, T>
+   create(options: Internal.Options.DerivedCreate<K, T>): DynReducer.DerivedList<T> | DynReducer.DerivedMap<K, T>
    {
       if (this.#destroyed || this.#hostData === null)
       {
@@ -56,9 +57,9 @@ export class AdapterDerived<D, K, T>
 
       let rest: DynReducer.Options.Common<T> = {};
 
-      let ctor: DynReducer.Ctor.DerivedReducer<K, T>;
+      let ctor: Internal.Ctor.DerivedReducer<K, T>;
 
-      const DerivedReducerCtor: DynReducer.Ctor.DerivedReducer<K, T> = this.#DerivedReducerCtor;
+      const DerivedReducerCtor: Internal.Ctor.DerivedReducer<K, T> = this.#DerivedReducerCtor;
 
       if (typeof options === 'string')
       {

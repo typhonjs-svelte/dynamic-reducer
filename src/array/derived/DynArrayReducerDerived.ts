@@ -10,6 +10,7 @@ import { ArrayIndexer }    from '../ArrayIndexer';
 import { DerivedListAPI }  from './DerivedListAPI';
 
 import type { DynReducer } from '../../types';
+import type { Internal }   from '../../types/internal';
 
 /**
  * Provides the base implementation derived reducer for arrays / DynArrayReducer.
@@ -19,7 +20,7 @@ import type { DynReducer } from '../../types';
  */
 export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
 {
-   #array: DynReducer.Data.Host<T[]> | null;
+   #array: Internal.Data.Host<T[]> | null;
 
    readonly #derived: AdapterDerived<T[], number, T>;
 
@@ -48,7 +49,7 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
     *
     * @param options - Any filters and sort functions to apply.
     */
-   constructor(array: DynReducer.Data.Host<T[]>, parentIndex: DynReducer.API.Index<number, T>,
+   constructor(array: Internal.Data.Host<T[]>, parentIndex: DynReducer.API.Index<number, T>,
     options: DynReducer.Options.Common<T>)
    {
       this.#array = array;

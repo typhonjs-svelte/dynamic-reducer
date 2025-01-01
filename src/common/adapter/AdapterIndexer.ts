@@ -3,6 +3,7 @@ import { DynReducerUtils }       from '../DynReducerUtils';
 import type { AdapterDerived }   from './AdapterDerived';
 
 import type { DynReducer }       from '../../types';
+import type { Internal }         from '../../types/internal';
 
 /**
  * Provides construction and management of indexed data when there are parent indexes or filter / sort functions
@@ -14,7 +15,7 @@ export abstract class AdapterIndexer<D, K, T>
 
    public filtersData: { filters: DynReducer.Data.Filter<T>[] };
 
-   public hostData: DynReducer.Data.Host<D> | null;
+   public hostData: Internal.Data.Host<D> | null;
 
    public hostUpdate: Function;
 
@@ -35,7 +36,7 @@ export abstract class AdapterIndexer<D, K, T>
     *
     * @returns Indexer adapter instance.
     */
-   constructor(hostData: DynReducer.Data.Host<D>, hostUpdate: Function, parentIndexer?: DynReducer.API.Index<K, T>)
+   constructor(hostData: Internal.Data.Host<D>, hostUpdate: Function, parentIndexer?: DynReducer.API.Index<K, T>)
    {
       this.hostData = hostData;
 

@@ -11,6 +11,7 @@ import { DerivedMapAPI }         from './derived/DerivedMapAPI';
 import { DynMapReducerDerived }  from './derived/DynMapReducerDerived';
 
 import type { DynReducer }       from '../types';
+import type { Internal }         from '../types/internal';
 
 /**
  * Provides a managed Map with non-destructive reducing / filtering / sorting capabilities with subscription /
@@ -18,7 +19,7 @@ import type { DynReducer }       from '../types';
  */
 export class DynMapReducer<K, T>
 {
-   #map: DynReducer.Data.Host<Map<K, T>> = [null];
+   #map: Internal.Data.Host<Map<K, T>> = [null];
 
    readonly #derived: AdapterDerived<Map<K, T>, K, T>;
 

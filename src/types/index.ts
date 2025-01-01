@@ -397,17 +397,6 @@ export declare namespace DynReducer {
       }
    }
 
-   export namespace Ctor {
-      /**
-       * Defines the shape of a derived reducer constructor function.
-       */
-      export interface DerivedReducer<K, T>
-      {
-         new(hostData: Data.Host<any>, parentIndex: API.Index<any, T> | null, options: Options.Common<T>):
-          DerivedList<T> | DerivedMap<K, T>;
-      }
-   }
-
    export namespace Data {
       /**
        * A callback function that compares two values. Return > 0 to sort 'b' before 'a'; < 0 to sort 'a' before 'b'; or 0 to
@@ -523,11 +512,6 @@ export declare namespace DynReducer {
       };
 
       /**
-       * Provides a compound type for the backing data structure stored in reducers.
-       */
-      export type Host<D> = (D | null)[];
-
-      /**
        * Defines the data object storing index data in AdapterIndexer.
        */
       export type Index<K, T> = {
@@ -626,8 +610,6 @@ export declare namespace DynReducer {
             | { filters: Iterable<Data.FilterFn<T> | Data.Filter<T>> }
             | { sort: Data.CompareFn<T> | Data.Sort<T> }
          ));
-
-      export type DerivedCreate<K, T> = DerivedListCreate<T> | DerivedMapCreate<K, T>;
 
       /**
        * The main options object for DynMapReducer.

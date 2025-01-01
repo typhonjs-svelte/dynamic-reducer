@@ -10,6 +10,7 @@ import { MapIndexer }      from '../MapIndexer';
 import { DerivedMapAPI }   from './DerivedMapAPI';
 
 import type { DynReducer } from '../../types';
+import type { Internal }   from '../../types/internal';
 
 /**
  * Provides the base implementation derived reducer for Maps / DynMapReducer.
@@ -19,7 +20,7 @@ import type { DynReducer } from '../../types';
  */
 export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
 {
-   #map: DynReducer.Data.Host<Map<K, T>> | null;
+   #map: Internal.Data.Host<Map<K, T>> | null;
 
    readonly #derived: AdapterDerived<Map<K, T>, K, T>;
 
@@ -48,7 +49,7 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
     *
     * @param options - Any filters and sort functions to apply.
     */
-   constructor(map: DynReducer.Data.Host<Map<K, T>>, parentIndex: DynReducer.API.Index<K, T>,
+   constructor(map: Internal.Data.Host<Map<K, T>>, parentIndex: DynReducer.API.Index<K, T>,
     options: DynReducer.Options.Common<T>)
    {
       this.#map = map;
