@@ -1,3 +1,6 @@
+import type { DynArrayReducerDerived } from '../array';
+import type { DynMapReducerDerived } from '../map';
+
 export declare namespace DynReducer {
    /**
     * Defines the common interface for a derived reducer.
@@ -160,9 +163,9 @@ export declare namespace DynReducer {
           *
           * @returns Newly created derived reducer.
           */
-         create<O extends Options.DerivedMapCreate<K, T>>(options: O): O extends Ctor.DerivedMapReducer<K, T>
+         create<O extends Options.DerivedMapCreate<K, T>>(options: O): O extends typeof DynMapReducerDerived<K, T>
             ? InstanceType<O>
-            : O extends { ctor: Ctor.DerivedMapReducer<K, T> }
+            : O extends { ctor: typeof DynMapReducerDerived<K, T> }
                ? InstanceType<O['ctor']>
                : DynReducer.DerivedMap<K, T>;
 
@@ -215,9 +218,9 @@ export declare namespace DynReducer {
           *
           * @returns Newly created derived reducer.
           */
-         create<O extends Options.DerivedListCreate<T>>(options: O): O extends Ctor.DerivedListReducer<T>
+         create<O extends Options.DerivedListCreate<T>>(options: O): O extends typeof DynArrayReducerDerived<T>
             ? InstanceType<O>
-            : O extends { ctor: Ctor.DerivedListReducer<T> }
+            : O extends { ctor: typeof DynArrayReducerDerived<T> }
                ? InstanceType<O['ctor']>
                : DynReducer.DerivedList<T>;
 
@@ -403,18 +406,6 @@ export declare namespace DynReducer {
          new(hostData: Data.Host<any>, parentIndex: API.Index<any, T> | null, options: Options.Common<T>):
           DerivedList<T> | DerivedMap<K, T>;
       }
-
-      export interface DerivedListReducer<T> extends DerivedReducer<number, T>
-      {
-         new(hostData: Data.Host<T[]>, parentIndex: API.Index<number, T> | null, options: Options.Common<T>):
-          DerivedList<T>;
-      }
-
-      export interface DerivedMapReducer<K, T> extends DerivedReducer<K, T>
-      {
-         new(hostData: Data.Host<Map<K, T>>, parentIndex: API.Index<K, T> | null, options: Options.Common<T>):
-          DerivedMap<K, T>;
-      }
    }
 
    export namespace Data {
@@ -454,7 +445,7 @@ export declare namespace DynReducer {
          /**
           * A DerivedReducer constructor function / class.
           */
-         ctor?: Ctor.DerivedMapReducer<K, T>;
+         ctor?: typeof DynMapReducerDerived<K, T>;
 
          /**
           * Extra data to pass through to `initialize`.
@@ -474,7 +465,7 @@ export declare namespace DynReducer {
          /**
           * A DerivedReducer constructor function / class.
           */
-         ctor?: Ctor.DerivedListReducer<T>;
+         ctor?: typeof DynArrayReducerDerived<T>;
 
          /**
           * Extra data to pass through to `initialize`.
@@ -615,12 +606,26 @@ export declare namespace DynReducer {
       /**
        * Creates a compound type for all derived reducer 'create' option combinations.
        */
-      export type DerivedListCreate<T> = string | Ctor.DerivedListReducer<T> | Data.DerivedListCreate<T>;
+      export type DerivedListCreate<T> =
+         | string
+         | typeof DynArrayReducerDerived<T>
+         | (Data.DerivedListCreate<T> & { ctor: typeof DynArrayReducerDerived<T> })
+         | (Data.DerivedListCreate<T> & { name: string } & (
+            | { filters: Iterable<Data.FilterFn<T> | Data.Filter<T>> }
+            | { sort: Data.CompareFn<T> | Data.Sort<T> }
+         ));
 
       /**
        * Creates a compound type for all derived reducer 'create' option combinations.
        */
-      export type DerivedMapCreate<K, T> = string | Ctor.DerivedMapReducer<K, T> | Data.DerivedMapCreate<K, T>;
+      export type DerivedMapCreate<K, T> =
+         | string
+         | typeof DynMapReducerDerived<K, T>
+         | (Data.DerivedMapCreate<K, T> & { ctor: typeof DynMapReducerDerived<K, T> })
+         | (Data.DerivedMapCreate<K, T> & { name: string } & (
+            | { filters: Iterable<Data.FilterFn<T> | Data.Filter<T>> }
+            | { sort: Data.CompareFn<T> | Data.Sort<T> }
+         ));
 
       export type DerivedCreate<K, T> = DerivedListCreate<T> | DerivedMapCreate<K, T>;
 

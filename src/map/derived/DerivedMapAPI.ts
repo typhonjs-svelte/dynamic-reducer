@@ -1,6 +1,8 @@
-import type { AdapterDerived }   from '#common';
+import type { AdapterDerived }         from '#common';
 
-import type { DynReducer }       from '../../types';
+import type { DynMapReducerDerived }   from './DynMapReducerDerived';
+
+import type { DynReducer }             from '../../types';
 
 /**
  * Provides a public API for managing derived reducers.
@@ -10,9 +12,9 @@ export class DerivedMapAPI<D, K, T> implements DynReducer.API.DerivedMap<K, T>
    clear: () => void;
 
    create: <O extends DynReducer.Options.DerivedMapCreate<K, T>>(options: O) =>
-      O extends DynReducer.Ctor.DerivedMapReducer<K, T>
+      O extends typeof DynMapReducerDerived<K, T>
          ? InstanceType<O>
-         : O extends { ctor: DynReducer.Ctor.DerivedMapReducer<K, T> }
+         : O extends { ctor: typeof DynMapReducerDerived<K, T> }
             ? InstanceType<O['ctor']>
             : DynReducer.DerivedMap<K, T>;
 

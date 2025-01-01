@@ -1,6 +1,8 @@
-import type { AdapterDerived }   from '#common';
+import type { AdapterDerived }         from '#common';
 
-import type { DynReducer }       from '../../types';
+import type { DynArrayReducerDerived } from './DynArrayReducerDerived';
+
+import type { DynReducer }             from '../../types';
 
 /**
  * Provides a public API for managing derived reducers.
@@ -10,9 +12,9 @@ export class DerivedListAPI<D, K, T> implements DynReducer.API.DerivedList<T>
    clear: () => void;
 
    create: <O extends DynReducer.Options.DerivedListCreate<T>>(options: O) =>
-      O extends DynReducer.Ctor.DerivedListReducer<T>
+      O extends typeof DynArrayReducerDerived<T>
          ? InstanceType<O>
-         : O extends { ctor: DynReducer.Ctor.DerivedListReducer<T> }
+         : O extends { ctor: typeof DynArrayReducerDerived<T> }
             ? InstanceType<O['ctor']>
             : DynReducer.DerivedList<T>;
 
