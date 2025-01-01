@@ -178,7 +178,7 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
     * Provides a callback for custom derived reducers to initialize any data / custom configuration. This allows
     * child classes to avoid implementing the constructor.
     *
-    * @param [optionsRest] - Any additional custom options passed beyond {@link DynDataOptions}.
+    * @param [optionsRest] - Any additional custom options passed beyond {@link DynReducer.Options.Common}.
     *
     * @protected
     */
@@ -221,7 +221,7 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
     *
     * @returns Unsubscribe function.
     */
-   subscribe(handler: (value: DynArrayReducerDerived<T>) => void): () => void
+   subscribe(handler: (value: this) => void): () => void
    {
       if (!this.#subscribers.has(handler)) { this.#subscribers.add(handler); }
 

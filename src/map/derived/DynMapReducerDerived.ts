@@ -227,7 +227,7 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
     *
     * @returns Unsubscribe function.
     */
-   subscribe(handler: (value: DynMapReducerDerived<K, T>) => void): () => void
+   subscribe(handler: (value: this) => void): () => void
    {
       if (!this.#subscribers.has(handler)) { this.#subscribers.add(handler); }
 

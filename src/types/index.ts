@@ -1,5 +1,10 @@
-import type { DynArrayReducerDerived } from '../array';
-import type { DynMapReducerDerived }   from '../map';
+import type {
+   DynArrayReducer,
+   DynArrayReducerDerived }   from '../array';
+
+import type {
+   DynMapReducer,
+   DynMapReducerDerived }     from '../map';
 
 /**
  * Defines all public types for the `dynamic-reducer` library.
@@ -563,6 +568,54 @@ export declare namespace DynReducer {
       export type IndexUpdateFn = (force?: boolean) => void;
 
       /**
+       * Defines object / options for creating a top-level DynArrayReducer. Useful for consumers of the
+       * `dynamic-reducer` library to implement a `create` method similar to derived reducers.
+       *
+       * @typeParam T `any` - Type of data.
+       */
+      export interface ListCreate<T> extends Options.Common<T> {
+         /**
+          * Name of reducer.
+          */
+         name?: string;
+
+         /**
+          * A list constructor function / class.
+          */
+         ctor?: typeof DynArrayReducer<T>;
+
+         /**
+          * Extra data to pass through to any `initialize` method.
+          */
+         [key: string]: any;
+      }
+
+      /**
+       * Defines object / options for creating a map reducer. Useful for consumers of the
+       * `dynamic-reducer` library to implement a `create` method similar to derived reducers.
+       *
+       * @typeParam K `any` - Key type.
+       *
+       * @typeParam T `any` - Type of data.
+       */
+      export interface MapCreate<K, T> extends Options.Common<T> {
+         /**
+          * Name of reducer.
+          */
+         name?: string;
+
+         /**
+          * A Map constructor function / class.
+          */
+         ctor?: typeof DynMapReducer<K, T>;
+
+         /**
+          * Extra data to pass through to any `initialize` method.
+          */
+         [key: string]: any;
+      }
+
+      /**
        * Defines an object to configure sort functionality.
        *
        * @typeParam T `any` - Type of data.
@@ -645,6 +698,42 @@ export declare namespace DynReducer {
          | typeof DynMapReducerDerived<K, T>
          | (Data.DerivedMapCreate<K, T> & { ctor: typeof DynMapReducerDerived<K, T> })
          | (Data.DerivedMapCreate<K, T> & { name: string } & (
+            | { filters: Iterable<Data.FilterFn<T> | Data.Filter<T>> }
+            | { sort: Data.CompareFn<T> | Data.Sort<T> }
+         ));
+
+      /**
+       * Creates a compound type for all list reducer 'create' option combinations. Useful for consumers of the
+       * `dynamic-reducer` library to implement a `create` method for a list reducer similar to derived reducers.
+       *
+       * Includes additional type inference constraints for {@link Data.ListCreate}.
+       *
+       * @typeParam T `any` - Type of data.
+       */
+      export type ListCreate<T> =
+         | string
+         | typeof DynArrayReducer<T>
+         | (Data.ListCreate<T> & { ctor: typeof DynArrayReducer<T> })
+         | (Data.ListCreate<T> & { name: string } & (
+            | { filters: Iterable<Data.FilterFn<T> | Data.Filter<T>> }
+            | { sort: Data.CompareFn<T> | Data.Sort<T> }
+         ));
+
+      /**
+       * Creates a compound type for all map reducer 'create' option combinations. Useful for consumers of the
+       * `dynamic-reducer` library to implement a `create` method for a map reducer similar to derived reducers.
+       *
+       * Includes additional type inference constraints for {@link Data.MapCreate}.
+       *
+       * @typeParam K `any` - Key type.
+       *
+       * @typeParam T `any` - Type of data.
+       */
+      export type MapCreate<K, T> =
+         | string
+         | typeof DynMapReducer<K, T>
+         | (Data.MapCreate<K, T> & { ctor: typeof DynMapReducer<K, T> })
+         | (Data.MapCreate<K, T> & { name: string } & (
             | { filters: Iterable<Data.FilterFn<T> | Data.Filter<T>> }
             | { sort: Data.CompareFn<T> | Data.Sort<T> }
          ));

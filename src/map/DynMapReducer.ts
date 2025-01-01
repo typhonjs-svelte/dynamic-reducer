@@ -232,6 +232,17 @@ export class DynMapReducer<K, T>
    }
 
    /**
+    * Provides a callback for custom reducers to initialize any data / custom configuration. Depending on the consumer
+    * of `dynamic-reducer` this may be utilized allowing child classes to avoid implementing the constructor.
+    *
+    * @param [optionsRest] - Any additional custom options passed beyond {@link DynReducer.Options.Common}.
+    *
+    * @protected
+    */
+   /* c8 ignore next */
+   protected initialize(optionsRest?: { [key: string]: any }): void {}
+
+   /**
     * Removes internal data and pushes new data. This does not destroy any initial array set to internal data unless
     * `replace` is set to true.
     *
@@ -239,7 +250,7 @@ export class DynMapReducer<K, T>
     *
     * @param [replace=false] - New data to set to internal data.
     */
-   setData(data: Map<K, T> | null, replace: boolean = false)
+   setData(data: Map<K, T> | null, replace: boolean = false): void
    {
       if (data !== null && !(data instanceof Map))
       {
@@ -293,7 +304,7 @@ export class DynMapReducer<K, T>
     *
     * @returns Unsubscribe function.
     */
-   subscribe(handler: (value: DynMapReducer<K, T>) => void): () => void
+   subscribe(handler: (value: this) => void): () => void
    {
       if (!this.#subscribers.has(handler)) { this.#subscribers.add(handler); }
 
