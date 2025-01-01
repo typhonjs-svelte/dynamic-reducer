@@ -1,2 +1,2 @@
-export * from './DynArrayReducer.js';
-export * from './derived/DynArrayReducerDerived.js';
+export * from './DynArrayReducer';
+export * from './derived/DynArrayReducerDerived';

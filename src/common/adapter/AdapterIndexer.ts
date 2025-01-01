@@ -1,6 +1,6 @@
-import { DynReducerUtils }       from '../DynReducerUtils.js';
+import { DynReducerUtils }       from '../DynReducerUtils';
 
-import type { AdapterDerived }   from './AdapterDerived.js';
+import type { AdapterDerived }   from './AdapterDerived';
 
 import type { DynReducer }       from '../../types';
 
