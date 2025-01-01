@@ -2,12 +2,13 @@ import {
    AdapterDerived,
    AdapterFilters,
    AdapterSort,
-   DerivedAPI,
    DynReducerUtils,
    IndexerAPI }                  from '#common';
 
 import { MapIndexer }            from './MapIndexer';
-import { DynMapReducerDerived }  from './derived/DynMapReducerDerived.js';
+
+import { DerivedMapAPI }         from './derived/DerivedMapAPI';
+import { DynMapReducerDerived }  from './derived/DynMapReducerDerived';
 
 import type { DynReducer }       from '../types';
 
@@ -21,7 +22,7 @@ export class DynMapReducer<K, T>
 
    readonly #derived: AdapterDerived<Map<K, T>, K, T>;
 
-   readonly #derivedPublicAPI: DerivedAPI<Map<K, T>, K, T>;
+   readonly #derivedPublicAPI: DynReducer.API.DerivedMap<K, T>;
 
    readonly #filters: AdapterFilters<T>;
 
@@ -121,7 +122,7 @@ export class DynMapReducer<K, T>
       this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortData);
 
       this.#derived = new AdapterDerived(this.#map, this.#indexPublicAPI, DynMapReducerDerived);
-      this.#derivedPublicAPI = new DerivedAPI<Map<K, T>, K, T>(this.#derived);
+      this.#derivedPublicAPI = new DerivedMapAPI<Map<K, T>, K, T>(this.#derived);
 
       this.#index.initAdapters(this.#filtersData, this.#sortData, this.#derived);
 
@@ -144,7 +145,7 @@ export class DynMapReducer<K, T>
    /**
     * @returns Derived public API.
     */
-   get derived(): DynReducer.API.Derived<K, T> { return this.#derivedPublicAPI; }
+   get derived(): DynReducer.API.DerivedMap<K, T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.

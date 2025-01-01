@@ -1,9 +1,8 @@
-export * from './adapter/AdapterDerived.js';
-export * from './adapter/AdapterFilters.js';
-export * from './adapter/AdapterIndexer.js';
-export * from './adapter/AdapterSort.js';
+export * from './adapter/AdapterDerived';
+export * from './adapter/AdapterFilters';
+export * from './adapter/AdapterIndexer';
+export * from './adapter/AdapterSort';
 
-export * from './api/IndexerAPI.js';
-export * from './api/DerivedAPI.js';
+export * from './api/IndexerAPI';
 
-export * from './DynReducerUtils.js';
+export * from './DynReducerUtils';

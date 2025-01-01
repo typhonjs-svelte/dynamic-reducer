@@ -116,7 +116,7 @@ export class DynReducerUtils
     *
     * @returns target constructor function has Prototype.
     */
-   static hasPrototype(target: any, Prototype: DynReducer.Ctor.DerivedReducer<any>): boolean
+   static hasPrototype(target: any, Prototype: DynReducer.Ctor.DerivedReducer<any, any>): boolean
    {
       /* c8 ignore next */
       if (typeof target !== 'function') { return false; }

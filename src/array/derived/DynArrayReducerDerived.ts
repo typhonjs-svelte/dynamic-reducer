@@ -2,11 +2,12 @@ import {
    AdapterDerived,
    AdapterFilters,
    AdapterSort,
-   DerivedAPI,
    DynReducerUtils,
    IndexerAPI }            from '#common';
 
 import { ArrayIndexer }    from '../ArrayIndexer';
+
+import { DerivedListAPI }  from './DerivedListAPI';
 
 import type { DynReducer } from '../../types';
 
@@ -22,7 +23,7 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
 
    readonly #derived: AdapterDerived<T[], number, T>;
 
-   readonly #derivedPublicAPI: DynReducer.API.Derived<number, T>;
+   readonly #derivedPublicAPI: DynReducer.API.DerivedList<T>;
 
    readonly #filters: AdapterFilters<T>;
 
@@ -60,7 +61,7 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
       this.#sort = new AdapterSort(this.#indexPublicAPI.update, this.#sortData);
 
       this.#derived = new AdapterDerived<T[], number, T>(this.#array, this.#indexPublicAPI, DynArrayReducerDerived);
-      this.#derivedPublicAPI = new DerivedAPI<T[], number, T>(this.#derived);
+      this.#derivedPublicAPI = new DerivedListAPI<T[], number, T>(this.#derived);
 
       this.#index.initAdapters(this.#filtersData, this.#sortData, this.#derived);
 
@@ -92,7 +93,7 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
    /**
     * @returns Derived public API.
     */
-   get derived(): DynReducer.API.Derived<number, T> { return this.#derivedPublicAPI; }
+   get derived(): DynReducer.API.DerivedList<T> { return this.#derivedPublicAPI; }
 
    /**
     * @returns The filters adapter.

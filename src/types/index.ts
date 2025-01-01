@@ -1,6 +1,3 @@
-import type { DynMapReducer }    from '../map';
-import type { DynArrayReducer }  from '../array';
-
 export declare namespace DynReducer {
    /**
     * Defines the common interface for a derived reducer.
@@ -15,7 +12,7 @@ export declare namespace DynReducer {
       /**
        * @returns Derived public API.
        */
-      get derived(): API.Derived<K, T>;
+      get derived(): API.DerivedMap<K, T>;
 
       /**
        * @returns The filters adapter.
@@ -69,7 +66,72 @@ export declare namespace DynReducer {
       subscribe(handler: (value: DerivedMap<K, T>) => void): () => void;
    }
 
-   export interface DerivedList<T> extends DerivedMap<number, T> {}
+   /**
+    * Defines the common interface for a derived reducer.
+    */
+   export interface DerivedList<T>
+   {
+      /**
+       * @returns Provides an iterato`r for data stored in DynDerivedReducer.
+       */
+      [Symbol.iterator](): IterableIterator<T>;
+
+      /**
+       * @returns Derived public API.
+       */
+      get derived(): API.DerivedList<T>;
+
+      /**
+       * @returns The filters adapter.
+       */
+      get filters(): API.Filters<T>;
+
+      /**
+       * @returns Returns the Indexer public API.
+       */
+      get index(): API.Index<number, T>;
+
+      /**
+       * @returns Returns whether this derived reducer is destroyed.
+       */
+      get destroyed(): boolean;
+
+      /**
+       * @returns Returns the main data items or indexed items length.
+       */
+      get length(): number;
+
+      /**
+       * @returns Returns current reversed state.
+       */
+      get reversed(): boolean;
+
+      /**
+       * @returns The sort adapter.
+       */
+      get sort(): API.Sort<T>;
+
+      /**
+       * Sets reversed state and notifies subscribers.
+       *
+       * @param reversed - New reversed state.
+       */
+      set reversed(reversed: boolean);
+
+      /**
+       * Removes all derived reducers, subscriptions, and cleans up all resources.
+       */
+      destroy(): void;
+
+      /**
+       * Add a subscriber to this DynMapReducer instance.
+       *
+       * @param handler - Callback function that is invoked on update / changes. Receives `this` reference.
+       *
+       * @returns Unsubscribe function.
+       */
+      subscribe(handler: (value: DerivedList<T>) => void): () => void;
+   }
 
    export namespace API {
       /**
@@ -86,7 +148,7 @@ export declare namespace DynReducer {
        * dynArray.derived.get(...);
        * ```
        */
-      export interface Derived<K, T>
+      export interface DerivedMap<K, T>
       {
          /**
           * Removes all derived reducers and associated subscriptions.
@@ -98,11 +160,11 @@ export declare namespace DynReducer {
           *
           * @returns Newly created derived reducer.
           */
-         create<O extends Options.DerivedCreate<T>>(options: O): O extends Ctor.DerivedReducer<T>
+         create<O extends Options.DerivedMapCreate<K, T>>(options: O): O extends Ctor.DerivedMapReducer<K, T>
             ? InstanceType<O>
-            : O extends { ctor: Ctor.DerivedReducer<T> }
+            : O extends { ctor: Ctor.DerivedMapReducer<K, T> }
                ? InstanceType<O['ctor']>
-               : DerivedMap<K, T>;
+               : DynReducer.DerivedMap<K, T>;
 
          /**
           * Deletes and destroys a derived reducer.
@@ -125,7 +187,62 @@ export declare namespace DynReducer {
           *
           * @returns Any associated derived reducer.
           */
-         get(name: string): DerivedMap<K, T>;
+         get(name: string): DynReducer.DerivedMap<K, T> | undefined;
+      }
+      /**
+       * Provides the public API for derived reducers. There are several ways to create a derived reducer from utilizing the
+       * default implementation or passing in a constructor function / class for a custom derived reducer.
+       *
+       * This class forms the public API which is accessible from the `.derived` getter in the main reducer implementation.
+       * ```
+       * const dynArray = new DynArrayReducer([...]);
+       * dynArray.derived.clear();
+       * dynArray.derived.create(...);
+       * dynArray.derived.delete(...);
+       * dynArray.derived.destroy();
+       * dynArray.derived.get(...);
+       * ```
+       */
+      export interface DerivedList<T>
+      {
+         /**
+          * Removes all derived reducers and associated subscriptions.
+          */
+         clear(): void;
+
+         /**
+          * @param options - Options for creating a reducer.
+          *
+          * @returns Newly created derived reducer.
+          */
+         create<O extends Options.DerivedListCreate<T>>(options: O): O extends Ctor.DerivedListReducer<T>
+            ? InstanceType<O>
+            : O extends { ctor: Ctor.DerivedListReducer<T> }
+               ? InstanceType<O['ctor']>
+               : DynReducer.DerivedList<T>;
+
+         /**
+          * Deletes and destroys a derived reducer.
+          *
+          * @param name - Name of the derived reducer
+          *
+          * @returns Whether the derived reducer was deleted.
+          */
+         delete(name: string): boolean;
+
+         /**
+          * Removes all derived reducers, associated subscriptions, and cleans up all resources.
+          */
+         destroy(): void;
+
+         /**
+          * Returns an existing derived reducer.
+          *
+          * @param name - Name of derived reducer.
+          *
+          * @returns Any associated derived reducer.
+          */
+         get(name: string): DynReducer.DerivedList<T> | undefined;
       }
 
       /**
@@ -281,19 +398,19 @@ export declare namespace DynReducer {
       /**
        * Defines the shape of a derived reducer constructor function.
        */
-      export interface DerivedReducer<T>
+      export interface DerivedReducer<K, T>
       {
          new(hostData: Data.Host<any>, parentIndex: API.Index<any, T> | null, options: Options.Common<T>):
-          DerivedMap<any, T>;
+          DerivedList<T> | DerivedMap<K, T>;
       }
 
-      export interface DerivedListReducer<T> extends DerivedReducer<T>
+      export interface DerivedListReducer<T> extends DerivedReducer<number, T>
       {
          new(hostData: Data.Host<T[]>, parentIndex: API.Index<number, T> | null, options: Options.Common<T>):
           DerivedList<T>;
       }
 
-      export interface DerivedMapReducer<K, T> extends DerivedReducer<T>
+      export interface DerivedMapReducer<K, T> extends DerivedReducer<K, T>
       {
          new(hostData: Data.Host<Map<K, T>>, parentIndex: API.Index<K, T> | null, options: Options.Common<T>):
           DerivedMap<K, T>;
@@ -328,7 +445,7 @@ export declare namespace DynReducer {
       /**
        * Defines object / options for creating a derived reducer.
        */
-      export type DerivedCreate<T> = {
+      export type DerivedMapCreate<K, T> = {
          /**
           * Name of derived reducer.
           */
@@ -337,13 +454,33 @@ export declare namespace DynReducer {
          /**
           * A DerivedReducer constructor function / class.
           */
-         ctor?: Ctor.DerivedReducer<T>;
+         ctor?: Ctor.DerivedMapReducer<K, T>;
 
          /**
           * Extra data to pass through to `initialize`.
           */
          [key: string]: any;
       } & Options.Common<T>;
+
+      /**
+       * Defines object / options for creating a derived reducer.
+       */
+      export interface DerivedListCreate<T> extends Options.Common<T> {
+         /**
+          * Name of derived reducer.
+          */
+         name?: string;
+
+         /**
+          * A DerivedReducer constructor function / class.
+          */
+         ctor?: Ctor.DerivedListReducer<T>;
+
+         /**
+          * Extra data to pass through to `initialize`.
+          */
+         [key: string]: any;
+      }
 
       /**
        * Defines the data object to configure a filter w/ additional configuration options.
@@ -463,7 +600,7 @@ export declare namespace DynReducer {
       /**
        * Defines the additional options for filters and sort function.
        */
-      export type Common<T> = {
+      export interface Common<T> {
          /**
           * Iterable list of filters.
           */
@@ -478,7 +615,14 @@ export declare namespace DynReducer {
       /**
        * Creates a compound type for all derived reducer 'create' option combinations.
        */
-      export type DerivedCreate<T> = string | Ctor.DerivedReducer<T> | Data.DerivedCreate<T>;
+      export type DerivedListCreate<T> = string | Ctor.DerivedListReducer<T> | Data.DerivedListCreate<T>;
+
+      /**
+       * Creates a compound type for all derived reducer 'create' option combinations.
+       */
+      export type DerivedMapCreate<K, T> = string | Ctor.DerivedMapReducer<K, T> | Data.DerivedMapCreate<K, T>;
+
+      export type DerivedCreate<K, T> = DerivedListCreate<T> | DerivedMapCreate<K, T>;
 
       /**
        * The main options object for DynMapReducer.
