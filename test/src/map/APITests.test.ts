@@ -196,8 +196,16 @@ describe(`(Map) API Test`, () =>
 
          assert.equal(callbackSub, 0);
 
-         const unsubscribe = dar.subscribe(() => callbackSub++);
+         const callbackFn = () => callbackSub++;
 
+         const unsubscribe = dar.subscribe(callbackFn);
+
+         assert.equal(callbackSub, 1);
+
+         // Attempt to add a repeat subscriber callback.
+         dar.subscribe(callbackFn);
+
+         // A callback is not received by duplicate subscription.
          assert.equal(callbackSub, 1);
 
          data.set(3, 3);
@@ -814,12 +822,20 @@ describe(`(Map) API Test`, () =>
 
          assert.equal(callbackSub, 0);
 
-         const unsubscribe = dr.subscribe((drInstance) =>
+         const callbackFn = (drInstance) =>
          {
             callbackSub++;
             assert.equal(drInstance.length, [...dr].length);
-         });
+         };
 
+         const unsubscribe = dr.subscribe(callbackFn);
+
+         assert.equal(callbackSub, 1);
+
+         // Attempt to add a repeat subscriber callback.
+         dr.subscribe(callbackFn);
+
+         // A callback is not received by duplicate subscription.
          assert.equal(callbackSub, 1);
 
          data.set(3, 3);

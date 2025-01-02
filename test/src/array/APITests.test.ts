@@ -213,8 +213,16 @@ describe(`(Array) API Test`, () =>
 
          assert.equal(callbackSub, 0);
 
-         const unsubscribe = dar.subscribe(() => callbackSub++);
+         const callbackFn = () => callbackSub++;
 
+         const unsubscribe = dar.subscribe(callbackFn);
+
+         assert.equal(callbackSub, 1);
+
+         // Attempt to add a repeat subscriber callback.
+         dar.subscribe(callbackFn);
+
+         // A callback is not received by duplicate subscription.
          assert.equal(callbackSub, 1);
 
          data.push(3);
@@ -223,6 +231,11 @@ describe(`(Array) API Test`, () =>
          assert.equal(callbackSub, 2);
 
          unsubscribe();
+
+         data.push(4);
+         dar.index.update();
+
+         assert.equal(callbackSub, 2);
       });
    });
 
@@ -830,12 +843,20 @@ describe(`(Array) API Test`, () =>
 
          assert.equal(callbackSub, 0);
 
-         const unsubscribe = dr.subscribe((drInstance) =>
+         const callbackFn = (drInstance) =>
          {
             callbackSub++;
             assert.equal(drInstance.length, [...dr].length);
-         });
+         };
 
+         const unsubscribe = dr.subscribe(callbackFn);
+
+         assert.equal(callbackSub, 1);
+
+         // Attempt to add a repeat subscriber callback.
+         dr.subscribe(callbackFn);
+
+         // A callback is not received by duplicate subscription.
          assert.equal(callbackSub, 1);
 
          data.push(3);

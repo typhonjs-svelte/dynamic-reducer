@@ -39,7 +39,7 @@ export class DynArrayReducer<T>
 
    #sortData: { compareFn: DynReducer.Data.CompareFn<T> | null } = { compareFn: null };
 
-   #subscribers: Set<Function> = new Set();
+   #subscribers: Function[] = [];
 
    #destroyed: boolean = false;
 
@@ -217,7 +217,7 @@ export class DynArrayReducer<T>
       this.index.update(true);
 
       // Remove all subscriptions.
-      this.#subscribers.clear();
+      this.#subscribers.length = 0;
 
       this.#filters.clear();
       this.#sort.clear();
@@ -298,20 +298,27 @@ export class DynArrayReducer<T>
     */
    subscribe(handler: (value: this) => void): () => void
    {
-      if (!this.#subscribers.has(handler)) { this.#subscribers.add(handler); }
-
-      handler(this);                     // call handler with current value
+      const currentIdx: number = this.#subscribers.findIndex((entry: Function): boolean => entry === handler);
+      if (currentIdx === -1)
+      {
+         this.#subscribers.push(handler);
+         handler(this);                     // call handler with current value
+      }
 
       // Return unsubscribe function.
-      return (): void => { this.#subscribers.delete(handler); }
+      return (): void =>
+      {
+         const existingIdx: number = this.#subscribers.findIndex((entry: Function): boolean => entry === handler);
+         if (existingIdx !== -1) { this.#subscribers.splice(existingIdx, 1); }
+      }
    }
 
    /**
     * Updates subscribers on changes.
     */
-   #updateSubscribers()
+   #updateSubscribers(): void
    {
-      for (const subscriber of this.#subscribers) { subscriber(this); }
+      for (let cntr: number = 0; cntr < this.#subscribers.length; cntr++) { this.#subscribers[cntr](this); }
    }
 
    /**
