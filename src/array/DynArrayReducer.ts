@@ -17,9 +17,42 @@ import type { Internal }            from '../types/internal';
  * Provides a managed array with non-destructive reducing / filtering / sorting capabilities with subscription /
  * Svelte store support.
  *
- * @typeParam T `any` - Type of data.
+ * _Note:_ In constructing a DynArrayReducer instance that arrays are treated as a special case. When an array is passed
+ * in as `data` in the constructor it will be used as the host array and not copied. All non-array iterables otherwise
+ * create a new array / copy.
+ *
+ * _Note:_
+ * - The default type `unknown` ensures stricter type checking, preventing unintended operations on the data.
+ * - If the type of data is known, explicitly specify the generic type to improve clarity and maintainability:
+ *
+ * @example
+ * ```ts
+ * // Using external array data as reducer host data.
+ * const data = ['a', 'b', 'c'];
+ * const reducer = new DynArrayReducer<string>(data);
+ *
+ * // Add new data externally.
+ * data.push('d');
+ *
+ * // Update the index.
+ * reducer.index.update();
+ * ```
+ *
+ * @example
+ * ```ts
+ * // Explicit type specification.
+ * const reducer = new DynArrayReducer<string>(['a', 'b', 'c']);
+ * ```
+ *
+ * @example
+ * ```ts
+ * // Using the default type.
+ * const reducer = new DynArrayReducer(); // Defaults to DynArrayReducer<unknown>
+ * ```
+ *
+ * @typeParam T `unknown` - Type of data. Defaults to `unknown` to enforce type safety when no type is specified.
  */
-export class DynArrayReducer<T>
+export class DynArrayReducer<T = unknown>
 {
    #array: Internal.Data.Host<T[]> = [null];
 
@@ -49,7 +82,7 @@ export class DynArrayReducer<T>
     *
     * @param [data] - Data iterable to store if array or copy otherwise.
     *
-    * @typeParam T `any` - Type of data.
+    * @typeParam T `unknown` - Type of data.
     */
    constructor(data?: Iterable<T> | DynReducer.Options.ListReducer<T>)
    {
@@ -157,7 +190,7 @@ export class DynArrayReducer<T>
    /**
     * @returns Returns the Indexer public API; is also iterable.
     */
-   get index(): DynReducer.API.Index<number, T> { return this.#indexPublicAPI; }
+   get index(): DynReducer.API.Index<number> { return this.#indexPublicAPI; }
 
    /**
     * @returns Returns whether this instance is destroyed.

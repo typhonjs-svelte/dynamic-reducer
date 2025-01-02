@@ -7,7 +7,7 @@ export namespace Internal {
        */
       export interface DerivedReducer<K, T>
       {
-         new (hostData: Data.Host<any>, parentIndex: DynReducer.API.Index<any, T> | null,
+         new (hostData: Data.Host<any>, parentIndex: DynReducer.API.Index<any> | null,
           options: DynReducer.Options.Common<T>): DynReducer.DerivedList<T> | DynReducer.DerivedMap<K, T>;
       }
    }
@@ -21,7 +21,7 @@ export namespace Internal {
       /**
        * Defines the data object storing index data in AdapterIndexer.
        */
-      export type Index<K, T> = {
+      export type Index<K> = {
          /**
           * The index array.
           */
@@ -40,7 +40,7 @@ export namespace Internal {
          /**
           * Any associated parent index data.
           */
-         parent?: DynReducer.API.Index<K, T> | null;
+         parent?: DynReducer.API.Index<K> | null;
       };
    }
 

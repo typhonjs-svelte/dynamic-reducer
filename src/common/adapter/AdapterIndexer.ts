@@ -19,7 +19,7 @@ export abstract class AdapterIndexer<D, K, T>
 
    public hostUpdate: Function;
 
-   public indexData: Internal.Data.Index<K, T>;
+   public indexData: Internal.Data.Index<K>;
 
    public sortData: { compareFn: DynReducer.Data.CompareFn<T> | null };
 
@@ -36,7 +36,7 @@ export abstract class AdapterIndexer<D, K, T>
     *
     * @returns Indexer adapter instance.
     */
-   constructor(hostData: Internal.Data.Host<D>, hostUpdate: Function, parentIndexer?: DynReducer.API.Index<K, T>)
+   constructor(hostData: Internal.Data.Host<D>, hostUpdate: Function, parentIndexer?: DynReducer.API.Index<K>)
    {
       this.hostData = hostData;
 

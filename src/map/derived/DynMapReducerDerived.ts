@@ -18,11 +18,11 @@ import type { Internal }   from '../../types/internal';
  * Note: That you should never directly create an instance of a derived reducer, but instead use the
  * {@link DynMapReducerDerived.initialize} function to set up any initial state in a custom derived reducer.
  *
- * @typeParam K `any` - Key type.
+ * @typeParam K `unknown` - Key type. Defaults to `unknown` to enforce type safety when no type is specified.
  *
- * @typeParam T `any` - Type of data.
+ * @typeParam T `unknown` - Type of data. Defaults to `unknown` to enforce type safety when no type is specified.
  */
-export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
+export class DynMapReducerDerived<K = unknown, T = unknown> implements DynReducer.DerivedMap<K, T>
 {
    #map: Internal.Data.Host<Map<K, T>> | null;
 
@@ -53,11 +53,13 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
     *
     * @param options - Any filters and sort functions to apply.
     *
-    * @typeParam K `any` - Key type.
+    * @typeParam K `unknown` - Key type.
     *
-    * @typeParam T `any` - Type of data.
+    * @typeParam T `unknown` - Type of data.
+    *
+    * @private
     */
-   constructor(map: Internal.Data.Host<Map<K, T>>, parentIndex: DynReducer.API.Index<K, T>,
+   constructor(map: Internal.Data.Host<Map<K, T>>, parentIndex: DynReducer.API.Index<K>,
     options: DynReducer.Options.Common<T>)
    {
       this.#map = map;
@@ -112,7 +114,7 @@ export class DynMapReducerDerived<K, T> implements DynReducer.DerivedMap<K, T>
    /**
     * @returns Returns the Indexer public API; is also iterable.
     */
-   get index(): DynReducer.API.Index<K, T> { return this.#indexPublicAPI; }
+   get index(): DynReducer.API.Index<K> { return this.#indexPublicAPI; }
 
    /**
     * @returns Returns whether this derived reducer is destroyed.

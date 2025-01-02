@@ -17,11 +17,33 @@ import type { Internal }         from '../types/internal';
  * Provides a managed {@link Map} with non-destructive reducing / filtering / sorting capabilities with subscription /
  * Svelte store support allowing for a {@link Map} to be treated like an iterable list.
  *
- * @typeParam K `any` - Key type.
+ * _Note:_
+ * - The default type `unknown` ensures stricter type checking, preventing unintended operations on the data.
+ * - If the type of data is known, explicitly specify the generic type to improve clarity and maintainability:
  *
- * @typeParam T `any` - Type of data.
+ * @example
+ * ```ts
+ * const mapReducer = new DynMapReducer<number, string>(
+ *     new Map([
+ *         [1, 'banana'],
+ *         [2, 'apple'],
+ *         [3, 'cherry'],
+ *     ])
+ * );
+ *
+ * console.log([...mapReducer]); // Output: ['banana', 'apple', 'cherry']
+ *
+ * // Sort values alphabetically.
+ * mapReducer.sort.set((a, b) => a.localeCompare(b));
+ *
+ * console.log([...mapReducer]); // Output: ['apple', 'banana', 'cherry']
+ * ```
+ *
+ * @typeParam K `unknown` - Key type. Defaults to `unknown` to enforce type safety when no type is specified.
+ *
+ * @typeParam T `unknown` - Type of data. Defaults to `unknown` to enforce type safety when no type is specified.
  */
-export class DynMapReducer<K, T>
+export class DynMapReducer<K = unknown, T = unknown>
 {
    #map: Internal.Data.Host<Map<K, T>> = [null];
 
@@ -51,9 +73,9 @@ export class DynMapReducer<K, T>
     *
     * @param [data] - Data iterable to store if array or copy otherwise.
     *
-    * @typeParam K `any` - Key type.
+    * @typeParam K `unknown` - Key type.
     *
-    * @typeParam T `any` - Type of data.
+    * @typeParam T `unknown` - Type of data.
     */
    constructor(data?: Map<K, T> | DynReducer.Options.MapReducer<K, T>)
    {
@@ -164,7 +186,7 @@ export class DynMapReducer<K, T>
    /**
     * @returns Returns the Indexer public API; is also iterable.
     */
-   get index(): DynReducer.API.Index<K, T> { return this.#indexPublicAPI; }
+   get index(): DynReducer.API.Index<K> { return this.#indexPublicAPI; }
 
    /**
     * @returns Returns whether this instance is destroyed.

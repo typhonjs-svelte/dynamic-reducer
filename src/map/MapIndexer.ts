@@ -42,7 +42,7 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
 
       let include: boolean = true;
 
-      const parentIndex: DynReducer.API.Index<K, T> | null | undefined = this.indexData.parent;
+      const parentIndex: DynReducer.API.Index<K> | null | undefined = this.indexData.parent;
 
       // Source index data is coming from an active parent index.
       if (DynReducerUtils.isIterable(parentIndex) && parentIndex.active)
@@ -108,7 +108,7 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
       const oldHash: number | null = this.indexData.hash;
 
       const map: Map<K, T> | null | undefined = this.hostData?.[0];
-      const parentIndex: DynReducer.API.Index<K, T> | null | undefined = this.indexData.parent;
+      const parentIndex: DynReducer.API.Index<K> | null | undefined = this.indexData.parent;
 
       // Clear index if there are no filters and no sort function or the index length doesn't match the item length.
       if ((this.filtersData.filters.length === 0 && !this.sortData.compareFn) ||

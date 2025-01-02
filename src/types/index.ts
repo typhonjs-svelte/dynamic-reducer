@@ -13,9 +13,9 @@ export declare namespace DynReducer {
    /**
     * Defines the common interface for a derived list reducer.
     *
-    * @typeParam T `any` - Type of data.
+    * @typeParam T `unknown` - Type of data.
     */
-   export interface DerivedList<T>
+   export interface DerivedList<T = unknown>
    {
       /**
        * @returns Provides an iterator for data stored in the derived reducer.
@@ -35,7 +35,7 @@ export declare namespace DynReducer {
       /**
        * @returns Returns the Indexer public API.
        */
-      get index(): API.Index<number, T>;
+      get index(): API.Index<number>;
 
       /**
        * @returns Returns whether this derived reducer is destroyed.
@@ -82,11 +82,11 @@ export declare namespace DynReducer {
    /**
     * Defines the common interface for a derived map reducer.
     *
-    * @typeParam K `any` - Key type.
+    * @typeParam K `unknown` - Key type. Defaults to `unknown` to enforce type safety when no type is specified.
     *
-    * @typeParam T `any` - Type of data.
+    * @typeParam T `unknown` - Type of data. Defaults to `unknown` to enforce type safety when no type is specified.
     */
-   export interface DerivedMap<K, T>
+   export interface DerivedMap<K = unknown, T = unknown>
    {
       /**
        * @returns Provides an iterator for data stored in the derived reducer.
@@ -106,7 +106,7 @@ export declare namespace DynReducer {
       /**
        * @returns Returns the Indexer public API.
        */
-      get index(): API.Index<K, T>;
+      get index(): API.Index<K>;
 
       /**
        * @returns Returns whether this derived reducer is destroyed.
@@ -358,10 +358,8 @@ export declare namespace DynReducer {
        * ```
        *
        * @typeParam K `any` - Key type.
-       *
-       * @typeParam T `any` - Type of data.
        */
-      export interface Index<K, T>
+      export interface Index<K>
       {
          /**
           * @returns Returns whether the index is active.

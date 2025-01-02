@@ -18,9 +18,9 @@ import type { Internal }   from '../../types/internal';
  * Note: That you should never directly create an instance of a derived reducer, but instead use the
  * {@link DynArrayReducerDerived.initialize} function to set up any initial state in a custom derived reducer.
  *
- * @typeParam T `any` - Type of data.
+ * @typeParam T `unknown` - Type of data. Defaults to `unknown` to enforce type safety when no type is specified.
  */
-export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
+export class DynArrayReducerDerived<T = unknown> implements DynReducer.DerivedList<T>
 {
    #array: Internal.Data.Host<T[]> | null;
 
@@ -51,9 +51,11 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
     *
     * @param options - Any filters and sort functions to apply.
     *
-    * @typeParam T `any` - Type of data.
+    * @typeParam T `unknown` - Type of data.
+    *
+    * @private
     */
-   constructor(array: Internal.Data.Host<T[]>, parentIndex: DynReducer.API.Index<number, T>,
+   constructor(array: Internal.Data.Host<T[]>, parentIndex: DynReducer.API.Index<number>,
     options: DynReducer.Options.Common<T>)
    {
       this.#array = array;
@@ -108,7 +110,7 @@ export class DynArrayReducerDerived<T> implements DynReducer.DerivedList<T>
    /**
     * @returns Returns the Indexer public API; is also iterable.
     */
-   get index(): DynReducer.API.Index<number, T> { return this.#indexPublicAPI; }
+   get index(): DynReducer.API.Index<number> { return this.#indexPublicAPI; }
 
    /**
     * @returns Returns whether this derived reducer is destroyed.
