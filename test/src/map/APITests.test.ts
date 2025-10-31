@@ -862,7 +862,7 @@ describe(`(Map) API Test`, () =>
          assert.equal(callbackSub, 1);
 
          data.set(3, 3);
-         dar.index.update(true);    // Requires a forced update as there is no derived index filtering.
+         dar.index.update({ force: true });    // Requires a forced update as there is no derived index filtering.
 
          assert.equal(callbackSub, 2);
 
@@ -911,6 +911,25 @@ describe(`(Map) API Test`, () =>
          assert.deepEqual([...dar.index], [2, 1], 'sorted index');
 
          dar.reversed = true;
+
+         assert.deepEqual([...dar.index], [1, 2], 'reverse sorted index');
+
+         dar.sort.clear();
+
+         assert.deepEqual([...dar.index], [], 'no index');
+      });
+
+      it(`iterator index update reversed`, () =>
+      {
+         const dar = createReducer(new Map([[1, 1], [2, 2]]));
+
+         assert.deepEqual([...dar.index], [], 'no index');
+
+         dar.sort.set((a, b) => b - a);
+
+         assert.deepEqual([...dar.index], [2, 1], 'sorted index');
+
+         dar.index.update({ reversed: true });
 
          assert.deepEqual([...dar.index], [1, 2], 'reverse sorted index');
 
