@@ -1,4 +1,10 @@
 # Changelog
+## Release 0.3.0 (major)
+- Fixed incorrect falsy check in compare / sorting path.
+- `IndexUpdateFn` / `index.update` now takes an object.
+  - If previously passing a boolean to `force` it is now `{ force: true }`.
+  - A new index update option `reversed` is available to reverse iteration through the index update function.
+
 ## Release 0.2.0 (major)
 - Refined type declarations for precise usage.
 - Derived reducers may now use private variables / methods when overriding `initialize`.
