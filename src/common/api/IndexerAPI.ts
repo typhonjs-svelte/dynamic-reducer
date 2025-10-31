@@ -18,11 +18,9 @@ export class IndexerAPI<K, T> implements DynReducer.API.Index<K>
    readonly length: number;
 
    /**
-    * Manually invoke an update of the index.
-    *
-    * @param force - Force update to any subscribers.
+    * Updates associated dynamic reducer indexer.
     */
-   readonly update: (force?: boolean) => void;
+   readonly update: DynReducer.Data.IndexUpdateFn;
 
    constructor(adapterIndexer: AdapterIndexer<any, K, T>)
    {

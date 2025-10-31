@@ -146,7 +146,11 @@ export abstract class AdapterIndexer<D, K, T>
    /**
     * Handles updating the index in child implementation specific to the backing data structure.
     *
-    * @param [force] - Force an update to any subscribers.
+    * @param [options] - Optional settings or any arbitrary value.
+    *
+    * @param [options.force=false] - Force an update the index regardless of hash calculations.
+    *
+    * @param [options.reversed] - Potentially change reversed state.
     */
-   abstract update(force: boolean): void;
+   abstract update(options?: unknown | { force?: boolean, reversed?: boolean }): void;
 }

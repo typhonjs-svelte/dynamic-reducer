@@ -153,7 +153,7 @@ export class DynArrayReducerDerived<T = unknown> implements DynReducer.DerivedLi
       this.#index.indexData.reversed = reversed;
 
       // Recalculate index and force an update to any subscribers.
-      this.index.update(true);
+      this.index.update({ force: true });
    }
 
    /**
@@ -165,7 +165,7 @@ export class DynArrayReducerDerived<T = unknown> implements DynReducer.DerivedLi
 
       // Remove any external data reference and perform a final update.
       this.#array = null;
-      this.index.update(true);
+      this.index.update({ force: true });
 
       // Remove all subscriptions.
       this.#subscribers.length = 0;

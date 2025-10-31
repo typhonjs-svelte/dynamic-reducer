@@ -90,11 +90,26 @@ export class ArrayIndexer<T> extends AdapterIndexer<T[], number, T>
     * Update the reducer indexes. If there are changes subscribers are notified. If data order is changed externally
     * pass in true to force an update to subscribers.
     *
-    * @param [force=false] - When true forces an update to subscribers.
+    * @param [options] - Optional settings or any arbitrary value.
+    *
+    * @param [options.force=false] - Force an update the index regardless of hash calculations.
+    *
+    * @param [options.reversed] - Potentially change reversed state.
     */
-   update(force: boolean = false)
+   update(options?: unknown | { force?: boolean, reversed?: boolean })
    {
       if (this.destroyed) { return; }
+
+      let { force = false, reversed = void 0 } = (typeof options === 'object' && options !== null ? options : {}) as {
+         force?: boolean;
+         reversed?: boolean;
+      };
+
+      if (typeof reversed === 'boolean' && this.indexData.reversed !== reversed)
+      {
+         force = true;
+         this.indexData.reversed = reversed;
+      }
 
       const oldIndex: number[] | null = this.indexData.index;
       const oldHash: number | null = this.indexData.hash;
@@ -135,6 +150,6 @@ export class ArrayIndexer<T> extends AdapterIndexer<T[], number, T>
       this.calcHashUpdate(oldIndex, oldHash, force);
 
       // Update all derived reducers.
-      this.derivedAdapter?.update(force);
+      this.derivedAdapter?.update(options);
    }
 }

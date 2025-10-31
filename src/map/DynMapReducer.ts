@@ -228,7 +228,7 @@ export class DynMapReducer<K = unknown, T = unknown>
       this.#index.indexData.reversed = reversed;
 
       // Recalculate index and force an update to any subscribers.
-      this.index.update(true);
+      this.index.update({ force: true });
    }
 
    /**
@@ -243,7 +243,7 @@ export class DynMapReducer<K = unknown, T = unknown>
 
       // Set the backing data to null and provide a final update.
       this.#map = [null];
-      this.index.update(true);
+      this.index.update({ force: true });
 
       // Remove all subscriptions.
       this.#subscribers.length = 0;
@@ -316,7 +316,7 @@ export class DynMapReducer<K = unknown, T = unknown>
       this.#index.indexData.index = null;
 
       // Recalculate index and force an update to any subscribers.
-      this.index.update(true);
+      this.index.update({ force: true });
    }
 
    /**

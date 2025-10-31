@@ -175,12 +175,16 @@ export class AdapterDerived<D, K, T>
    /**
     * Updates all managed derived reducer indexes.
     *
-    * @param [force=false] - Force an update to subscribers.
+    * @param [options] - Optional settings or any arbitrary value.
+    *
+    * @param [options.force=false] - Force an update the index regardless of hash calculations.
+    *
+    * @param [options.reversed] - Potentially change reversed state.
     */
-   update(force: boolean = false)
+   update(options?: unknown | { force?: boolean, reversed?: boolean })
    {
       if (this.#destroyed) { return; }
 
-      for (const reducer of this.#derived.values()) { reducer.index.update(force); }
+      for (const reducer of this.#derived.values()) { reducer.index.update(options); }
    }
 }

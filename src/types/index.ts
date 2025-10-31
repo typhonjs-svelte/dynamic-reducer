@@ -372,11 +372,15 @@ export declare namespace DynReducer {
          get length(): number;
 
          /**
-          * Manually invoke an update of the index.
+          * Manually updates associated dynamic reducer indexer.
           *
-          * @param [force] - Force update to any subscribers.
+          * @param [options] - Optional settings or any arbitrary value.
+          *
+          * @param [options.force] - Force an update the index regardless of hash calculations.
+          *
+          * @param [options.reversed] - Potentially change reversed state.
           */
-         update(force?: boolean): void;
+         update: DynReducer.Data.IndexUpdateFn;
 
          /**
           * @returns Current hash value of the index.
@@ -456,7 +460,8 @@ export declare namespace DynReducer {
           * @param indexUpdate - Callback function that is invoked on update / changes. Receives `index update`
           *        function.
           */
-         subscribe?: (indexUpdate: IndexUpdateFn) => () => void;
+         subscribe?: ((this: void, indexUpdate: IndexUpdateFn) => () => void) |
+          ((this: void, run: (value: any) => void) => () => void);
       }
 
       /**
@@ -531,7 +536,8 @@ export declare namespace DynReducer {
           *
           * @param indexUpdate - Callback function that is invoked on update / changes.
           */
-         subscribe?: (indexUpdate: IndexUpdateFn) => () => void;
+         subscribe?: ((this: void, indexUpdate: IndexUpdateFn) => () => void) |
+          ((this: void, run: (value: any) => void) => () => void);
       };
 
       /**
@@ -555,15 +561,20 @@ export declare namespace DynReducer {
           *
           * @param indexUpdate - Callback function that is invoked on update / changes. Receives `this` reference.
           */
-         subscribe?: (indexUpdate: IndexUpdateFn) => () => void;
+         subscribe?: ((this: void, indexUpdate: IndexUpdateFn) => () => void) |
+          ((this: void, run: (value: any) => void) => () => void);
       }
 
       /**
        * Updates associated dynamic reducer indexer.
        *
-       * @param [force] - Force an update the index regardless of hash calculations.
+       * @param [options] - Optional settings or any arbitrary value.
+       *
+       * @param [options.force] - Force an update the index regardless of hash calculations.
+       *
+       * @param [options.reversed] - Potentially change reversed state.
        */
-      export type IndexUpdateFn = (force?: boolean) => void;
+      export type IndexUpdateFn = (options?: { force?: boolean, reversed?: boolean } | unknown) => void;
 
       /**
        * Defines object / options for creating a top-level DynArrayReducer. Useful for consumers of the
@@ -629,7 +640,8 @@ export declare namespace DynReducer {
           *
           * @param indexUpdate - Callback function that is invoked on update / changes.
           */
-         subscribe?: (indexUpdate: IndexUpdateFn) => () => void;
+         subscribe?: ((this: void, indexUpdate: IndexUpdateFn) => () => void) |
+          ((this: void, run: (value: any) => void) => () => void);
       };
    }
 

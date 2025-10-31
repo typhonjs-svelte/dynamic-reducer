@@ -157,7 +157,7 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynReduce
       this.#index.indexData.reversed = reversed;
 
       // Recalculate index and force an update to any subscribers.
-      this.index.update(true);
+      this.index.update({ force: true });
    }
 
    /**
@@ -169,7 +169,7 @@ export class DynMapReducerDerived<K = unknown, T = unknown> implements DynReduce
 
       // Remove any external data reference and perform a final update.
       this.#map = [null];
-      this.#index.update(true);
+      this.#index.update({ force: true });
 
       // Remove all subscriptions.
       this.#subscribers.length = 0;
