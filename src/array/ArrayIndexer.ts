@@ -19,7 +19,7 @@ export class ArrayIndexer<T> extends AdapterIndexer<T[], number, T>
          const dataA: T | undefined = data?.[a];
          const dataB: T | undefined = data?.[b];
          /* c8 ignore next */
-         return dataA && dataB ? this.sortData.compareFn!(dataA, dataB) : 0;
+         return dataA !== void 0 && dataB !== void 0 ? this.sortData.compareFn!(dataA, dataB) : 0;
       }
    }
 

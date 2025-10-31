@@ -19,7 +19,7 @@ export class MapIndexer<K, T> extends AdapterIndexer<Map<K, T>, K, T>
          const dataB: T | undefined = data?.get(b);
 
          /* c8 ignore next */
-         return dataA && dataB ? this.sortData.compareFn!(dataA, dataB) : 0;
+         return dataA !== void 0 && dataB !== void 0 ? this.sortData.compareFn!(dataA, dataB) : 0;
       }
    }
 

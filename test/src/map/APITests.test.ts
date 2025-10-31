@@ -582,6 +582,29 @@ describe(`(Map) API Test`, () =>
          assert.deepEqual([...dar], [1, 2], 'initial order');
          assert.isTrue(unsubscribeCalled);
       });
+
+      it(`Correct sort order (include falsy data)`, () =>
+      {
+         const dar = createReducer(new Map([[-2, -2], [0, 0], [-1, -1], [1, 1], [2, 2]]));
+
+         let unsubscribeCalled = false;
+
+         dar.sort.set({
+            compare: (a, b) => b - a,
+            subscribe: (handler) =>
+            {
+               handler();
+               return () => unsubscribeCalled = true;
+            }
+         });
+
+         assert.deepEqual([...dar], [2, 1, 0, -1, -2], 'reverse order');
+
+         dar.sort.set(null);
+
+         assert.deepEqual([...dar], [-2, 0, -1, 1, 2], 'initial order');
+         assert.isTrue(unsubscribeCalled);
+      });
    });
 
    describe(`DerivedAPI`, () =>
